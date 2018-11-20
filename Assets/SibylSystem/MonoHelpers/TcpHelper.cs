@@ -763,7 +763,7 @@ public static class BinaryExtensions
         }
         if ((flag & (int)Query.Owner) != 0)
             r.ReadInt32();
-        if ((flag & (int)Query.IsDisabled) != 0)
+        if ((flag & (int)Query.Status) != 0)
         {
             cardToRefresh.disabled = (r.ReadInt32() != 0);
         }
