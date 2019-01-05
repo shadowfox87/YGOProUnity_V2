@@ -19,19 +19,19 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 0x1348 EN";
+            nullString += "欢迎使用 YGOPro2 1033.D.3";
             nullString += "\r\n\r\n";
-            nullString += "English Translation thanks to AntiMetaMan.";
+            nullString += "使用本软件竞技前请在官方网站阅读竞技声明。";
             //if (File.Exists("config/link.conf"))
             //{
             nullString += "\r\n";
             nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
             nullString += "\r\n\r\n";
-            nullString += "[url=https://duelistsunite.org/][u]Official English Website.[/u][/url]\r\n";
-            nullString += "[url=https://discord.gg/NTd2vJJ][u]Official English Discord.[/u][/url]\r\n";
+            nullString += "官方网站：\r\n[url=http://ygopro2.lofter.com][u]http://ygopro2.lofter.com[/u][/url]\r\n请随时关注此页面的新卡消息和程序更新消息。";
             //}
             nullString += "\r\n\r\n";
-            //nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
+            nullString += "公测玩家交流群：\r\n[url=https://jq.qq.com/?_wv=1027&k=42Gsxgd][u]580454979[/u][/url]";
+            nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();
