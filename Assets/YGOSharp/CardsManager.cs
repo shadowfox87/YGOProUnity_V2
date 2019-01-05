@@ -19,9 +19,9 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 0x1348 EN";
+            nullString += "YGOPro2\nOCGCORE 0x1348";
             nullString += "\r\n\r\n";
-            nullString += "English Translation thanks to AntiMetaMan.";
+            nullString += "English Translation thanks to AntiMetaman.";
             //if (File.Exists("config/link.conf"))
             //{
             nullString += "\r\n";
