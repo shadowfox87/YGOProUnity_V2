@@ -19,14 +19,19 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
         UIHelper.registEvent(gameObject, "face_", onClickFace);
         UIHelper.registEvent(gameObject, "join_", onClickJoin);
-        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","一秒一喵机会");
+        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","YGOPro2 User");
+        UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
         list = UIHelper.getByName<UIPopupList>(gameObject, "history_");
         UIHelper.registEvent(gameObject,"history_", onSelected);
-        name = Config.Get("name", "一秒一喵机会");
+        name = Config.Get("name", "YGOPro2 User");
         inputIP = UIHelper.getByName<UIInput>(gameObject, "ip_");
+        inputIP.defaultText = "szefoserver.ddns.net";
         inputPort = UIHelper.getByName<UIInput>(gameObject, "port_");
+        inputPort.defaultText = "7210";
         inputPsw = UIHelper.getByName<UIInput>(gameObject, "psw_");
+        inputPsw.defaultText = "";
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
+        inputVersion.defaultText = "0x1348";
         SetActiveFalse();
     }
 
@@ -144,8 +149,8 @@ public class SelectServer : WindowServantSP
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
         if (versionString=="")  
         {
-            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x133d";
-            versionString = "0x133d";
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+            versionString = "0x1348";
         }
         KF_onlineGame(Name, ipString, portString, versionString, pswString);
     }
