@@ -237,10 +237,6 @@ public class Room : WindowServantSP
                 result += "[System]";
                 result += ":";
                 break;
-            case 9: //error message
-                result += "[Script error]";
-                result += ":";
-                break;
             default: //from watcher or unknown
                 result += "[---]";
                 result += ":";
