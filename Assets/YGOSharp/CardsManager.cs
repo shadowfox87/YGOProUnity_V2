@@ -21,14 +21,14 @@ namespace YGOSharp
             nullString = "";
             nullString += "YGOPro2\nOCGCORE 0x1348";
             nullString += "\r\n\r\n";
-            nullString += "English Translation thanks to AntiMetaman.";
+            nullString += "English translation done by AntiMetaman.";
             //if (File.Exists("config/link.conf"))
             //{
             nullString += "\r\n";
             nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
             nullString += "\r\n\r\n";
-            nullString += "[url=https://duelistsunite.org/][u]Official English Website.[/u][/url]\r\n";
-            nullString += "[url=https://discord.gg/NTd2vJJ][u]Official English Discord.[/u][/url]\r\n";
+            nullString += "[url=https://duelistsunite.org/][u]Official english website.[/u][/url]\r\n";
+            nullString += "[url=https://discord.gg/NTd2vJJ][u]Official english discord.[/u][/url]\r\n";
             //}
             nullString += "\r\n\r\n";
             //nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
