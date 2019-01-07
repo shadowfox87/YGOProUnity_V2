@@ -1454,15 +1454,21 @@ public class DeckManager : ServantWithCardDescription
                     {
                         switch (flag)
                         {
-                            case 1:
+                            case 3:
                                 {
-                                    YGOSharp.Card card =YGOSharp.CardsManager.Get(code);
+                                    deck.Side.Add(code);
+                                    deck.Deck_O.Side.Add(code);
+                                }
+                                break;
+                            default:
+                                { 
+                                    YGOSharp.Card card = YGOSharp.CardsManager.Get(code);
                                     if ((card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Fusion) > 0
-                                       ||
+                                        ||
                                         (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Synchro) > 0
-                                       ||
+                                        ||
                                         (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Xyz) > 0
-                                       ||
+                                         ||
                                         (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.link) > 0)
                                     {
                                         deck.Extra.Add(code);
@@ -1473,23 +1479,7 @@ public class DeckManager : ServantWithCardDescription
                                         deck.Main.Add(code);
                                         deck.Deck_O.Main.Add(code);
                                     }
-                                    
-
                                 }
-                                break;
-                            case 2:
-                                {
-                                    deck.Extra.Add(code);
-                                    deck.Deck_O.Extra.Add(code);
-                                }
-                                break;
-                            case 3:
-                                {
-                                    deck.Side.Add(code);
-                                    deck.Deck_O.Side.Add(code);
-                                }
-                                break;
-                            default:
                                 break;
                         }
                     }
