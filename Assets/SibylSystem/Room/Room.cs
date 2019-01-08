@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 public class Room : WindowServantSP
 {
@@ -278,6 +279,67 @@ public class Room : WindowServantSP
                 break;
         }
         RMSshow_none(result);
+    }
+
+    public void StocMessage_RoomList(BinaryReader r)
+    {
+        //requires a dedicated button and a list to show rooms.
+        try
+        {
+            short count = BitConverter.ToInt16(r.ReadBytes(2), 0);
+            string roomname;
+            string player1 = "";
+            string player2 = "";
+            string hoststr;
+            for (ushort i = 0; i < count; i++)
+            {
+                List<char> chars = new List<char>();
+                byte[] temp = r.ReadBytes(64);
+                roomname = Encoding.UTF8.GetString(temp);
+                int room_status = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0),16);
+                int room_duel_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0),16);
+                int room_turn_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0), 16);
+                temp = r.ReadBytes(128);
+                player1 = Encoding.UTF8.GetString(temp);
+                int player1_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
+                int player1_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
+                temp = r.ReadBytes(128);
+                player2 = Encoding.UTF8.GetString(temp);
+                int player2_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
+                int player2_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
+                string[] strings = new string[] { room_duel_count.ToString(), room_turn_count.ToString(), roomname, player1_score.ToString(), player1_lp.ToString(), player1, player2, player2_score.ToString(), player2_lp.ToString() };
+                switch (room_status)
+                {
+                    case 0:
+                        {
+
+                            hoststr = "[Waiting][" + strings[2] + "] " + player1 + " VS " + player2;
+                            break;
+                        }
+                    case 1:
+                        {
+                            hoststr = "[G" + strings[0] + ",T" + strings[1] + "][ " + strings[2] + " ] (" + strings[3] + ",LP" + strings[4] + ") " + strings[5] + " VS " + strings[6] + " (" + strings[7] + ",LP" + strings[8] + ")";
+                            break;
+                        }
+                    case 2:
+                        {
+                            hoststr = "[G" + strings[0] + ",Siding][ " + strings[2] + " ] (" + strings[3] + ") " + strings[5] + " VS " + strings[6] + " (" + strings[7] + ")";
+
+                            break;
+                        }
+                    default:
+                        {
+                            hoststr = String.Empty;
+                            break;
+                        }
+
+                }
+                Debug.Log(hoststr);
+            }
+        }catch(Exception e)
+        {
+            Debug.Log(e.ToString());
+        }
     }
 
     public void StocMessage_Replay(BinaryReader r)

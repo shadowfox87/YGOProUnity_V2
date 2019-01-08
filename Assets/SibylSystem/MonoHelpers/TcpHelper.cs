@@ -163,6 +163,9 @@ public static class TcpHelper
                             case YGOSharp.Network.Enums.StocMessage.HsWatchChange:
                                 ((Room)Program.I().room).StocMessage_HsWatchChange(r);
                                 break;
+                            case YGOSharp.Network.Enums.StocMessage.RoomList:
+                                ((Room)Program.I().room).StocMessage_RoomList(r);
+                                break;
                             default:
                                 break;
                         }
