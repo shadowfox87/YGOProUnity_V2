@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
 
 public class Program : MonoBehaviour
 {
@@ -299,7 +300,7 @@ public class Program : MonoBehaviour
             }
             YGOSharp.BanlistManager.initialize("config\\lflist.conf");
 
-            var fileInfos = (new DirectoryInfo("cdb")).GetFiles();
+            FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray();
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 4)
