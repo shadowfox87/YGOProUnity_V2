@@ -367,7 +367,7 @@ public class Room : WindowServantSP
     {
         string roomTag=String.Empty;
         List<string> tags = new List<string>();
-        if (Regex.IsMatch(roomname, @"S\S{0,}#\d{1,}"))
+        if (Regex.IsMatch(roomname, @"S,RANDOM#\d{1,}"))
         {
             roomTag = "[11C69C][TCG/OCG][8AE57E][Duel] ";
             return roomTag;
