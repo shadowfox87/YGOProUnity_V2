@@ -809,6 +809,10 @@ public class Program : MonoBehaviour
         {
             aiRoom.hide();
         }
+        if(to != roomList && to != selectServer && roomList.isShowed)
+        {
+            roomList.hide();
+        }
 
         if (to == backGroundPic && backGroundPic.isShowed == false) backGroundPic.show();
         if (to == menu && menu.isShowed == false) menu.show();
@@ -821,6 +825,7 @@ public class Program : MonoBehaviour
         if (to == selectReplay && selectReplay.isShowed == false) selectReplay.show();
         if (to == puzzleMode && puzzleMode.isShowed == false) puzzleMode.show();
         if (to == aiRoom && aiRoom.isShowed == false) aiRoom.show();
+        if (to == roomList && !roomList.isShowed) roomList.show();
 
     }
 

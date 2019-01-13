@@ -39,10 +39,9 @@ public class RoomList : WindowServantSP
     {
         listOfRooms.Clear();
         listOfRooms.AddRange(roomList);
-        show();
         printFile();
     }
-    void onClickExit()
+    public void onClickExit()
     {
         hide();
     }
@@ -57,7 +56,7 @@ public class RoomList : WindowServantSP
         superScrollView.toTop();
         if (UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value)
         {
-            listOfRooms.RemoveAll(s => s[11] == "AI"); 
+            listOfRooms.RemoveAll(s => s[11].Contains("AI"));
         }
         if (UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value)
         {

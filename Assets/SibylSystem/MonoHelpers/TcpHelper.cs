@@ -36,7 +36,7 @@ public static class TcpHelper
                         roomListChecking = true;
                     }
                     else
-                    {
+                    { 
                         roomListChecking = false;
                     }
                     CtosMessage_JoinGame(pswString, version);
