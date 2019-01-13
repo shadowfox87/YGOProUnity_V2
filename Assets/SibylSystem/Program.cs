@@ -86,6 +86,7 @@ public class Program : MonoBehaviour
     public GameObject new_ui_setting;
     public GameObject new_ui_book;
     public GameObject new_ui_selectServer;
+    public GameObject new_ui_RoomList;
     public GameObject new_ui_gameInfo;
     public GameObject new_ui_cardDescription;
     public GameObject new_ui_search;
@@ -728,6 +729,7 @@ public class Program : MonoBehaviour
     public DeckManager deckManager;
     public Ocgcore ocgcore;
     public SelectServer selectServer;
+    public RoomList roomList;
     public Book book;
     public puzzleMode puzzleMode;
     public AIRoom aiRoom;
@@ -749,6 +751,8 @@ public class Program : MonoBehaviour
         servants.Add(ocgcore);
         selectServer = new SelectServer();
         servants.Add(selectServer);
+        roomList = new RoomList();
+        servants.Add(roomList);
         book = new Book();
         servants.Add(book);
         selectReplay = new selectReplay();
