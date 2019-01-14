@@ -29,7 +29,7 @@ public class RoomList : WindowServantSP
     private void save()
     {
         hideAI = UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value;
-        hideStarted = hideAI = UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value;
+        hideStarted  = UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value;
         Config.Set("hideAIrooms_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value));
         Config.Set("hideStarted_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value));
     }
