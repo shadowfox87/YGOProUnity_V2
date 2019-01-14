@@ -138,8 +138,6 @@ public class SelectServer : WindowServantSP
         {
             return;
         }
-        Program.I().roomList.show();
-
         string Name = UIHelper.getByName<UIInput>(gameObject, "name_").value;
         string ipString = UIHelper.getByName<UIInput>(gameObject, "ip_").value;
         string portString = UIHelper.getByName<UIInput>(gameObject, "port_").value;
@@ -239,7 +237,7 @@ public class SelectServer : WindowServantSP
 
     void onClickExit()
     {
-        Program.I().roomList.hide();
+        //Program.I().roomList.hide();
         Program.I().shiftToServant(Program.I().menu);
         if (TcpHelper.tcpClient != null)
         {

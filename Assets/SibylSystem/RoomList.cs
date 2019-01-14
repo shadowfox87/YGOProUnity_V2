@@ -9,13 +9,15 @@ public class RoomList : WindowServantSP
 {
     UIselectableList superScrollView = null;
     List<string[]> listOfRooms = new List<string[]>();
+    bool hideAI;
+    bool hideStarted;
     public override void initialize()
     {
         createWindow(Program.I().new_ui_RoomList);
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
         UIHelper.registEvent(gameObject, "refresh_", onRefresh);
-        UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value = UIHelper.fromStringToBool(Config.Get("hideAIrooms_", "1"));
-        UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value = UIHelper.fromStringToBool(Config.Get("hideStarted_", "1"));
+        hideAI=UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value = UIHelper.fromStringToBool(Config.Get("hideAIrooms_", "1"));
+        hideStarted=UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value = UIHelper.fromStringToBool(Config.Get("hideStarted_", "1"));
         UIHelper.registEvent(gameObject, "hideAIrooms_", save);
         UIHelper.registEvent(gameObject, "hideStarted_", save);
         superScrollView = gameObject.GetComponentInChildren<UIselectableList>();
@@ -26,6 +28,8 @@ public class RoomList : WindowServantSP
 
     private void save()
     {
+        hideAI = UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value;
+        hideStarted = hideAI = UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value;
         Config.Set("hideAIrooms_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value));
         Config.Set("hideStarted_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value));
     }
@@ -37,6 +41,7 @@ public class RoomList : WindowServantSP
 
     public void UpdateList(List<string[]> roomList)
     {
+        show();
         listOfRooms.Clear();
         listOfRooms.AddRange(roomList);
         printFile();
@@ -45,20 +50,16 @@ public class RoomList : WindowServantSP
     {
         hide();
     }
-    public override void show()
-    {
-        base.show();
-    }
 
     private void printFile()
     {
         superScrollView.clear();
         superScrollView.toTop();
-        if (UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value)
+        if (hideAI)
         {
             listOfRooms.RemoveAll(s => s[11].Contains("AI"));
         }
-        if (UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value)
+        if (hideStarted)
         {
             listOfRooms.RemoveAll(s => Convert.ToInt32(s[10]) != 0);
         }
