@@ -367,52 +367,52 @@ public class Room : WindowServantSP
     {
         string roomTag=String.Empty;
         List<string> tags = new List<string>();
-        if (Regex.IsMatch(roomname, @"S,RANDOM#\d{1,}"))
+        if (Regex.IsMatch(roomname, @"^S,RANDOM#\d{1,}"))
         {
             roomTag = "[11C69C][TCG/OCG][8AE57E][Duel] ";
             return roomTag;
         }
-        else if(Regex.IsMatch(roomname, @"M,RANDOM#\d{1,}"))
+        else if(Regex.IsMatch(roomname, @"^M,RANDOM#\d{1,}"))
         {
             roomTag = "[11C69C][TCG/OCG][42C1EC][Match] ";
             return roomTag;
         }
-        else if(Regex.IsMatch(roomname, @"AI#\S{0,},\d{1,}")|| Regex.IsMatch(roomname, @"AI\S{0,}#\d{1,}"))
+        else if(Regex.IsMatch(roomname, @"^AI#\S{0,},\d{1,}")|| Regex.IsMatch(roomname, @"^AI\S{0,}#\d{1,}"))
         {
             roomTag = "[5E71FF][AI] ";
             return roomTag;
         }
 
-        if (Regex.IsMatch(roomname, @"NF\S{0,}#"))
+        if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}NF[,#])?(?(1)|(^NF[#,]))"))
         {
             tags.Add("[C63111][No Banlist] ");
         }
-        if (Regex.IsMatch(roomname, @"OO\S{0,}#"))
+        if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OO[,#])?(?(1)|(^OO[#,]))"))
         {
-            if (Regex.IsMatch(roomname, @"OT\S{0,}#")){
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))")){
                 tags.Add("[11C69C][TCG/OCG]");
             }
             else
             {
-                tags.Add("[421140][OCG]");
+                tags.Add("[B62FB2][OCG]");
             }
-            if(Regex.IsMatch(roomname, @"S\S{0,}#"))
+            if(Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))"))
             {
                 tags.Add("[8AE57E][Duel] ");
             }
-            else if (Regex.IsMatch(roomname, @"M\S{0,}#"))
+            else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}M[,#])?(?(1)|(^M[#,]))"))
             {
                 tags.Add("[42C1EC][Match] ");
             }
-            else if (Regex.IsMatch(roomname, @",T\S{0,}#"))
+            else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}T[,#])?(?(1)|(^T[#,]))"))
             {
                 tags.Add("[D14291][TAG] ");
 
             }
         }
-        else if (Regex.IsMatch(roomname, @"TO\S{0,}#"))
+        else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}TO[,#])?(?(1)|(^TO[#,]))"))
             {
-            if (Regex.IsMatch(roomname, @"OT\S{0,}#")){
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))")){
                 tags.Add("[11C69C][TCG/OCG]");
 
             }
@@ -420,26 +420,26 @@ public class Room : WindowServantSP
             {
                 tags.Add("[F58637][TCG]");
             }
-            if (Regex.IsMatch(roomname, @"S\S{0,}#"))
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))"))
             {
                 tags.Add("[8AE57E][Duel] ");
             }
-            else if (Regex.IsMatch(roomname, @"M\S{0,}#"))
+            else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}M[,#])?(?(1)|(^M[#,]))"))
             {
                 tags.Add("[42C1EC][Match] ");
             }
-            else if (Regex.IsMatch(roomname, @",T\S{0,}#"))
+            else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}T[,#])?(?(1)|(^T[#,]))"))
             {
                 tags.Add("[D14291][TAG] ");
 
             }
         }
-        else if (Regex.IsMatch(roomname, @"T\S{0,}#"))
+        else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}T[,#])?(?(1)|(^T[#,]))"))
         {
             tags.Add("[11C69C][TCG/OCG][D14291][TAG] ");
         }
 
-        if (Regex.IsMatch(roomname, @"LF\d\S{0,}#"))
+        if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF\d[#,]))"))
         {
             int banlist = (int)char.GetNumericValue(roomname[roomname.LastIndexOf("LF")+2]);
             YGOSharp.Banlist blist = YGOSharp.BanlistManager.Banlists[banlist - 1];

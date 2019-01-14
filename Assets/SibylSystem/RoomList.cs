@@ -11,12 +11,14 @@ public class RoomList : WindowServantSP
     List<string[]> listOfRooms = new List<string[]>();
     bool hideAI;
     bool hideStarted;
+    UILabel roomNameLabel;
     public override void initialize()
     {
         createWindow(Program.I().new_ui_RoomList);
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
         UIHelper.registEvent(gameObject, "refresh_", onRefresh);
-        hideAI=UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value = UIHelper.fromStringToBool(Config.Get("hideAIrooms_", "1"));
+        roomNameLabel = UIHelper.getByName<UILabel>(gameObject, "roomNameLabel");
+        hideAI =UIHelper.getByName<UIToggle>(gameObject, "hideAIrooms_").value = UIHelper.fromStringToBool(Config.Get("hideAIrooms_", "1"));
         hideStarted=UIHelper.getByName<UIToggle>(gameObject, "hideStarted_").value = UIHelper.fromStringToBool(Config.Get("hideStarted_", "1"));
         UIHelper.registEvent(gameObject, "hideAIrooms_", save);
         UIHelper.registEvent(gameObject, "hideStarted_", save);
@@ -49,6 +51,12 @@ public class RoomList : WindowServantSP
     public void onClickExit()
     {
         hide();
+    }
+    public override void hide()
+    {
+        roomNameLabel.text = "";
+        base.hide();
+
     }
 
     private void printFile()
@@ -89,12 +97,21 @@ public class RoomList : WindowServantSP
         {
             return;
         }
+        string roomPsw;
         if (selectedString == superScrollView.selectedString)
         {
-            string roomPsw = listOfRooms.Find(s => s[9] == selectedString)[2];
+            roomPsw= listOfRooms.Find(s => s[9] == selectedString)[2];
             JoinRoom(superScrollView.selectedString,roomPsw);
+            return;
         }
         selectedString = superScrollView.selectedString;
+        roomPsw= listOfRooms.Find(s => s[9] == selectedString)[2];
+        int roomNameIndex = roomPsw.LastIndexOf("#")+1;
+        if (roomNameIndex > 0)
+        {
+            roomNameLabel.text = roomPsw.Substring(roomNameIndex);
+        }
+         
     }
 
     void JoinRoom(string selectedString,string roomPsw)
