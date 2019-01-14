@@ -448,7 +448,7 @@ public class Room : WindowServantSP
         roomTag = String.Join("", tags.ToArray());
         if (roomTag == "")
         {
-            roomTag ="["+roomname+"] ";
+            roomTag ="[ "+roomname+" ] ";
         }
         if (roomTag.Length > 200)
         {
