@@ -387,16 +387,23 @@ public class Room : WindowServantSP
         {
             tags.Add("[C63111][No Banlist] ");
         }
+        if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF\d[#,]))"))
+        {
+            int banlist = (int)char.GetNumericValue(roomname[roomname.LastIndexOf("LF") + 2]);
+            YGOSharp.Banlist blist = YGOSharp.BanlistManager.Banlists[banlist - 1];
+            tags.Add("[DDDDAA][" + blist.Name + "]");
+        }
         if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OO[,#])?(?(1)|(^OO[#,]))"))
         {
-            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))")){
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))"))
+            {
                 tags.Add("[11C69C][TCG/OCG]");
             }
             else
             {
                 tags.Add("[B62FB2][OCG]");
             }
-            if(Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))"))
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))"))
             {
                 tags.Add("[8AE57E][Duel] ");
             }
@@ -411,8 +418,9 @@ public class Room : WindowServantSP
             }
         }
         else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}TO[,#])?(?(1)|(^TO[#,]))"))
+        {
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))"))
             {
-            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}OT[,#])?(?(1)|(^OT[#,]))")){
                 tags.Add("[11C69C][TCG/OCG]");
 
             }
@@ -434,23 +442,27 @@ public class Room : WindowServantSP
 
             }
         }
-        else if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}T[,#])?(?(1)|(^T[#,]))"))
+        else
         {
-            tags.Add("[11C69C][TCG/OCG][D14291][TAG] ");
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}T[,#])?(?(1)|(^T[#,]))"))
+            {
+                tags.Add("[D14291][TAG]");
+            }
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}M[,#])?(?(1)|(^M[#,]))"))
+            {
+                tags.Add("[42C1EC][Match]");
+            }
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))")){
+                tags.Add("[8AE57E][Duel]");
+            }
         }
 
-        if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}LF\d[,#])?(?(1)|(^LF\d[#,]))"))
-        {
-            int banlist = (int)char.GetNumericValue(roomname[roomname.LastIndexOf("LF")+2]);
-            YGOSharp.Banlist blist = YGOSharp.BanlistManager.Banlists[banlist - 1];
-            tags.Add(blist.Name);
-        }
-        roomTag = String.Join("", tags.ToArray());
-        if (roomTag == "")
+        roomTag = String.Join("", tags.ToArray())+" ";
+        if (roomTag == " ")
         {
             roomTag ="[ "+roomname+" ] ";
         }
-        if (roomTag.Length > 200)
+        if (roomTag.Length > 150)
         {
             roomTag = "[CUSTOM] ";
         }
