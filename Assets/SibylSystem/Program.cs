@@ -285,19 +285,19 @@ public class Program : MonoBehaviour
         });
         go(300, () =>
         {
-            InterString.initialize("config\\translation.conf");
+            InterString.initialize("config/translation.conf");
             GameTextureManager.initialize();
-            Config.initialize("config\\config.conf");
-            GameStringManager.initialize("config\\strings.conf");
-            if (File.Exists("cdb\\strings.conf"))
+            Config.initialize("config/config.conf");
+            GameStringManager.initialize("config/strings.conf");
+            if (File.Exists("cdb/strings.conf"))
             {
-                GameStringManager.initialize("cdb\\strings.conf");
+                GameStringManager.initialize("cdb/strings.conf");
             }
-            if (File.Exists("diy\\strings.conf"))
+            if (File.Exists("expansions/strings.conf"))
             {
-                GameStringManager.initialize("diy\\strings.conf");
+                GameStringManager.initialize("expansions/strings.conf");
             }
-            YGOSharp.BanlistManager.initialize("config\\lflist.conf");
+            YGOSharp.BanlistManager.initialize("config/lflist.conf");
 
             var fileInfos = (new DirectoryInfo("cdb")).GetFiles();
             for (int i = 0; i < fileInfos.Length; i++)
@@ -306,21 +306,21 @@ public class Program : MonoBehaviour
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                     {
-                        YGOSharp.CardsManager.initialize("cdb\\" + fileInfos[i].Name);
+                        YGOSharp.CardsManager.initialize("cdb/" + fileInfos[i].Name);
                     }
                 }
             }
 
-            if (Directory.Exists("diy"))
+            if (Directory.Exists("expansions"))
             {
-                fileInfos = (new DirectoryInfo("diy")).GetFiles();
+                fileInfos = (new DirectoryInfo("expansions")).GetFiles();
                 for (int i = 0; i < fileInfos.Length; i++)
                 {
                     if (fileInfos[i].Name.Length > 4)
                     {
                         if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                         {
-                            YGOSharp.CardsManager.initialize("diy\\" + fileInfos[i].Name);
+                            YGOSharp.CardsManager.initialize("expansions/" + fileInfos[i].Name);
                         }
                     }
                 }
@@ -334,7 +334,7 @@ public class Program : MonoBehaviour
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 3, 3) == ".db")
                     {
-                        YGOSharp.PacksManager.initialize("pack\\" + fileInfos[i].Name);
+                        YGOSharp.PacksManager.initialize("pack/" + fileInfos[i].Name);
                     }
                 }
             }
