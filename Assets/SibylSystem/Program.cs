@@ -137,6 +137,7 @@ public class Program : MonoBehaviour
     public GameObject New_winCaculator;
     public GameObject New_winCaculatorRecord;
     public GameObject New_ocgcore_placeSelector;
+    public BGMController bgm;
     #endregion
 
     #region Initializement
@@ -287,19 +288,20 @@ public class Program : MonoBehaviour
         });
         go(300, () =>
         {
-            InterString.initialize("config\\translation.conf");
+            UpdateClient();
+            InterString.initialize("config/translation.conf");
             GameTextureManager.initialize();
-            Config.initialize("config\\config.conf");
-            GameStringManager.initialize("config\\strings.conf");
-            if (File.Exists("cdb\\strings.conf"))
+            Config.initialize("config/config.conf");
+            GameStringManager.initialize("config/strings.conf");
+            if (File.Exists("cdb/strings.conf"))
             {
-                GameStringManager.initialize("cdb\\strings.conf");
+                GameStringManager.initialize("cdb/strings.conf");
             }
-            if (File.Exists("diy\\strings.conf"))
+            if (File.Exists("diy/strings.conf"))
             {
-                GameStringManager.initialize("diy\\strings.conf");
+                GameStringManager.initialize("diy/strings.conf");
             }
-            YGOSharp.BanlistManager.initialize("config\\lflist.conf");
+            YGOSharp.BanlistManager.initialize("config/lflist.conf");
 
             FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray();
             for (int i = 0; i < fileInfos.Length; i++)
@@ -308,7 +310,7 @@ public class Program : MonoBehaviour
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                     {
-                        YGOSharp.CardsManager.initialize("cdb\\" + fileInfos[i].Name);
+                        YGOSharp.CardsManager.initialize("cdb/" + fileInfos[i].Name);
                     }
                 }
             }
@@ -322,7 +324,7 @@ public class Program : MonoBehaviour
                     {
                         if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                         {
-                            YGOSharp.CardsManager.initialize("diy\\" + fileInfos[i].Name);
+                            YGOSharp.CardsManager.initialize("diy/" + fileInfos[i].Name);
                         }
                     }
                 }
@@ -336,7 +338,7 @@ public class Program : MonoBehaviour
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 3, 3) == ".db")
                     {
-                        YGOSharp.PacksManager.initialize("pack\\" + fileInfos[i].Name);
+                        YGOSharp.PacksManager.initialize("pack/" + fileInfos[i].Name);
                     }
                 }
             }
@@ -348,6 +350,72 @@ public class Program : MonoBehaviour
 
     }
 
+    private void UpdateClient()
+    {
+        try
+        {
+            WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
+            while (!w.isDone)
+            {
+                if (Application.internetReachability == NetworkReachability.NotReachable)
+                {
+                    throw new Exception("No Internet connection!");
+                }
+            }
+            List<ApiFile> toDownload = new List<ApiFile>();
+            List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
+            if (!File.Exists("updates/SHAs.txt"))
+            {
+                Directory.CreateDirectory("updates");
+                toDownload.AddRange(apiFromGit);
+            }
+
+            if (File.Exists("updates/SHAs.txt"))
+            {
+                List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
+                foreach (ApiFile file in apiFromGit)
+                {
+                    if (file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
+                    {
+                        toDownload.Add(file);
+                    }
+                }
+                foreach (ApiFile f in local)
+                {
+                    if (f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
+                    {
+                        if (File.Exists("cdb/" + f.name))
+                        {
+                            File.Delete("cdb/" + f.name);
+                        }
+                        if (File.Exists("config/" + f.name))
+                        {
+                            File.Delete("config/" + f.name);
+                        }
+
+                    }
+                }
+            }
+            HttpDldFile httpDldFile = new HttpDldFile();
+            foreach (var dl in toDownload)
+            {
+                if (Path.GetExtension(dl.name) == ".cdb" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                {
+                    httpDldFile.Download(dl.download_url, Path.Combine("cdb/", dl.name));
+                }
+                if (Path.GetExtension(dl.name) == ".conf" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                {
+                    httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
+                }
+            }
+            File.WriteAllText("updates/SHAs.txt", w.text);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.ToString());
+            File.Delete("updates/SHAs.txt");
+        }
+    }
     public GameObject mouseParticle;
 
     static int lastChargeTime = 0;
@@ -950,6 +1018,7 @@ public class Program : MonoBehaviour
     void gameStart()
     {
         backGroundPic.show();
+        bgm = gameObject.AddComponent<BGMController>();
         shiftToServant(menu);
     }
 

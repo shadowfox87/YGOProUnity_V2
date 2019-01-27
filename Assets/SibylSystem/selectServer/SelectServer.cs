@@ -26,12 +26,13 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "quickAI_", onQuickAI);
         UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
         serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
-        serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefoserver");
+        serversList.fontSize = 24;
+        serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefo");
         UIHelper.registEvent(gameObject, "server", pickServer);
-        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","YGOPro2 User");
+        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name", "YGOPro2 User");
         UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
         list = UIHelper.getByName<UIPopupList>(gameObject, "history_");
-        UIHelper.registEvent(gameObject,"history_", onSelected);
+        UIHelper.registEvent(gameObject, "history_", onSelected);
         name = Config.Get("name", "YGOPro2 User");
         inputIP = UIHelper.getByName<UIInput>(gameObject, "ip_");
         inputIP.defaultText = "szefoserver.ddns.net";
@@ -51,12 +52,12 @@ public class SelectServer : WindowServantSP
         //[OCG]Mercury233
         switch (server)
         {
-            case "[TCG+OCG]Szefoserver":
+            case "[TCG+OCG]Szefo":
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "szefoserver.ddns.net";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
                     UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
-                    Config.Set("serversPicker", "[TCG+OCG]Szefoserver");
+                    Config.Set("serversPicker", "[TCG+OCG]Szefo");
                     break;
                 }
             case "[TCG]Koishi":
@@ -65,6 +66,14 @@ public class SelectServer : WindowServantSP
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "1311";
                     UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
                     Config.Set("serversPicker", "[TCG]Koishi");
+                    break;
+                }
+            case "[OCG]Koishi":
+                {
+                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
+                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    Config.Set("serversPicker", "[OCG]Koishi");
                     break;
                 }
             case "[OCG]Mercury233":
@@ -216,11 +225,11 @@ public class SelectServer : WindowServantSP
     void printFile(bool first)
     {
         list.Clear();
-        if (File.Exists("config\\hosts.conf") == false)
+        if (File.Exists("config/hosts.conf") == false)
         {
-            File.Create("config\\hosts.conf").Close();
+            File.Create("config/hosts.conf").Close();
         }
-        string txtString = File.ReadAllText("config\\hosts.conf");
+        string txtString = File.ReadAllText("config/hosts.conf");
         string[] lines = txtString.Replace("\r", "").Split("\n");
         for (int i = 0; i < lines.Length; i++)
         {
@@ -264,7 +273,7 @@ public class SelectServer : WindowServantSP
         string portString = UIHelper.getByName<UIInput>(gameObject, "port_").value;
         string pswString = UIHelper.getByName<UIInput>(gameObject, "psw_").value;
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
-        if (versionString=="")  
+        if (versionString == "")
         {
             UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
             versionString = "0x1348";
@@ -273,7 +282,7 @@ public class SelectServer : WindowServantSP
 
     }
 
-    public void KF_onlineGame(string Name,string ipString, string portString, string versionString, string pswString="")
+    public void KF_onlineGame(string Name, string ipString, string portString, string versionString, string pswString = "")
     {
         name = Name;
         Config.Set("name", name);
@@ -300,10 +309,10 @@ public class SelectServer : WindowServantSP
                     {
                         all += list.items[i] + "\r\n";
                     }
-                    File.WriteAllText("config\\hosts.conf", all);
+                    File.WriteAllText("config/hosts.conf", all);
                     printFile(false);
                 }
-                (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString,versionString); })).Start();
+                (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString, versionString); })).Start();
             }
             else
             {
