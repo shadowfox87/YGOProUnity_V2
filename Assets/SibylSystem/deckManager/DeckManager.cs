@@ -1413,6 +1413,7 @@ public class DeckManager : ServantWithCardDescription
     {
         FromYDKtoCodedDeck(path, out deck);
         FormCodedDeckToObjectDeck();
+
     }
 
     public static void FromYDKtoCodedDeck(string path, out YGOSharp.Deck deck)
@@ -1453,18 +1454,6 @@ public class DeckManager : ServantWithCardDescription
                     {
                         switch (flag)
                         {
-                            case 1:
-                                {
-                                    deck.Main.Add(code);
-                                    deck.Deck_O.Main.Add(code);
-                                }
-                                break;
-                            case 2:
-                                {
-                                    deck.Extra.Add(code);
-                                    deck.Deck_O.Extra.Add(code);
-                                }
-                                break;
                             case 3:
                                 {
                                     deck.Side.Add(code);
@@ -1472,6 +1461,25 @@ public class DeckManager : ServantWithCardDescription
                                 }
                                 break;
                             default:
+                                { 
+                                    YGOSharp.Card card = YGOSharp.CardsManager.Get(code);
+                                    if ((card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Fusion) > 0
+                                        ||
+                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Synchro) > 0
+                                        ||
+                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Xyz) > 0
+                                         ||
+                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.link) > 0)
+                                    {
+                                        deck.Extra.Add(code);
+                                        deck.Deck_O.Extra.Add(code);
+                                    }
+                                    else
+                                    {
+                                        deck.Main.Add(code);
+                                        deck.Deck_O.Main.Add(code);
+                                    }
+                                }
                                 break;
                         }
                     }
@@ -1673,6 +1681,7 @@ public class DeckManager : ServantWithCardDescription
                 MonoCardInDeckManager card = createCard();
                 card.cardData = data;
                 card.gameObject.layer = 16;
+                
                 deck.IMain.Add(card);
                 card.tweenToVectorAndFall(toVector,new Vector3(90,0,0));
             });

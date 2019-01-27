@@ -37,35 +37,35 @@ public class Menu : WindowServantSP
 
     static int Version = 0;
     string upurl = "";
-    void up()
-    {
-        try
-        {
-            string url = "http://ygoforge.com/update.asp";
-            WebClient wc = new WebClient();
-            Stream s = wc.OpenRead(url);
-            StreamReader sr = new StreamReader(s, Encoding.UTF8);
-            string result = sr.ReadToEnd();
-            sr.Close();
-            s.Close();
-            string[] lines = result.Replace("\r", "").Split("\n");
-            if (lines.Length > 0)
-            {
-                string[] mats = lines[0].Split(":.:");
-                if (mats.Length == 2)
-                {
-                    if (Version.ToString() != mats[0])
-                    {
-                        upurl = mats[1];
-                    }
-                }
-            }
-        }
-        catch (System.Exception e)
-        {
-            UnityEngine.Debug.Log(e);
-        }
-    }
+    //void up()
+    //{
+    //    try
+    //    {
+    //        string url = "http://ygoforge.com/update.asp";
+    //        WebClient wc = new WebClient();
+    //        Stream s = wc.OpenRead(url);
+    //        StreamReader sr = new StreamReader(s, Encoding.UTF8);
+    //        string result = sr.ReadToEnd();
+    //        sr.Close();
+    //        s.Close();
+    //        string[] lines = result.Replace("\r", "").Split("\n");
+    //        if (lines.Length > 0)
+    //        {
+    //            string[] mats = lines[0].Split(":.:");
+    //            if (mats.Length == 2)
+    //            {
+    //                if (Version.ToString() != mats[0])
+    //                {
+    //                    upurl = mats[1];
+    //                }
+    //            }
+    //        }
+    //    }
+    //    catch (System.Exception e)
+    //    {
+    //        UnityEngine.Debug.Log(e);
+    //    }
+    //}
 
     public override void ES_RMS(string hashCode, List<messageSystemValue> result)
     {

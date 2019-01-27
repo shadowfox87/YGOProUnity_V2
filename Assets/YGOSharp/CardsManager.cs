@@ -19,14 +19,19 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "欢迎使用 YGOPro2 233测试版";
+            nullString += "YGOPro2\nOCGCORE 0x1348";
             nullString += "\r\n\r\n";
-            nullString += "详见官方网站说明：";
+            nullString += "English translation done by AntiMetaman.";
+            //if (File.Exists("config/link.conf"))
+            //{
             nullString += "\r\n";
-            nullString += "[url=https://ygo233.com/ygopro2_233_test][u]https://ygo233.com/ygopro2_233_test[/u][/url]";
+            nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
             nullString += "\r\n\r\n";
-            nullString += "公测玩家交流群：\r\n[url=https://jq.qq.com/?_wv=1027&k=42Gsxgd][u]580454979[/u][/url]";
-            nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
+            nullString += "[url=https://duelistsunite.org/][u]Official english website.[/u][/url]\r\n";
+            nullString += "[url=https://discord.gg/NTd2vJJ][u]Official english discord.[/u][/url]\r\n";
+            //}
+            nullString += "\r\n\r\n";
+            //nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();

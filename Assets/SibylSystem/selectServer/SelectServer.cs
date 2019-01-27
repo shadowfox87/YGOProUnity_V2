@@ -7,6 +7,7 @@ using System.Threading;
 public class SelectServer : WindowServantSP
 {
     UIPopupList list;
+    UIPopupList serversList;
 
     UIInput inputIP;
     UIInput inputPort;
@@ -19,15 +20,135 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
         UIHelper.registEvent(gameObject, "face_", onClickFace);
         UIHelper.registEvent(gameObject, "join_", onClickJoin);
-        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","一秒一喵机会");
+        UIHelper.registEvent(gameObject, "roomList_", onClickRoomList);
+        UIHelper.registEvent(gameObject, "quickSingle_", onQuickSingle);
+        UIHelper.registEvent(gameObject, "quickMatch_", onQuickMatch);
+        UIHelper.registEvent(gameObject, "quickAI_", onQuickAI);
+        UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
+        serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
+        serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefoserver");
+        UIHelper.registEvent(gameObject, "server", pickServer);
+        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","YGOPro2 User");
+        UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
         list = UIHelper.getByName<UIPopupList>(gameObject, "history_");
         UIHelper.registEvent(gameObject,"history_", onSelected);
-        name = Config.Get("name", "一秒一喵机会");
+        name = Config.Get("name", "YGOPro2 User");
         inputIP = UIHelper.getByName<UIInput>(gameObject, "ip_");
+        inputIP.defaultText = "szefoserver.ddns.net";
         inputPort = UIHelper.getByName<UIInput>(gameObject, "port_");
+        inputPort.defaultText = "7210";
         inputPsw = UIHelper.getByName<UIInput>(gameObject, "psw_");
+        inputPsw.defaultText = "";
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
+        inputVersion.defaultText = "0x1348";
         SetActiveFalse();
+    }
+    private void pickServer()
+    {
+        string server = serversList.value;
+        //[TCG/OCG]Szefoserver
+        //[TCG]Koishi
+        //[OCG]Mercury233
+        switch (server)
+        {
+            case "[TCG+OCG]Szefoserver":
+                {
+                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "szefoserver.ddns.net";
+                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    Config.Set("serversPicker", "[TCG+OCG]Szefoserver");
+                    break;
+                }
+            case "[TCG]Koishi":
+                {
+                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
+                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "1311";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    Config.Set("serversPicker", "[TCG]Koishi");
+                    break;
+                }
+            case "[OCG]Mercury233":
+                {
+                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "s1.ygo233.com";
+                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "23333";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    Config.Set("serversPicker", "[OCG]Mercury233");
+                    break;
+                }
+            default:
+                {
+                    Config.Set("serversPicker", "Custom");
+                    break;
+                }
+
+        }
+
+    }
+
+    public void onQuickSingle()
+    {
+        if (!isShowed)
+        {
+            return;
+        }
+        onQuick("");
+    }
+    public void onQuickAI()
+    {
+        if (!isShowed)
+        {
+            return;
+        }
+        onQuick("AI");
+    }
+    public void onQuickTag()
+    {
+        if (!isShowed)
+        {
+            return;
+        }
+        onQuick("T");
+    }
+
+    public void onQuickMatch()
+    {
+        if (!isShowed)
+        {
+            return;
+        }
+        onQuick("M");
+    }
+    private void onQuick(string psw)
+    {
+        string Name = UIHelper.getByName<UIInput>(gameObject, "name_").value;
+        string ipString = UIHelper.getByName<UIInput>(gameObject, "ip_").value;
+        string portString = UIHelper.getByName<UIInput>(gameObject, "port_").value;
+        string pswString = psw;
+        string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
+        if (versionString == "")
+        {
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+            versionString = "0x1348";
+        }
+        KF_onlineGame(Name, ipString, portString, versionString, pswString);
+    }
+    public void onClickRoomList()
+    {
+        if (!isShowed)
+        {
+            return;
+        }
+        string Name = UIHelper.getByName<UIInput>(gameObject, "name_").value;
+        string ipString = UIHelper.getByName<UIInput>(gameObject, "ip_").value;
+        string portString = UIHelper.getByName<UIInput>(gameObject, "port_").value;
+        string pswString = "L";
+        string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
+        if (versionString == "")
+        {
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+            versionString = "0x1348";
+        }
+        KF_onlineGame(Name, ipString, portString, versionString, pswString);
     }
 
     void onSelected()
@@ -116,6 +237,7 @@ public class SelectServer : WindowServantSP
 
     void onClickExit()
     {
+        //Program.I().roomList.hide();
         Program.I().shiftToServant(Program.I().menu);
         if (TcpHelper.tcpClient != null)
         {
@@ -148,6 +270,7 @@ public class SelectServer : WindowServantSP
             versionString = "0x1348";
         }
         KF_onlineGame(Name, ipString, portString, versionString, pswString);
+
     }
 
     public void KF_onlineGame(string Name,string ipString, string portString, string versionString, string pswString="")
@@ -162,21 +285,24 @@ public class SelectServer : WindowServantSP
         {
             if (name != "")
             {
-                string fantasty = "(" + versionString + ")" + ipString + ":" + portString + " " + pswString;
-                list.items.Remove(fantasty);
-                list.items.Insert(0, fantasty);
-                list.value = fantasty;
-                if (list.items.Count>5) 
+                if (pswString != "L")
                 {
-                    list.items.RemoveAt(list.items.Count - 1);
+                    string fantasty = "(" + versionString + ")" + ipString + ":" + portString + " " + pswString;
+                    list.items.Remove(fantasty);
+                    list.items.Insert(0, fantasty);
+                    list.value = fantasty;
+                    if (list.items.Count > 5)
+                    {
+                        list.items.RemoveAt(list.items.Count - 1);
+                    }
+                    string all = "";
+                    for (int i = 0; i < list.items.Count; i++)
+                    {
+                        all += list.items[i] + "\r\n";
+                    }
+                    File.WriteAllText("config\\hosts.conf", all);
+                    printFile(false);
                 }
-                string all = "";
-                for (int i = 0; i < list.items.Count; i++)
-                {
-                    all += list.items[i] + "\r\n";
-                }
-                File.WriteAllText("config\\hosts.conf", all);
-                printFile(false);
                 (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString,versionString); })).Start();
             }
             else
