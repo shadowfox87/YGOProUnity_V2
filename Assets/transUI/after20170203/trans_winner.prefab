@@ -79,7 +79,7 @@ GameObject:
   m_Component:
   - component: {fileID: 418562}
   - component: {fileID: 11466940}
-  m_Layer: 18
+  m_Layer: 5
   m_Name: trans_winner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +188,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 150246}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -716,7 +716,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: "[u][\u4FDD\u5B58\u5F55\u50CF][/u]"
+  mText: '[u][Save Replay][/u]'
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 2
@@ -816,7 +816,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: "[u][\u653E\u5F03\u5F55\u50CF][/u]"
+  mText: '[u][Don''t save][/u]'
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 2

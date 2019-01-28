@@ -27,7 +27,7 @@ GameObject:
   m_Component:
   - component: {fileID: 437286}
   - component: {fileID: 11113336}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 442836}
   - component: {fileID: 11128310}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 406978}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: new_toolBar_changeSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 468250}
   - component: {fileID: 11142608}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 11404784}
   - component: {fileID: 11483464}
   - component: {fileID: 11467776}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: finish_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 11400142}
   - component: {fileID: 11417822}
   - component: {fileID: 11454816}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: setting_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,7 +179,7 @@ GameObject:
   - component: {fileID: 421706}
   - component: {fileID: 11162800}
   - component: {fileID: 11440266}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: Animation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 11447732}
   - component: {fileID: 11434374}
   - component: {fileID: 11490116}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: sort_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 11448250}
   - component: {fileID: 11460376}
   - component: {fileID: 11425028}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: chat_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 456136}
-  m_Layer: 10
+  m_Layer: 5
   m_Name: input_
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 122638}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -718,7 +718,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: "\u526F\u5361\u7EC4\u66F4\u6362\u5B8C\u6BD5"
+  mText: Side Decking Complete
   mFontSize: 20
   mFontStyle: 0
   mAlignment: 0

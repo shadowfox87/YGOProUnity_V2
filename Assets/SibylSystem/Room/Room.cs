@@ -714,13 +714,13 @@ public class Room : WindowServantSP
                         RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（数量过多）", null);
                         break;
                     case 6: // DECKERROR_MAINCOUNT
-                        RMSshow_onlyYes("", "主卡组数量应为40-60张", null);
+                        RMSshow_onlyYes("", "Your main deck needs to be between 40-60 cards", null);
                         break;
                     case 7: // DECKERROR_EXTRACOUNT
-                        RMSshow_onlyYes("", "额外卡组数量应为0-15张", null);
+                        RMSshow_onlyYes("", "Your extra deck needs to be between 0-15 cards", null);
                         break;
                     case 8: // DECKERROR_SIDECOUNT
-                        RMSshow_onlyYes("", "副卡组数量应为0-15", null);
+                        RMSshow_onlyYes("", "Your side deck needs to be between 0-15 cards", null);
                         break;
                     default:
                         RMSshow_onlyYes("", GameStringManager.get_unsafe(1406), null);
