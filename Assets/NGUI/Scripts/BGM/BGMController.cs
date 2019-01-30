@@ -20,7 +20,7 @@ public class BGMController : MonoBehaviour {
 #if UNITY_IOS
         multiplier=0.08f;
 #endif
-        multiplier = 0.08f;
+        multiplier = 0.8f;
     }
 
     // Update is called once per frame
