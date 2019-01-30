@@ -286,24 +286,25 @@ public class Program : MonoBehaviour
             servants.Add(backGroundPic);
             backGroundPic.fixScreenProblem();
         });
+        UpdateClient();
         go(300, () =>
         {
-            UpdateClient();
             InterString.initialize("config/translation.conf");
+            InterString.initialize("config" + AppLanguage.LanguageDir() + "/translation.conf");   //System Language
             GameTextureManager.initialize();
             Config.initialize("config/config.conf");
             GameStringManager.initialize("config/strings.conf");
-            if (File.Exists("cdb/strings.conf"))
+            if (File.Exists("config/strings.conf"))
             {
-                GameStringManager.initialize("cdb/strings.conf");
+                GameStringManager.initialize("config/strings.conf");
             }
-            if (File.Exists("diy/strings.conf"))
+            if (File.Exists("expansions/strings.conf"))
             {
-                GameStringManager.initialize("diy/strings.conf");
+                GameStringManager.initialize("expansions/strings.conf");
             }
             YGOSharp.BanlistManager.initialize("config/lflist.conf");
 
-            FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray();
+            FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray(); //load cards.cdb last this way
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 4)
@@ -311,27 +312,32 @@ public class Program : MonoBehaviour
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                     {
                         YGOSharp.CardsManager.initialize("cdb/" + fileInfos[i].Name);
+                        YGOSharp.CardsManager.initialize("cdb" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);//System Language
                     }
                 }
             }
 
-            if (Directory.Exists("diy"))
-            {
-                fileInfos = (new DirectoryInfo("diy")).GetFiles();
-                for (int i = 0; i < fileInfos.Length; i++)
+            if (Directory.Exists("expansions"))
+                if (Directory.Exists("expansions" + AppLanguage.LanguageDir()))
                 {
-                    if (fileInfos[i].Name.Length > 4)
+                    fileInfos = (new DirectoryInfo("expansions")).GetFiles().OrderByDescending(x => x.Name).ToArray(); ;
+                    fileInfos = (new DirectoryInfo("expansions" + AppLanguage.LanguageDir())).GetFiles();
+                    for (int i = 0; i < fileInfos.Length; i++)
                     {
-                        if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
+                        if (fileInfos[i].Name.Length > 4)
                         {
-                            YGOSharp.CardsManager.initialize("diy/" + fileInfos[i].Name);
+                            if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
+                            {
+                                YGOSharp.CardsManager.initialize("expansions/" + fileInfos[i].Name);
+                                YGOSharp.CardsManager.initialize("expansions" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
+                            }
                         }
                     }
                 }
-            }
 
 
             fileInfos = (new DirectoryInfo("pack")).GetFiles();
+            fileInfos = (new DirectoryInfo("pack" + AppLanguage.LanguageDir())).GetFiles();
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 3)
@@ -339,6 +345,7 @@ public class Program : MonoBehaviour
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 3, 3) == ".db")
                     {
                         YGOSharp.PacksManager.initialize("pack/" + fileInfos[i].Name);
+                        YGOSharp.PacksManager.initialize("pack" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
                     }
                 }
             }
@@ -347,7 +354,6 @@ public class Program : MonoBehaviour
             loadResources();
 
         });
-
     }
 
     private void UpdateClient()

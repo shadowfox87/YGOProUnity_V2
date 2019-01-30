@@ -26,7 +26,7 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "quickAI_", onQuickAI);
         UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
         serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
-        serversList.fontSize = 24;
+        serversList.fontSize = 20;
         serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefo");
         UIHelper.registEvent(gameObject, "server", pickServer);
         UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name", "YGOPro2 User");
