@@ -375,14 +375,14 @@ public class Program : MonoBehaviour
                 List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
                 foreach (ApiFile file in apiFromGit)
                 {
-                    if (file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
+                    if (local.FirstOrDefault(x => x.name == file.name)==null || file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
                     {
                         toDownload.Add(file);
                     }
                 }
                 foreach (ApiFile f in local)
                 {
-                    if (f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
+                    if (apiFromGit.FirstOrDefault(x => x.name == f.name) == null || f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
                     {
                         if (File.Exists("cdb/" + f.name))
                         {
