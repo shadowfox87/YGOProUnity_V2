@@ -632,10 +632,6 @@ public class GameTextureManager
             }
             if (!File.Exists(path))
             {
-                path = "texture/duel/unknown.jpg";
-            }
-            if (!File.Exists(path))
-            {
                 return;
             }
             pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
