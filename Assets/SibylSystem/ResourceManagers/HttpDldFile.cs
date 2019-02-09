@@ -23,7 +23,7 @@ public class HttpDldFile
         {
             ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
         #warning requires github api key.
-            client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
+           // client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
             client.DownloadFile(new Uri(url), filename+".tmp");
         }
         flag = true;
