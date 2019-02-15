@@ -331,7 +331,6 @@ public class GameTextureManager
             {
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
             }
-            bool Iam8 = false;
             //if (!File.Exists(path))
             //{
             //    Iam8 = true;
@@ -339,12 +338,10 @@ public class GameTextureManager
             //}
             if (!File.Exists(path))
             {
-               Iam8 = true;
                 path = "expansions/pics/" + pic.code.ToString() + ".jpg";
             }
             if (!File.Exists(path))
             {
-                Iam8 = true;
                 path = "pics/" + pic.code.ToString() + ".jpg";
             }
             if (!File.Exists(path))
@@ -600,15 +597,14 @@ public class GameTextureManager
         {
             df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
-        #else
+        #endif
         if (!File.Exists(path) )
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
-        #endif
         if (!File.Exists(path))
         {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
             path = "picture/card/" + pic.code.ToString() + ".png";
             if (!File.Exists(path))
             {
@@ -632,6 +628,10 @@ public class GameTextureManager
             }
             if (!File.Exists(path))
             {
+                path = "texture/duel/unknown.jpg";
+            }
+            if (!File.Exists(path))
+            {
                 return;
             }
             pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
@@ -643,7 +643,7 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-#elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+            #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
             path = "picture/null/" + pic.code.ToString() + ".png";
             if (!File.Exists(path))
             {
@@ -798,19 +798,19 @@ public class GameTextureManager
         //{
         //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
         //}
-        if (!File.Exists(path))
+        else if (!File.Exists(path))
         {
             path = "expansions/pics/" + pic.code.ToString() + ".png";
         }
-        if (!File.Exists(path))
+        else if (!File.Exists(path))
         {
             path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         }
-        if (!File.Exists(path))
+        else if (!File.Exists(path))
         {
             path = "pics/" + pic.code.ToString() + ".png";
         }
-        if (!File.Exists(path))
+        else if (!File.Exists(path))
         {
             path = "pics/" + pic.code.ToString() + ".jpg";
         }
@@ -820,7 +820,7 @@ public class GameTextureManager
         //    //df.Download("http://android.ygopro.win/YGOMobile/pics/" + pic.code.ToString() + ".jpg", "expansions/pics/" + pic.code.ToString() + ".jpg");
         //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         //}
-#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+        #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
         if (!File.Exists(path)&& pic.code != 0 )
         {
             if (Program.I().setting != null)
@@ -835,8 +835,21 @@ public class GameTextureManager
                         }
                     case "Anime":
                         {
+
                             df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
-                            path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
+                            if(File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
+                            {
+                                path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
+                            }
+                            else
+                            {
+                                //Download Series10 if anime is missing
+                                if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
+                                {
+                                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                }
+                                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                            }
                             break;
                         }
                     default:
@@ -851,7 +864,12 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
             }
         }
-#endif
+        if (!File.Exists(path)&& pic.code!=0)
+        {
+            df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+            path = "picture/card/" + pic.code.ToString() + ".png";
+        }
+        #endif
         if (!File.Exists(path) && pic.code != 0 )
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");

@@ -18,6 +18,7 @@ public class GameField : OCGobject
     public phaser Phase = null; 
     public bool mePHole = false;
     public bool opPHole = false;
+    static HttpDldFile df = new HttpDldFile();
 
     public List<thunder_locator> thunders = new List<thunder_locator>();
 
@@ -422,14 +423,49 @@ public class GameField : OCGobject
                     fieldCode[player] = code;
                     if (code > 0)
                     {
-                        Texture2D tex;
+                        #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+                        if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+                            {
+                            //Mobile field
+
+                                df.Download("http://download.ygopro.win/ygopro/pics/field/" + code.ToString() + ".jpg", "picture/field/" + code.ToString() + ".jpg");
+                            }
+                        else if (!File.Exists("expansions/pics/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+                        {
+                            //Mobile field
+
+                            df.Download("http://download.ygopro.win/ygopro2/expansions/field/" + code.ToString() + ".jpg", "expansions/pics/field/" + code.ToString() + ".jpg");
+                        }
+                        #endif
+                        if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+                        {
+                            //HQ  Field
+                            df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                        }
+                        Texture2D tex=null;
                         if (File.Exists("picture/field/" + code.ToString() + ".png"))  
                         {
                             tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
                         }
-                        else
+                        else if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
                         {
                             tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
+                        }
+                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".png"))  
+                        {
+                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".jpg"))  
+                        {
+                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".jpg");
+                        }
+                        else if (File.Exists("pics/field/" + code.ToString() + ".png"))  
+                        {
+                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("pics/field/" + code.ToString() + ".jpg"))  
+                        {
+                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".jpg");
                         }
                         if (tex != null)
                         {
