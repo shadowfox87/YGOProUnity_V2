@@ -369,12 +369,12 @@ public class Room : WindowServantSP
         List<string> tags = new List<string>();
         if (Regex.IsMatch(roomname, @"^S,RANDOM#\d{1,}"))
         {
-            roomTag = "[11C69C][TCG/OCG][8AE57E][Duel] ";
+            roomTag = "[8AE57E][Duel] ";
             return roomTag;
         }
         else if(Regex.IsMatch(roomname, @"^M,RANDOM#\d{1,}"))
         {
-            roomTag = "[11C69C][TCG/OCG][42C1EC][Match] ";
+            roomTag = "[42C1EC][Match] ";
             return roomTag;
         }
         else if(Regex.IsMatch(roomname, @"^AI#\S{0,},\d{1,}")|| Regex.IsMatch(roomname, @"^AI\S{0,}#\d{1,}"))
