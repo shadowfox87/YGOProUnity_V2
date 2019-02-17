@@ -363,7 +363,7 @@ public class Program : MonoBehaviour
             WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
             while (!w.isDone)
             {
-                if (Application.internetReachability == NetworkReachability.NotReachable)
+                if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(w.error))
                 {
                     throw new Exception("No Internet connection!");
                 }
@@ -418,7 +418,6 @@ public class Program : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log(e.ToString());
             File.Delete("updates/SHAs.txt");
         }
     }
