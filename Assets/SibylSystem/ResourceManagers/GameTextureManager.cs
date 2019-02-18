@@ -24,6 +24,7 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
+    static bool autoPicDownload;
 
     public class BitmapHelper
     {
@@ -198,6 +199,7 @@ public class GameTextureManager
 
     static void thread_run()
     {
+
         while (Program.Running)
         {
             try
@@ -593,12 +595,12 @@ public class GameTextureManager
     {
         string path = "picture/closeup/" + pic.code.ToString() + ".png";
         #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-        if (!File.Exists(path) )
+        if (!File.Exists(path) && Program.I().setting.autoPicDownload)
         {
             df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
         #endif
-        if (!File.Exists(path) )
+        if (!File.Exists(path) && Program.I().setting.autoPicDownload)
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
@@ -816,8 +818,8 @@ public class GameTextureManager
         //    //df.Download("http://android.ygopro.win/YGOMobile/pics/" + pic.code.ToString() + ".jpg", "expansions/pics/" + pic.code.ToString() + ".jpg");
         //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         //}
-        #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-        if (!File.Exists(path)&& pic.code != 0 )
+#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+        if (!File.Exists(path)&& pic.code != 0 && Program.I().setting.autoPicDownload)
         {
             if (Program.I().setting != null)
             {
@@ -856,17 +858,20 @@ public class GameTextureManager
             }
             else
             {
+                if(autoPicDownload)
+                {
                 df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
             }
         }
-        if (!File.Exists(path)&& pic.code!=0)
+        if (!File.Exists(path)&& pic.code!=0 && Program.I().setting.autoPicDownload)
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
             path = "picture/card/" + pic.code.ToString() + ".png";
         }
-        #endif
-        if (!File.Exists(path) && pic.code != 0 )
+#endif
+        if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
             path = "picture/card/" + pic.code.ToString() + ".png";

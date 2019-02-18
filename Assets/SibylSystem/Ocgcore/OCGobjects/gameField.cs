@@ -423,6 +423,8 @@ public class GameField : OCGobject
                     fieldCode[player] = code;
                     if (code > 0)
                     {
+                        if (Program.I().setting.autoPicDownload)
+                        {
                         #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
                         if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
                             {
@@ -437,11 +439,13 @@ public class GameField : OCGobject
                             df.Download("http://download.ygopro.win/ygopro2/expansions/field/" + code.ToString() + ".jpg", "expansions/pics/field/" + code.ToString() + ".jpg");
                         }
                         #endif
-                        if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
-                        {
-                            //HQ  Field
-                            df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                            if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+                            {
+                                //HQ  Field
+                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                            }
                         }
+
                         Texture2D tex=null;
                         if (File.Exists("picture/field/" + code.ToString() + ".png"))  
                         {

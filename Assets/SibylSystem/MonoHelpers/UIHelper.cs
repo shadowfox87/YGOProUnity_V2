@@ -776,7 +776,7 @@ public static class UIHelper
             }
         }
         else
-        if (name.Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+        if (name.Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
         {
             HttpDldFile httpDldFile = new HttpDldFile();
             httpDldFile.Download("https://raw.githubusercontent.com/szefo09/face/master/" + name + ".png", "texture/face/" + name + ".png");

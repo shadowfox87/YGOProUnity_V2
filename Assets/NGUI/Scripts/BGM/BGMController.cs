@@ -13,7 +13,7 @@ public class BGMController : MonoBehaviour {
 
         audioSource = gameObject.AddComponent<AudioSource>();
         soundPath = new System.Uri(new System.Uri("file:///"),Environment.CurrentDirectory.Replace("\\", "/") + "/" +"sound/bgm/song.ogg").ToString();
-        if (!Program.I().setting.isBGMMute.value)
+        if (Program.I().setting!=null &&!Program.I().setting.isBGMMute.value)
         {
             StartCoroutine(LoadBGM());
         }
