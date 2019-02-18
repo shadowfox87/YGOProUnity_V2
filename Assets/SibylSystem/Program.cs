@@ -273,6 +273,11 @@ public class Program : MonoBehaviour
 
     void initialize()
     {
+#if UNITY_STANDALONE_OSX //Mac
+        string GamePaths = Application.streamingAssetsPath;// .app/Contents/Resources/Data/StreamingAssets/
+        Environment.CurrentDirectory = GamePaths;
+        System.IO.Directory.SetCurrentDirectory(GamePaths);
+#endif
 
         go(1, () =>
         {

@@ -141,7 +141,7 @@ public class GameStringHelper
             re += "[b]" + card.Name + "[/b]";
             re += "\n";
             re += "[sup]" + limitot + "[/sup]";
-            re += "\n";
+            re += "\r";
             re += "[sup]" + card.Id.ToString() + "[/sup]";
             re += "\n";
         }
