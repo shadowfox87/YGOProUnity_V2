@@ -24,7 +24,6 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
-    static bool autoPicDownload;
 
     public class BitmapHelper
     {
@@ -819,7 +818,7 @@ public class GameTextureManager
         //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         //}
 #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-        if (!File.Exists(path)&& pic.code != 0 && Program.I().setting.autoPicDownload)
+        if (!File.Exists(path)&& pic.code != 0)
         {
             if (Program.I().setting != null)
             {
@@ -827,14 +826,19 @@ public class GameTextureManager
                 {
                     case "Series 10":
                         {
+                            if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
+                            {
                             df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                            }
                             path = "picture/card/" + pic.code.ToString() + ".jpg";
                             break;
                         }
                     case "Anime":
                         {
 
+                            if(!File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload){
                             df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
+                           }
                             if(File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
                             {
                                 path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
@@ -842,7 +846,7 @@ public class GameTextureManager
                             else
                             {
                                 //Download Series10 if anime is missing
-                                if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
+                                if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
                                 {
                                     df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                 }
@@ -858,7 +862,7 @@ public class GameTextureManager
             }
             else
             {
-                if(autoPicDownload)
+                if(Program.I().setting.autoPicDownload)
                 {
                 df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
