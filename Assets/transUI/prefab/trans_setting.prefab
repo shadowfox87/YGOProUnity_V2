@@ -3660,11 +3660,15 @@ MonoBehaviour:
   alignment: 1
   items:
   - 1080*640
+  - 1024*640
   - 1280*720
+  - 1300*700
   - 1366*768
   - 1600*900
+  - 1900*1000
   - 1920*1080
   - 2560*1440
+  - 3840*2160
   padding: {x: 4, y: 4}
   textColor: {r: 1, g: 1, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 1}
@@ -3682,7 +3686,7 @@ MonoBehaviour:
     mMethodName: function
     mParameters: []
     oneShot: 0
-  mSelectedItem: 1280*720
+  mSelectedItem: 1920*1080
   mPanel: {fileID: 0}
   mBackground: {fileID: 0}
   mHighlight: {fileID: 0}
