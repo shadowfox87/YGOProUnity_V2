@@ -629,7 +629,7 @@ public class GameTextureManager
             }
             if (!File.Exists(path))
             {
-                return;
+                path = "picture/null.png";
             }
             pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
             softVtype(pic, 0.5f);
@@ -641,12 +641,6 @@ public class GameTextureManager
              *  暂时只能直接贴图，以后再处理
             */
             #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
-            path = "picture/null/" + pic.code.ToString() + ".png";
-            if (!File.Exists(path))
-            {
-                path = "picture/null.png";
-            }
-
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -659,7 +653,7 @@ public class GameTextureManager
         }
         else
         {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
