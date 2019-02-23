@@ -653,7 +653,7 @@ public class GameTextureManager
         }
         else
         {
-        #if !UNITY_ANDROID && !UNITY_IOS //编译器、Windows
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX //编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
