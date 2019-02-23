@@ -274,7 +274,7 @@ public class GameTextureManager
         if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX  //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN  //编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
@@ -309,7 +309,7 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-            #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+        #elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX //Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -318,7 +318,7 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-            #endif
+        #endif
 
             if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
             {
@@ -605,7 +605,7 @@ public class GameTextureManager
         }
         if (!File.Exists(path))
         {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX  //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN  //编译器、Windows
             path = "picture/card/" + pic.code.ToString() + ".png";
             if (!File.Exists(path))
             {
@@ -640,7 +640,7 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-            #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+        #elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX //Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -649,11 +649,11 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-#endif
+        #endif
         }
         else
         {
-        #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX //编译器、Windows
+        #if UNITY_EDITOR || UNITY_STANDALONE_WIN//编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
