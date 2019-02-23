@@ -121,7 +121,7 @@ public class GameTextureManager
         public float k = 1;
         //public bool autoMade = false;
         public byte[] data = null;
-        public float[, ,] hashed_data = null;
+        public float[,,] hashed_data = null;
         public Texture2D u_data = null;
         public Texture2D nullReturen = null;
         public PictureResource(GameTextureType t, long c, Texture2D n)
@@ -144,7 +144,7 @@ public class GameTextureManager
 
     public static Texture2D opBack = null;
 
-    public static Texture2D unknown = null; 
+    public static Texture2D unknown = null;
 
     public static Texture2D attack = null;
 
@@ -152,7 +152,7 @@ public class GameTextureManager
 
     public static Texture2D bar = null;
 
-    public static Texture2D exBar = null;   
+    public static Texture2D exBar = null;
 
     public static Texture2D lp = null;
 
@@ -208,12 +208,12 @@ public class GameTextureManager
                 while (waitLoadStack.Count > 0)
                 {
                     thu++;
-                    if (thu==10)    
+                    if (thu == 10)
                     {
                         Thread.Sleep(50);
                         thu = 0;
                     }
-                    if (bLock==false)
+                    if (bLock == false)
                     {
                         PictureResource pic;
 
@@ -262,7 +262,7 @@ public class GameTextureManager
                     }
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Debug.Log("erroe 1" + e.ToString());
             }
@@ -274,7 +274,7 @@ public class GameTextureManager
         if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-            #if !UNITY_ANDROID && !UNITY_IOS  //编译器、Windows
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
@@ -309,7 +309,7 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-#elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX//Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -365,7 +365,7 @@ public class GameTextureManager
             }
             else
             {
-                pic.hashed_data = getCuttedPic(path, pic.pCard,false);
+                pic.hashed_data = getCuttedPic(path, pic.pCard, false);
                 int width = pic.hashed_data.GetLength(0);
                 int height = pic.hashed_data.GetLength(1);
                 int size = (int)(height * 0.8);
@@ -437,7 +437,7 @@ public class GameTextureManager
         int width = pic.hashed_data.GetLength(0);
         int height = pic.hashed_data.GetLength(1);
         int h = 0;
-        for (h = height-1; h >0; h--)
+        for (h = height - 1; h > 0; h--)
         {
             int all = 0;
             for (int w = 0; w < width; w++)
@@ -452,7 +452,7 @@ public class GameTextureManager
                 break;
             }
         }
-        pic.k =((float)h) / ((float)height);
+        pic.k = ((float)h) / ((float)height);
         if (pic.k > 1)
         {
             pic.k = 1f;
@@ -463,12 +463,12 @@ public class GameTextureManager
         }
     }
 
-    private static float[,,] getCuttedPic(string path,bool pCard,bool EightEdition)
+    private static float[,,] getCuttedPic(string path, bool pCard, bool EightEdition)
     {
         BitmapHelper bitmap = new BitmapHelper(path);
         int left = 0, top = 0, right = bitmap.colors.GetLength(0), buttom = bitmap.colors.GetLength(1);
         //right is width and buttom is height now
-        if (EightEdition)   
+        if (EightEdition)
         {
             if (pCard)
             {
@@ -593,19 +593,19 @@ public class GameTextureManager
     private static void ProcessingVerticleDrawing(PictureResource pic)
     {
         string path = "picture/closeup/" + pic.code.ToString() + ".png";
-        #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
         if (!File.Exists(path) && Program.I().setting.autoPicDownload)
         {
             df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
-        #endif
+#endif
         if (!File.Exists(path) && Program.I().setting.autoPicDownload)
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
         }
         if (!File.Exists(path))
         {
-        #if !UNITY_ANDROID && !UNITY_IOS   //编译器、Windows
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
             path = "picture/card/" + pic.code.ToString() + ".png";
             if (!File.Exists(path))
             {
@@ -631,7 +631,7 @@ public class GameTextureManager
             {
                 path = "picture/null.png";
             }
-            pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
+            pic.hashed_data = getCuttedPic(path, pic.pCard, Iam8);
             softVtype(pic, 0.5f);
             pic.k = 1;
             //pic.autoMade = true;
@@ -640,7 +640,12 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-        #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
+            if (!File.Exists(path))
+            {
+                path = "picture/null.png";
+            }
+
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -649,11 +654,11 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-        #endif
+#endif
         }
         else
         {
-        #if !UNITY_ANDROID && !UNITY_IOS //编译器、Windows
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
@@ -702,7 +707,7 @@ public class GameTextureManager
             }
             if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
             {
-                softVtype(pic,0.7f);
+                softVtype(pic, 0.7f);
             }
             caculateK(pic);
 
@@ -710,7 +715,7 @@ public class GameTextureManager
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
             */
-        #elif UNITY_ANDROID || UNITY_IOS //Android、iPhone
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -719,7 +724,7 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-        #endif
+#endif
         }
 
         if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
@@ -789,19 +794,19 @@ public class GameTextureManager
         //{
         //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
         //}
-        else if (!File.Exists(path))
+        if (!File.Exists(path))
         {
             path = "expansions/pics/" + pic.code.ToString() + ".png";
         }
-        else if (!File.Exists(path))
+        if (!File.Exists(path))
         {
             path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         }
-        else if (!File.Exists(path))
+        if (!File.Exists(path))
         {
             path = "pics/" + pic.code.ToString() + ".png";
         }
-        else if (!File.Exists(path))
+        if (!File.Exists(path))
         {
             path = "pics/" + pic.code.ToString() + ".jpg";
         }
@@ -812,7 +817,7 @@ public class GameTextureManager
         //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         //}
 #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-        if (!File.Exists(path)&& pic.code != 0)
+        if (!File.Exists(path) && pic.code != 0)
         {
             if (Program.I().setting != null)
             {
@@ -820,27 +825,26 @@ public class GameTextureManager
                 {
                     case "Series 10":
                         {
-                            if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
-                            {
-                            df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                            if (Program.I().setting.autoPicDownload) {
+                                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                             }
                             path = "picture/card/" + pic.code.ToString() + ".jpg";
                             break;
                         }
                     case "Anime":
                         {
-
-                            if(!File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload){
-                            df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
-                           }
-                            if(File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
+                            if (Program.I().setting.autoPicDownload && !File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
+                            {
+                                df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
+                            }
+                            if (File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
                             {
                                 path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
                             }
                             else
                             {
                                 //Download Series10 if anime is missing
-                                if(!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
+                                if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
                                 {
                                     df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                 }
@@ -856,14 +860,14 @@ public class GameTextureManager
             }
             else
             {
-                if(Program.I().setting.autoPicDownload)
+                if (Program.I().setting.autoPicDownload)
                 {
-                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
-                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
                 }
             }
         }
-        if (!File.Exists(path)&& pic.code!=0 && Program.I().setting.autoPicDownload)
+        if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
         {
             df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
             path = "picture/card/" + pic.code.ToString() + ".png";
@@ -992,7 +996,7 @@ public class GameTextureManager
         return ret;
     }
 
-    public static bool uiLoaded=false;
+    public static bool uiLoaded = false;
 
     public static Texture2D get(string name)
     {
@@ -1029,7 +1033,7 @@ public class GameTextureManager
         return re;
     }
 
-    public static UnityEngine.Color chainColor= UnityEngine.Color.white;
+    public static UnityEngine.Color chainColor = UnityEngine.Color.white;
 
     internal static void initialize()
     {
@@ -1063,10 +1067,10 @@ public class GameTextureManager
         rs = UIHelper.getTexture2D("texture/duel/phase/rs.png");
         ts = UIHelper.getTexture2D("texture/duel/phase/ts.png");
 
-        N = new Texture2D(10,10);
-        for (int i = 0; i < 10; i++)    
+        N = new Texture2D(10, 10);
+        for (int i = 0; i < 10; i++)
         {
-            for (int a = 0; a < 10; a++)    
+            for (int a = 0; a < 10; a++)
             {
                 N.SetPixel(i, a, new UnityEngine.Color(0, 0, 0, 0));
             }
@@ -1076,7 +1080,7 @@ public class GameTextureManager
         {
             ColorUtility.TryParseHtmlString(File.ReadAllText("texture/duel/chainColor.txt"), out chainColor);
         }
-        catch (Exception)   
+        catch (Exception)
         {
 
         }
