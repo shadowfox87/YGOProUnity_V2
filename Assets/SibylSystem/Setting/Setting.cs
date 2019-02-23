@@ -8,6 +8,7 @@ public class Setting : WindowServant2D
     public UIToggle isBGMMute;
     public bool batterySaving;
     public bool autoPicDownload;
+    public bool autoDeckUpdate;
 
     public override void initialize()
     {
@@ -24,6 +25,7 @@ public class Setting : WindowServant2D
         batterySaving = UIHelper.getByName<UIToggle>(gameObject, "batterySaving").value = UIHelper.fromStringToBool(Config.Get("batterySaving", "0"));
         UIHelper.getByName<UIToggle>(gameObject, "full_").value = Screen.fullScreen;
         autoPicDownload = UIHelper.fromStringToBool(Config.Get("autoPicDownload_", "1"));
+        autoDeckUpdate = UIHelper.fromStringToBool(Config.Get("autoDeckUpdate_", "1"));
         UIHelper.getByName<UIPopupList>(gameObject, "screen_").value = Config.Get("resolution_",
 #if UNITY_ANDROID || UNITY_IOS
             "1280*720" //Gives people the freedom to change their resolution on mobile.

@@ -2,8 +2,8 @@
 using System.Data;
 using Mono.Data.Sqlite;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace YGOSharp
 {
@@ -51,8 +51,20 @@ namespace YGOSharp
 
         internal static Card GetCard(int id)
         {
+
             if (_cards.ContainsKey(id))
+            {
                 return _cards[id].clone();
+            }
+            else if(id.ToString().Length>=9)
+            {
+                int possibleOfficialID = GetOfficialID(id);
+                if (possibleOfficialID != 0)
+                {
+                    return _cards[possibleOfficialID].clone();
+                }
+            }
+                
             return null;
         }
 
@@ -78,10 +90,76 @@ namespace YGOSharp
                 }
                 if (returnValue == null)
                 {
-                    returnValue = new Card();
+                    if (id.ToString().Length >= 9)
+                    {
+                        int possibleOfficialID = GetOfficialID(id);
+                        if (possibleOfficialID != 0)
+                        {
+                            returnValue = Get(possibleOfficialID);
+                        }
+                        else
+                        {
+                            returnValue = new Card();
+                        }
+                    }
+                    else
+                    {
+                        returnValue = new Card();
+                    }
+
                 }
             }
             return returnValue;
+        }
+        private static string WebsiteData;
+        static int GetOfficialID(int id)
+        {
+            if (!Program.I().setting.autoDeckUpdate)
+            {
+                return 0;
+            }
+            try
+            {
+                if (WebsiteData == null)
+                {
+                    UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get("http://eeriecode.altervista.org/tools/ecu2_beta_converter.php#table");
+                    www.Send();
+
+                    while (!www.isDone)
+                    {
+                        if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(www.error))
+                        {
+                            throw new Exception("No Internet connection!");
+                        }
+                    }
+                    if (www.isError)
+                    {
+                        Debug.Log(www.error);
+                        WebsiteData = " ";
+                    }
+                    else
+                    {
+                        // Show results as text
+                        WebsiteData = www.downloadHandler.text;
+                        // Or retrieve results as binary data
+                    }
+                }
+                if (!WebsiteData.Contains(id.ToString()+" ->"))
+                {
+                    return 0;
+                }
+                else
+                {
+                    var index = WebsiteData.LastIndexOf(id.ToString() + " ->")+13;
+                    int newid= int.Parse(Regex.Match(WebsiteData.Substring(index, 9), @"\d+").Value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    return newid;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            return 0;
         }
 
         private static void LoadCard(IDataRecord reader)

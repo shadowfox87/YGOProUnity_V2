@@ -308,7 +308,8 @@ public class selectDeck : WindowServantSP
         int extraSync = 0;
         int extraXyz = 0;
         int currentIndex = 0;
-
+        bool resaveDeck = false;
+        
         int[] hangshu = UIHelper.get_decklieshuArray(deck.Main.Count);
         foreach (var item in deck.Main)
         {
@@ -326,7 +327,16 @@ public class selectDeck : WindowServantSP
             {
                 mainTrap++;
             }
-            quickCards[currentIndex].reCode(item);
+            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            {
+                deck.Deck_O.Main[deck.Deck_O.Main.IndexOf(item)] = c.Id;
+                resaveDeck = true;
+                quickCards[currentIndex].reCode(c.Id);
+            }
+            else
+            {
+                quickCards[currentIndex].reCode(item);
+            }
             Vector2 v = UIHelper.get_hang_lieArry(mainAll - 1, hangshu);
             quickCards[currentIndex].transform.localPosition = new Vector3
                 (
@@ -357,7 +367,16 @@ public class selectDeck : WindowServantSP
             {
                 sideTrap++;
             }
-            quickCards[currentIndex].reCode(item);
+            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            {
+                deck.Deck_O.Side[deck.Deck_O.Side.IndexOf(item)] = c.Id;
+                resaveDeck = true;
+                quickCards[currentIndex].reCode(c.Id);
+            }
+            else
+            {
+                quickCards[currentIndex].reCode(item);
+            }
             quickCards[currentIndex].transform.localPosition = new Vector3
                 (
                 -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, sideAll - 1, deck.Side.Count,10)
@@ -391,7 +410,16 @@ public class selectDeck : WindowServantSP
             {
                 extraLink++;
             }
-            quickCards[currentIndex].reCode(item);
+            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            {
+                deck.Deck_O.Extra[deck.Deck_O.Extra.IndexOf(item)] = c.Id;
+                resaveDeck = true;
+                quickCards[currentIndex].reCode(c.Id);
+            }
+            else
+            {
+                quickCards[currentIndex].reCode(item);
+            }
             quickCards[currentIndex].transform.localPosition = new Vector3
                 (
                 -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, extraAll - 1, deck.Extra.Count, 10)
@@ -423,6 +451,13 @@ public class selectDeck : WindowServantSP
         deckPanel.rightMain.text = GameStringHelper._guaishou + mainMonster + " "+ GameStringHelper._mofa + mainSpell + " " + GameStringHelper._xianjing + mainTrap;
         deckPanel.rightExtra.text = GameStringHelper._ronghe + extraFusion + " " + GameStringHelper._tongtiao + extraSync + " " + GameStringHelper._chaoliang + extraXyz + " " + GameStringHelper._lianjie + extraLink;
         deckPanel.rightSide.text = GameStringHelper._guaishou + sideMonster + " " + GameStringHelper._mofa + sideSpell + " " + GameStringHelper._xianjing + sideTrap;
+        if (resaveDeck && Program.I().setting.autoDeckUpdate)
+        {
+            Program.I().deckManager.deck = deck;
+            RMSshow_none("This deck has been updated becase it contained cards with beta IDs that got removed.\nPlease confirm your deck has no missing cards.");
+            Program.I().deckManager.onSave();
+            //resaveDecklist
+        }
     }
 
     public override void show()
