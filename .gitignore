@@ -51,3 +51,6 @@ AI_core_vs2017solution/core.VC.VC.opendb
 AI_core_vs2017solution/System.Servicemodel.Faltexception.dll
 [Ll]ibrary_/
 AI_core_vs2017solution/.vs
+Assets/StreamingAssets*
+Assets/SibylSystem/ResourceManagers/ApiFile*
+Assets/SibylSystem/ResourceManagers/HttpDldFile*

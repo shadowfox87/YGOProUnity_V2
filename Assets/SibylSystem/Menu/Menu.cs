@@ -21,6 +21,8 @@ public class Menu : WindowServantSP
         UIHelper.registEvent(gameObject, "single_", onClickPizzle);
         //UIHelper.registEvent(gameObject, "ai_", onClickAI);
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
+        UIHelper.registEvent(gameObject, "joinQQ_", onClickJoinQQ);
+        UIHelper.registEvent(gameObject, "download_", onClickDownload);
         //(new Thread(up)).Start();
     }
 
@@ -124,6 +126,16 @@ public class Menu : WindowServantSP
     void onClickSelectDeck()
     {
         Program.I().shiftToServant(Program.I().selectDeck);
+    }
+
+    void onClickJoinQQ()
+    {
+        Application.OpenURL("https://jq.qq.com/?_wv=1027&k=5BUmANr");
+    }
+
+    void onClickDownload()
+    {
+        Application.OpenURL("https://pan.baidu.com/s/1yz7wmtXGxIUN96COYQnJCA");
     }
 
     public static void deleteShell()

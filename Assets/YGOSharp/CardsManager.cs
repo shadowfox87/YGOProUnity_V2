@@ -19,14 +19,16 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "欢迎使用 YGOPro2 233测试版";
+            nullString += "欢迎使用：\r\nYGOPro2 For Windows";
             nullString += "\r\n\r\n";
-            nullString += "详见官方网站说明：";
-            nullString += "\r\n";
-            nullString += "[url=https://ygo233.com/ygopro2_233_test][u]https://ygo233.com/ygopro2_233_test[/u][/url]";
-            nullString += "\r\n\r\n";
-            nullString += "公测玩家交流群：\r\n[url=https://jq.qq.com/?_wv=1027&k=42Gsxgd][u]580454979[/u][/url]";
-            nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
+            nullString += "软件下载：";
+            nullString += "\r\n①：[url=https://pan.baidu.com/s/1PEulJRq8ztugD7PtH0ZSlA][u]https://pan.baidu.com/s/1PEulJRq8ztugD7PtH0ZSlA[/u][/url]";
+            nullString += "\r\n\r\n②：[url=https://github.com/Unicorn369/YGOPro2_Droid/releases][u]https://github.com/Unicorn369/YGOPro2_Droid/releases[/u][/url]";
+            nullString += "\r\n\r\n\r\n";
+            nullString += "欢迎加入QQ群：";
+            nullString += "\r\n①：[url=https://jq.qq.com/?_wv=1027&k=5nq6xJe][u]649612818[/u][/url]";
+            nullString += "\r\n③：[url=https://jq.qq.com/?_wv=1027&k=50MZVQA][u]831010207[/u][/url]";
+            nullString += "\r\n②：[url=https://jq.qq.com/?_wv=1027&k=5idyod3][u]559276772[/u][/url]";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();
