@@ -1386,7 +1386,12 @@ public class DeckManager : ServantWithCardDescription
             card.transform.position = card.getGoodPosition(4);
             card.cardData = data;
             card.gameObject.layer = 16;
-            if (
+            if (Input.GetKey(KeyCode.LeftShift) || (Input.GetKey(KeyCode.RightShift)))
+            {
+                deck.ISide.Add(card);
+                deck.Side.Add(card.cardData.Id);
+            }
+            else if (
                 (data.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Fusion) > 0
                   ||
                 (data.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Synchro) > 0
