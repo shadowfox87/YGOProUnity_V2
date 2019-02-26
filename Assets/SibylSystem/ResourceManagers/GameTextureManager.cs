@@ -271,7 +271,7 @@ public class GameTextureManager
         if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX  //编译器、Windows、Linux
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
@@ -305,8 +305,9 @@ public class GameTextureManager
             /**
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
+             *  Linux平台 需要安装libgdiplus
              **/
-            #elif UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Mac OS X、Linux
+            #elif UNITY_STANDALONE_OSX //Mac OS X
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -590,7 +591,7 @@ public class GameTextureManager
         string path = "picture/closeup/" + pic.code.ToString() + ".png";
         if (!File.Exists(path))
         {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX  //编译器、Windows、Linux
             path = "picture/card/" + pic.code.ToString() + ".png";
             if (!File.Exists(path))
             {
@@ -623,8 +624,9 @@ public class GameTextureManager
             /**
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
+             *  Linux平台 需要安装libgdiplus
              **/
-            #elif UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Mac OS X、Linux
+            #elif UNITY_STANDALONE_OSX //Mac OS X
             path = "picture/null.png";
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -638,7 +640,7 @@ public class GameTextureManager
         }
         else
         {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX  //编译器、Windows、Linux
             BitmapHelper bitmap = new BitmapHelper(path);
             int left;
             int right;
@@ -694,8 +696,9 @@ public class GameTextureManager
             /**
              *  以上处理其他平台无法正常使用
              *  暂时只能直接贴图，以后再处理
+             *  Linux平台 需要安装libgdiplus
              **/
-            #elif UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Mac OS X、Linux
+            #elif UNITY_STANDALONE_OSX //Mac OS X
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {

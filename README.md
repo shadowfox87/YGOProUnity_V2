@@ -43,3 +43,14 @@ The feedbacks is checked every day.
 2. build the c++ solution in x64 and release mode and you get the **ocgcore.dll**
 
 3. copy it into **YGOProUnity_V2\Assets\Plugins**
+
+# Linux平台请注意！
+
+需要安装 libgdiplus
+
+Ubuntu可以使用
+`
+apt intsall libgdiplus
+`
+
+或者使用源码进行编译：https://github.com/mono/libgdiplus.git
