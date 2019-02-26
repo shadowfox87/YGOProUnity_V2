@@ -44,13 +44,17 @@ The feedbacks is checked every day.
 
 3. copy it into **YGOProUnity_V2\Assets\Plugins**
 
-# Linux平台请注意！
+# Linux Or Mac install libgdiplus
 
-需要安装 libgdiplus
-
-Ubuntu可以使用
+Ubuntu
 `
 apt intsall libgdiplus
 `
 
-或者使用源码进行编译：https://github.com/mono/libgdiplus.git
+Mac OSX
+`
+brew install mono-libgdiplus
+`
+or
+
+Download [Mono](https://download.mono-project.com/archive/5.16.0/macos-10-universal/MonoFramework-MDK-5.16.0.220.macos10.xamarin.universal.pkg)
