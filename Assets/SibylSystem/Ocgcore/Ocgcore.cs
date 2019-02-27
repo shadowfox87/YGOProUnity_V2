@@ -7271,8 +7271,7 @@ public class Ocgcore : ServantWithCardDescription
                         }
                     }
                 }
-
-            gameField.set(0, code);
+            new System.Threading.Thread(() => gameField.set(0, code)).Start();
 
             code = 0;
 
@@ -7290,7 +7289,7 @@ public class Ocgcore : ServantWithCardDescription
                     }
                 }
 
-            gameField.set(1, code);
+            new System.Threading.Thread(() => gameField.set(1, code)).Start();
         }
         else
         {

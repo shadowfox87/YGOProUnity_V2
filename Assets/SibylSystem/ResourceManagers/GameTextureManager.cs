@@ -230,7 +230,7 @@ public class GameTextureManager
                         {
                             try
                             {
-                                ProcessingCardFeature(pic);
+                                new Thread(() => ProcessingCardFeature(pic)).Start();
                             }
                             catch (Exception e)
                             {
@@ -241,7 +241,7 @@ public class GameTextureManager
                         {
                             try
                             {
-                                ProcessingCardPicture(pic);
+                                new Thread(() => ProcessingCardPicture(pic)).Start();
                             }
                             catch (Exception e)
                             {
@@ -252,7 +252,7 @@ public class GameTextureManager
                         {
                             try
                             {
-                                ProcessingVerticleDrawing(pic);
+                                new Thread(() => ProcessingVerticleDrawing(pic)).Start();
                             }
                             catch (Exception e)
                             {
