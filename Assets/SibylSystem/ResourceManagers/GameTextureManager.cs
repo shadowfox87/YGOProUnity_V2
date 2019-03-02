@@ -627,6 +627,11 @@ public class GameTextureManager
                 Iam8 = true;
                 path = "pics/" + pic.code.ToString() + ".jpg";
             }
+            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+            {
+                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                path = "picture/card/" + pic.code.ToString() + ".png";
+            }
             if (!File.Exists(path))
             {
                 path = "picture/null.png";
