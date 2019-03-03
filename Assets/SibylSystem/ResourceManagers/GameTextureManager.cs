@@ -822,38 +822,34 @@ public class GameTextureManager
         //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
         //}
 #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-        if (!File.Exists(path) && pic.code != 0)
-        {
             if (Program.I().setting != null)
             {
                 switch (Program.I().setting.pictureDownloadVersion.value)
                 {
                     case "Series 10":
                         {
-                            if (Program.I().setting.autoPicDownload) {
+                        path = "picture/card/" + pic.code.ToString() + ".jpg";
+                        if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                            {
                                 df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                             }
-                            path = "picture/card/" + pic.code.ToString() + ".jpg";
                             break;
                         }
                     case "Anime":
                         {
-                            if (Program.I().setting.autoPicDownload && !File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
+                        path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
+                        if (Program.I().setting.autoPicDownload && !File.Exists(path))
                             {
                                 df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
                             }
-                            if (File.Exists("picture/card-ani/" + pic.code.ToString() + ".jpg"))
-                            {
-                                path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
-                            }
                             else
                             {
-                                //Download Series10 if anime is missing
-                                if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && Program.I().setting.autoPicDownload)
+                            //Download Series10 if anime is missing
+                            path = "picture/card/" + pic.code.ToString() + ".jpg";
+                            if (!File.Exists(path) && Program.I().setting.autoPicDownload)
                                 {
                                     df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                 }
-                                path = "picture/card/" + pic.code.ToString() + ".jpg";
                             }
                             break;
                         }
@@ -865,17 +861,21 @@ public class GameTextureManager
             }
             else
             {
-                if (Program.I().setting.autoPicDownload)
+            path = "picture/card/" + pic.code.ToString() + ".jpg";
+            if (Program.I().setting.autoPicDownload && !File.Exists(path))
                 {
                     df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                     path = "picture/card/" + pic.code.ToString() + ".jpg";
                 }
             }
-        }
+
         if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
         {
-            df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
             path = "picture/card/" + pic.code.ToString() + ".png";
+            if (!File.Exists(path))
+            {
+                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+            }
         }
 #endif
         if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
