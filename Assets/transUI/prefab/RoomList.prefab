@@ -1762,7 +1762,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   mFont: {fileID: 0}
-  mText: 'Room Name: '
+  mText: 'Room''s PSW:'
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 1
