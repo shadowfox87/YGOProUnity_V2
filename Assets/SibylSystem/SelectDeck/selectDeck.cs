@@ -455,6 +455,7 @@ public class selectDeck : WindowServantSP
         {
             Program.I().deckManager.deck = deck;
             RMSshow_none("This deck has been updated becase it contained cards with beta IDs that got removed.\nPlease confirm your deck has no missing cards.");
+            Config.Set("deckInUse", deckSelected);
             Program.I().deckManager.onSave();
             //resaveDecklist
         }
