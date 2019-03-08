@@ -15,24 +15,25 @@ public class HttpDldFile
         bool flag = false;
         try
         {
-        if(!Directory.Exists(Path.GetDirectoryName(filename))){
-            Directory.CreateDirectory(Path.GetDirectoryName(filename));
-        }
-        
-        using (var client = new WebClient())
-        {
-            ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+            if (!Directory.Exists(Path.GetDirectoryName(filename)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(filename));
+            }
+
+            using (var client = new TimeoutWebClient())
+            {
+                ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
 
                 //authorization needed to acces github
                 if (Path.GetExtension(filename).Contains("png"))
                 {
                     client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
+                    client.Timeout = 4000;
                 }
-            
-            client.DownloadFile(new Uri(url), filename+".tmp");
-        }
-        flag = true;
-        if(File.Exists(filename))
+                client.DownloadFile(new Uri(url), filename + ".tmp");
+            }
+            flag = true;
+            if (File.Exists(filename))
             {
                 File.Delete(filename);
             }
@@ -72,5 +73,26 @@ public class HttpDldFile
         }
         return isOk;
     }
+}
+//Added to let the picture download timeout after 2 seconds instead of a minute.
+public class TimeoutWebClient : WebClient
+{
+    public int Timeout { get; set; }
 
+    public TimeoutWebClient()
+    {
+        Timeout = 2000;
+    }
+
+    public TimeoutWebClient(int timeout)
+    {
+        Timeout = timeout;
+    }
+
+    protected override WebRequest GetWebRequest(Uri address)
+    {
+        WebRequest request = base.GetWebRequest(address);
+        request.Timeout = Timeout;
+        return request;
+    }
 }

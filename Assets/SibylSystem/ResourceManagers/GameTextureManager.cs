@@ -229,7 +229,6 @@ public class GameTextureManager
                         if (pic.type == GameTextureType.card_feature)
                         {
                             ProcessingCardFeature(pic);
-
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
@@ -251,45 +250,46 @@ public class GameTextureManager
 
     private static void ProcessingCardFeature(PictureResource pic)
     {
-        try { 
-        if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
+        try
         {
-            string path = "picture/closeup/" + pic.code.ToString() + ".png";
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            BitmapHelper bitmap = new BitmapHelper(path);
-            int left;
-            int right;
-            int up;
-            int down;
-            CutTop(bitmap, out left, out right, out up, out down);
-            up = CutLeft(bitmap, up);
-            down = CutRight(bitmap, down);
-            right = CutButton(bitmap, right);
-            int width = right - left;
-            int height = down - up;
-            pic.hashed_data = new float[width, height, 4];
-            for (int w = 0; w < width; w++)
+            if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
             {
-                for (int h = 0; h < height; h++)
+                string path = "picture/closeup/" + pic.code.ToString() + ".png";
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                BitmapHelper bitmap = new BitmapHelper(path);
+                int left;
+                int right;
+                int up;
+                int down;
+                CutTop(bitmap, out left, out right, out up, out down);
+                up = CutLeft(bitmap, up);
+                down = CutRight(bitmap, down);
+                right = CutButton(bitmap, right);
+                int width = right - left;
+                int height = down - up;
+                pic.hashed_data = new float[width, height, 4];
+                for (int w = 0; w < width; w++)
                 {
-                    System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                    float a = (float)color.A / 255f;
-                    if (w < 40) if (a > (float)w / (float)40) a = (float)w / (float)40;
-                    if (w > (width - 40)) if (a > 1f - (float)(w - (width - 40)) / (float)40) a = 1f - (float)(w - (width - 40)) / (float)40;
-                    if (h < 40) if (a > (float)h / (float)40) a = (float)h / (float)40;
-                    if (h > (height - 40)) if (a > 1f - (float)(h - (height - 40)) / (float)40) a = 1f - (float)(h - (height - 40)) / (float)40;
-                    pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                    pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                    pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                    pic.hashed_data[w, height - h - 1, 3] = a;
+                    for (int h = 0; h < height; h++)
+                    {
+                        System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
+                        float a = (float)color.A / 255f;
+                        if (w < 40) if (a > (float)w / (float)40) a = (float)w / (float)40;
+                        if (w > (width - 40)) if (a > 1f - (float)(w - (width - 40)) / (float)40) a = 1f - (float)(w - (width - 40)) / (float)40;
+                        if (h < 40) if (a > (float)h / (float)40) a = (float)h / (float)40;
+                        if (h > (height - 40)) if (a > 1f - (float)(h - (height - 40)) / (float)40) a = 1f - (float)(h - (height - 40)) / (float)40;
+                        pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
+                        pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
+                        pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
+                        pic.hashed_data[w, height - h - 1, 3] = a;
+                    }
                 }
-            }
-            caculateK(pic);
+                caculateK(pic);
 
-            /*
-             *  以上处理其他平台无法正常使用
-             *  暂时只能直接贴图，以后再处理
-            */
+                /*
+                 *  以上处理其他平台无法正常使用
+                 *  暂时只能直接贴图，以后再处理
+                */
 #elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX//Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -301,44 +301,6 @@ public class GameTextureManager
             pic.data = data;
 #endif
 
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
-        }
-        else
-        {
-            string path = "picture/card/" + pic.code.ToString() + ".png";
-            if (!File.Exists(path))
-            {
-                path = "picture/card/" + pic.code.ToString() + ".jpg";
-            }
-            //if (!File.Exists(path))
-            //{
-            //    Iam8 = true;
-            //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-            //}
-            if (!File.Exists(path))
-            {
-                path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                path = "pics/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                pic.hashed_data = new float[10, 10, 4];
-                for (int w = 0; w < 10; w++)
-                {
-                    for (int h = 0; h < 10; h++)
-                    {
-                        pic.hashed_data[w, h, 0] = 0;
-                        pic.hashed_data[w, h, 1] = 0;
-                        pic.hashed_data[w, h, 2] = 0;
-                        pic.hashed_data[w, h, 3] = 0;
-                    }
-                }
                 if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
                 {
                     loadedList.Add(hashPic(pic.code, pic.type), pic);
@@ -346,40 +308,78 @@ public class GameTextureManager
             }
             else
             {
-                pic.hashed_data = getCuttedPic(path, pic.pCard, false);
-                int width = pic.hashed_data.GetLength(0);
-                int height = pic.hashed_data.GetLength(1);
-                int size = (int)(height * 0.8);
-                int empWidth = (width - size) / 2;
-                int empHeight = (height - size) / 2;
-                int right = width - empWidth;
-                int buttom = height - empHeight;
-                for (int w = 0; w < width; w++)
+                string path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
                 {
-                    for (int h = 0; h < height; h++)
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
+                //if (!File.Exists(path))
+                //{
+                //    Iam8 = true;
+                //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
+                //}
+                if (!File.Exists(path))
+                {
+                    path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+                }
+                if (!File.Exists(path))
+                {
+                    path = "pics/" + pic.code.ToString() + ".jpg";
+                }
+                if (!File.Exists(path))
+                {
+                    pic.hashed_data = new float[10, 10, 4];
+                    for (int w = 0; w < 10; w++)
                     {
-                        float a = pic.hashed_data[w, h, 3];
-                        if (w < empWidth)
-                            if (a > ((float)w) / (float)empWidth)
-                                a = ((float)w) / (float)empWidth;
-                        if (h < empHeight)
-                            if (a > ((float)h) / (float)empHeight)
-                                a = ((float)h) / (float)empHeight;
-                        if (w > right)
-                            if (a > 1f - ((float)(w - right)) / (float)empWidth)
-                                a = 1f - ((float)(w - right)) / (float)empWidth;
-                        if (h > buttom)
-                            if (a > 1f - ((float)(h - buttom)) / (float)empHeight)
-                                a = 1f - ((float)(h - buttom)) / (float)empHeight;
-                        pic.hashed_data[w, h, 3] = a * 0.7f;
+                        for (int h = 0; h < 10; h++)
+                        {
+                            pic.hashed_data[w, h, 0] = 0;
+                            pic.hashed_data[w, h, 1] = 0;
+                            pic.hashed_data[w, h, 2] = 0;
+                            pic.hashed_data[w, h, 3] = 0;
+                        }
+                    }
+                    if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                    {
+                        loadedList.Add(hashPic(pic.code, pic.type), pic);
                     }
                 }
-                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                else
                 {
-                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                    pic.hashed_data = getCuttedPic(path, pic.pCard, false);
+                    int width = pic.hashed_data.GetLength(0);
+                    int height = pic.hashed_data.GetLength(1);
+                    int size = (int)(height * 0.8);
+                    int empWidth = (width - size) / 2;
+                    int empHeight = (height - size) / 2;
+                    int right = width - empWidth;
+                    int buttom = height - empHeight;
+                    for (int w = 0; w < width; w++)
+                    {
+                        for (int h = 0; h < height; h++)
+                        {
+                            float a = pic.hashed_data[w, h, 3];
+                            if (w < empWidth)
+                                if (a > ((float)w) / (float)empWidth)
+                                    a = ((float)w) / (float)empWidth;
+                            if (h < empHeight)
+                                if (a > ((float)h) / (float)empHeight)
+                                    a = ((float)h) / (float)empHeight;
+                            if (w > right)
+                                if (a > 1f - ((float)(w - right)) / (float)empWidth)
+                                    a = 1f - ((float)(w - right)) / (float)empWidth;
+                            if (h > buttom)
+                                if (a > 1f - ((float)(h - buttom)) / (float)empHeight)
+                                    a = 1f - ((float)(h - buttom)) / (float)empHeight;
+                            pic.hashed_data[w, h, 3] = a * 0.7f;
+                        }
+                    }
+                    if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                    {
+                        loadedList.Add(hashPic(pic.code, pic.type), pic);
+                    }
                 }
             }
-        }
         }
         catch (Exception e)
         {
@@ -819,10 +819,14 @@ public class GameTextureManager
                 {
                     case "Series 10":
                         {
-                            path = "picture/card/" + pic.code.ToString() + ".jpg";
-                            if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            if (!File.Exists(path))
                             {
-                                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                                if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                                {
+                                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                }
                             }
                             break;
                         }
@@ -841,6 +845,7 @@ public class GameTextureManager
                                     }
                                 }
                             }
+
                             break;
                         }
                     default:
