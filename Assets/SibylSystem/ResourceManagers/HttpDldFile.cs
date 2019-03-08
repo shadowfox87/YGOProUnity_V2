@@ -28,7 +28,7 @@ public class HttpDldFile
                 if (Path.GetExtension(filename).Contains("png"))
                 {
                     client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 4000;
+                    client.Timeout = 10000;
                 }
                 client.DownloadFile(new Uri(url), filename + ".tmp");
             }
@@ -74,14 +74,14 @@ public class HttpDldFile
         return isOk;
     }
 }
-//Added to let the picture download timeout after 2 seconds instead of a minute.
+//Added to let the picture download timeout after 5 seconds instead of a minute.
 public class TimeoutWebClient : WebClient
 {
     public int Timeout { get; set; }
 
     public TimeoutWebClient()
     {
-        Timeout = 2000;
+        Timeout = 5000;
     }
 
     public TimeoutWebClient(int timeout)
