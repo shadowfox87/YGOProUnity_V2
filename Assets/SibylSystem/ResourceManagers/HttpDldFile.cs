@@ -28,7 +28,7 @@ public class HttpDldFile
                 if (Path.GetExtension(filename).Contains("png"))
                 {
                     client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 10000;
+                    client.Timeout = 15000;
                 }
                 client.DownloadFile(new Uri(url), filename + ".tmp");
             }

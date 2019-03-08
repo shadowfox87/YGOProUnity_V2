@@ -24,6 +24,7 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
+    static readonly Semaphore _sem = new Semaphore(3, 3);
 
     public class BitmapHelper
     {
@@ -228,15 +229,18 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            ProcessingCardFeature(pic);
+                            _sem.WaitOne();
+                            new Thread(() => ProcessingCardFeature(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            ProcessingCardPicture(pic);
+                            _sem.WaitOne();
+                            new Thread(() => ProcessingCardPicture(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            ProcessingVerticleDrawing(pic);
+                            _sem.WaitOne();
+                            new Thread(() => ProcessingVerticleDrawing(pic)).Start();
                         }
                     }
                 }
@@ -385,6 +389,7 @@ public class GameTextureManager
         {
             Debug.Log("e 1" + e.ToString());
         }
+        finally { _sem.Release(); }
     }
 
     private static void caculateK(PictureResource pic)
@@ -729,6 +734,7 @@ public class GameTextureManager
         {
             Debug.Log("e 3" + e.ToString());
         }
+        finally { _sem.Release(); }
     }
 
     private static void softVtype(PictureResource pic, float si)
@@ -919,6 +925,7 @@ public class GameTextureManager
         {
             Debug.Log("e 2" + e.ToString());
         }
+        finally { _sem.Release(); }
     }
 
     private static UInt64 hashPic(long code, GameTextureType type)
