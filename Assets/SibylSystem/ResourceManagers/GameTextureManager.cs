@@ -228,27 +228,16 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            Thread t = new Thread(() => ProcessingCardFeature(pic))
-                            {
-                                IsBackground = true
-                            };
-                            t.Start();
+                            ProcessingCardFeature(pic);
+
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            Thread t = new Thread(() => ProcessingCardPicture(pic))
-                            {
-                                IsBackground = true
-                            };
-                            t.Start();
+                            ProcessingCardPicture(pic);
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            Thread t = new Thread(() => ProcessingVerticleDrawing(pic))
-                            {
-                                IsBackground = true
-                            };
-                            t.Start();
+                            ProcessingVerticleDrawing(pic);
                         }
                     }
                 }
