@@ -25,7 +25,7 @@ public class GameTextureManager
 
     static HttpDldFile df = new HttpDldFile();
     //Semaphore allows you to wait before executing some sort of async code. (max 6 threads at the same time.)
-    static readonly Semaphore _sem = new Semaphore(1, 1);
+    static readonly Semaphore _sem = new Semaphore(4, 4);
 
     public class BitmapHelper
     {
