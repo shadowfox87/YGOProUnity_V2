@@ -327,7 +327,7 @@ public class selectDeck : WindowServantSP
             {
                 mainTrap++;
             }
-            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Main[deck.Deck_O.Main.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -367,7 +367,7 @@ public class selectDeck : WindowServantSP
             {
                 sideTrap++;
             }
-            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Side[deck.Deck_O.Side.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -410,7 +410,7 @@ public class selectDeck : WindowServantSP
             {
                 extraLink++;
             }
-            if (item != c.Id && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Extra[deck.Deck_O.Extra.IndexOf(item)] = c.Id;
                 resaveDeck = true;
