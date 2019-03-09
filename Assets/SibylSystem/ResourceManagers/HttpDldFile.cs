@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class HttpDldFile
 {
-    private readonly System.Threading.Semaphore semaphore = new System.Threading.Semaphore(10, 10);
+    private readonly System.Threading.Semaphore semaphore = new System.Threading.Semaphore(8, 8);
     public bool Download(string url, string filename)
     {
         bool flag = false;
