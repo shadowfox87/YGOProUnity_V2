@@ -4,6 +4,8 @@ using Mono.Data.Sqlite;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using Assets.YGOSharp;
+using System.Linq;
 
 namespace YGOSharp
 {
@@ -19,9 +21,11 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2\nOCGCORE 0x1348";
+            nullString += "YGOPro2 Mobile\nOCGCORE 0x1348";
+            nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
             nullString += "English translation done by AntiMetaman.";
+            nullString += "\r\n";
             //if (File.Exists("config/link.conf"))
             //{
             nullString += "\r\n";
@@ -32,6 +36,10 @@ namespace YGOSharp
             //}
             nullString += "\r\n\r\n";
             //nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
+            nullString += "源码：";
+            nullString += "\r\n「Android」\r\n[url=https://github.com/Unicorn369/YGOPro2_Droid][u]https://github.com/Unicorn369/YGOPro2_Droid[/u][/url]";
+            //nullString += "\r\nWindows：[url=https://github.com/lllyasviel/YGOProUnity_V2][u]https://github.com/lllyasviel/YGOProUnity_V2[/u][/url]";
+            nullString += "\r\n\r\n「Windows」\r\n[url=https://github.com/mercury233/ygopro2][u]https://github.com/mercury233/ygopro2[/u][/url]";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();
@@ -56,7 +64,7 @@ namespace YGOSharp
             {
                 return _cards[id].clone();
             }
-            else if(id.ToString().Length>=9)
+            else if (id.ToString().Length >= 9)
             {
                 int possibleOfficialID = GetOfficialID(id);
                 if (possibleOfficialID != 0)
@@ -64,7 +72,7 @@ namespace YGOSharp
                     return _cards[possibleOfficialID].clone();
                 }
             }
-                
+
             return null;
         }
 
@@ -122,8 +130,7 @@ namespace YGOSharp
             {
                 if (WebsiteData == null)
                 {
-                    UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequest.Get("http://eeriecode.altervista.org/tools/ecu2_beta_converter.php#table");
-                    www.Send();
+                    WWW www = new WWW("http://eeriecode.altervista.org/tools/get_beta_cards.php");
 
                     while (!www.isDone)
                     {
@@ -132,26 +139,27 @@ namespace YGOSharp
                             throw new Exception("No Internet connection!");
                         }
                     }
-                    if (www.isError)
+                    if (www.error != null)
                     {
                         Debug.Log(www.error);
                         WebsiteData = " ";
                     }
                     else
                     {
-                        // Show results as text
-                        WebsiteData = www.downloadHandler.text;
-                        // Or retrieve results as binary data
+                        WebsiteData = www.text;
+                        WebsiteData = "{\"betaToOfficialCards\":" + WebsiteData + "}";
                     }
                 }
-                if (!WebsiteData.Contains(id.ToString()+" ->"))
+
+                BetaToOfficialCardListObject betaToOfficialCards = JsonUtility.FromJson<BetaToOfficialCardListObject>(WebsiteData);
+                var card = betaToOfficialCards.betaToOfficialCards.FirstOrDefault(x => x.ucode == id.ToString());
+                if (card == null)
                 {
                     return 0;
                 }
                 else
                 {
-                    var index = WebsiteData.LastIndexOf(id.ToString() + " ->")+13;
-                    int newid= int.Parse(Regex.Match(WebsiteData.Substring(index, 9), @"\d+").Value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    int newid = int.Parse(card.ocode, System.Globalization.NumberFormatInfo.InvariantInfo);
                     return newid;
                 }
             }
@@ -198,8 +206,8 @@ namespace YGOSharp
                 Card card = item.Value;
                 if ((card.Type & (uint)game_type.TYPE_TOKEN) == 0)
                 {
-                    if (getName == "" 
-                        || Regex.Replace(card.Name, getName,"miaowu", RegexOptions.IgnoreCase) != card.Name
+                    if (getName == ""
+                        || Regex.Replace(card.Name, getName, "miaowu", RegexOptions.IgnoreCase) != card.Name
                         || Regex.Replace(card.Desc, getName, "miaowu", RegexOptions.IgnoreCase) != card.Desc
                         || Regex.Replace(card.strSetName, getName, "miaowu", RegexOptions.IgnoreCase) != card.strSetName
                         || card.Id.ToString() == getName
@@ -207,11 +215,11 @@ namespace YGOSharp
                     {
                         if (((card.Type & getTypeFilter)) == getTypeFilter || getTypeFilter == 0)
                         {
-                            if ((card.Race & getRaceFilter) >0 || getRaceFilter == 0)
+                            if ((card.Race & getRaceFilter) > 0 || getRaceFilter == 0)
                             {
                                 if ((card.Attribute & getAttributeFilter) > 0 || getAttributeFilter == 0)
                                 {
-                                    if (((card.Category & getCatagoryFilter))== getCatagoryFilter || getCatagoryFilter == 0)
+                                    if (((card.Category & getCatagoryFilter)) == getCatagoryFilter || getCatagoryFilter == 0)
                                     {
                                         if (judgeint(getAttack, getAttack_UP, card.Attack))
                                         {
@@ -288,7 +296,7 @@ namespace YGOSharp
                         || card.Id.ToString() == getName
                         )
                 {
-                    if (getsearchCode.Count == 0|| is_declarable(card, getsearchCode))
+                    if (getsearchCode.Count == 0 || is_declarable(card, getsearchCode))
                     {
                         returnValue.Add(card);
                     }
@@ -606,7 +614,7 @@ namespace YGOSharp
     {
         public class packName
         {
-           public string fullName;
+            public string fullName;
             public string shortName;
             public int year;
             public int month;
@@ -645,7 +653,7 @@ namespace YGOSharp
                                         c.day = int.Parse(mats[1]);
                                         c.year = int.Parse(mats[2]);
                                     }
-                                    if (!pacDic.ContainsKey(c.packFullName))    
+                                    if (!pacDic.ContainsKey(c.packFullName))
                                     {
                                         pacDic.Add(c.packFullName, c.packShortNam);
                                         packName p = new packName();
