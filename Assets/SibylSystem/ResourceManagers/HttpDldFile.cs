@@ -87,7 +87,7 @@ public class TimeoutWebClient : WebClient
 
     public TimeoutWebClient()
     {
-        Timeout = 1500;
+        Timeout = 2500;
     }
 
     public TimeoutWebClient(int timeout)
