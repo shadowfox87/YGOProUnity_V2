@@ -2160,7 +2160,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 780, y: 630, z: 0}
+  m_Size: {x: 780, y: 660, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6551748
 BoxCollider:
@@ -3667,6 +3667,8 @@ MonoBehaviour:
   - 1600*900
   - 1900*1000
   - 1920*1080
+  - 1900*1180
+  - 1920*1200
   - 2560*1440
   - 3840*2160
   padding: {x: 4, y: 4}
@@ -3977,7 +3979,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.5238096
+  aspectRatio: 1.4545455
   mType: 0
   mFillDirection: 4
   mFillAmount: 1
