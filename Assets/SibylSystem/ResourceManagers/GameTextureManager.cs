@@ -25,6 +25,7 @@ public class GameTextureManager
 
     static HttpDldFile df = new HttpDldFile();
 
+    private static readonly Semaphore _sem = new Semaphore(30, 30);
     public class BitmapHelper
     {
         public System.Drawing.Color[,] colors = null;
@@ -228,14 +229,17 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
+                            _sem.WaitOne();
                             new Thread(() => ProcessingCardFeature(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
+                            _sem.WaitOne();
                             new Thread(() => ProcessingCardPicture(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
+                            _sem.WaitOne();
                             new Thread(() => ProcessingVerticleDrawing(pic)).Start();
                         }
                     }
@@ -384,6 +388,10 @@ public class GameTextureManager
         catch (Exception e)
         {
             Debug.Log("e 1" + e.ToString());
+        }
+        finally
+        {
+            _sem.Release();
         }
     }
 
@@ -729,6 +737,10 @@ public class GameTextureManager
         {
             Debug.Log("e 3" + e.ToString());
         }
+        finally
+        {
+            _sem.Release();
+        }
     }
 
     private static void softVtype(PictureResource pic, float si)
@@ -927,6 +939,10 @@ public class GameTextureManager
         catch (Exception e)
         {
             Debug.Log("e 2" + e.ToString());
+        }
+                finally
+        {
+            _sem.Release();
         }
     }
 
