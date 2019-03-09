@@ -10,6 +10,7 @@ using UnityEngine;
 
 public class HttpDldFile
 {
+    private readonly System.Threading.Semaphore semaphore = new System.Threading.Semaphore(10, 10);
     public bool Download(string url, string filename)
     {
         bool flag = false;
@@ -28,8 +29,9 @@ public class HttpDldFile
                 if (Path.GetExtension(filename).Contains("png"))
                 {
                     client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 10000;
+                    client.Timeout = 5000;
                 }
+                semaphore.WaitOne();
                 client.DownloadFile(new Uri(url), filename + ".tmp");
             }
             flag = true;
@@ -42,6 +44,10 @@ public class HttpDldFile
         catch (Exception)
         {
             flag = false;
+        }
+        finally
+        {
+            semaphore.Release();
         }
         return flag;
     }
@@ -74,14 +80,14 @@ public class HttpDldFile
         return isOk;
     }
 }
-//Added to let the picture download timeout after 5 seconds instead of a minute.
+//Added to let the picture download timeout after 2,5 seconds instead of a minute.
 public class TimeoutWebClient : WebClient
 {
     public int Timeout { get; set; }
 
     public TimeoutWebClient()
     {
-        Timeout = 2500;
+        Timeout = 1500;
     }
 
     public TimeoutWebClient(int timeout)

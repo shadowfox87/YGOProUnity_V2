@@ -24,8 +24,6 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
-    //Semaphore allows you to wait before executing some sort of async code. (max 6 threads at the same time.)
-    static readonly Semaphore _sem = new Semaphore(4, 4);
 
     public class BitmapHelper
     {
@@ -230,17 +228,14 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            _sem.WaitOne();
                             new Thread(() => ProcessingCardFeature(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            _sem.WaitOne();
                             new Thread(() => ProcessingCardPicture(pic)).Start();
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            _sem.WaitOne();
                             new Thread(() => ProcessingVerticleDrawing(pic)).Start();
                         }
                     }
@@ -390,7 +385,6 @@ public class GameTextureManager
         {
             Debug.Log("e 1" + e.ToString());
         }
-        finally { _sem.Release(); }
     }
 
     private static void caculateK(PictureResource pic)
@@ -735,7 +729,6 @@ public class GameTextureManager
         {
             Debug.Log("e 3" + e.ToString());
         }
-        finally { _sem.Release(); }
     }
 
     private static void softVtype(PictureResource pic, float si)
@@ -935,7 +928,6 @@ public class GameTextureManager
         {
             Debug.Log("e 2" + e.ToString());
         }
-        finally { _sem.Release(); }
     }
 
     private static UInt64 hashPic(long code, GameTextureType type)
