@@ -24,7 +24,8 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
-    static readonly Semaphore _sem = new Semaphore(3, 3);
+    //Semaphore allows you to wait before executing some sort of async code. (max 6 threads at the same time.)
+    static readonly Semaphore _sem = new Semaphore(1, 1);
 
     public class BitmapHelper
     {
@@ -587,7 +588,7 @@ public class GameTextureManager
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
 #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-            if (!File.Exists(path) && Program.I().setting.autoPicDownload)
+            if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value!="Series 10 HQ")
             {
                 df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
@@ -852,6 +853,15 @@ public class GameTextureManager
                                 }
                             }
 
+                            break;
+                        }
+                    case "Series 10 HQ":
+                        {
+                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+                            {
+                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                            }
                             break;
                         }
                     default:
