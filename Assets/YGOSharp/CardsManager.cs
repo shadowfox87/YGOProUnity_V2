@@ -203,7 +203,7 @@ namespace YGOSharp
         {
             List<Card> returnValue = new List<Card>();
             var temp = getTypeFilter;
-            if(temp >= 0x8000000)
+            if (temp >= 0x8000000)
             {
                 getTypeFilter -= 0x8000000;
             }
@@ -688,7 +688,8 @@ namespace YGOSharp
 
         internal static void initializeSec()
         {
-            packs.Sort((left, right) => {
+            packs.Sort((left, right) =>
+            {
                 if (left.year > right.year)
                 {
                     return -1;
