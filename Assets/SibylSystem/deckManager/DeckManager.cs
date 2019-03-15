@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -574,6 +575,7 @@ public class DeckManager : ServantWithCardDescription
             UIPopupList_second.AddItem(GameStringManager.get_unsafe(1074));
             UIPopupList_second.AddItem(GameStringManager.get_unsafe(1075));
             UIPopupList_second.AddItem(GameStringManager.get_unsafe(1076));
+            UIPopupList_second.AddItem(GameStringManager.get_unsafe(1077));
             for (int i = 1020; i <= 1044; i++)
             {
                 UIPopupList_race.AddItem(GameStringManager.get_unsafe(i));
@@ -753,6 +755,10 @@ public class DeckManager : ServantWithCardDescription
             if (ifType(GameStringManager.get_unsafe(1076)))
             {
                 returnValue |= (UInt32)CardType.Monster + (UInt32)CardType.link;
+            }
+            if (ifType(GameStringManager.get_unsafe(1077)))
+            {
+                returnValue |= (UInt32)CardType.Monster + (UInt32)CardType.NonEffect;
             }
         }
         if (UIPopupList_main.value == GameStringManager.get_unsafe(1313))
