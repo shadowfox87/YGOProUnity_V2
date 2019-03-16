@@ -232,21 +232,19 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingCardFeature(pic);
-                                Debug.Log(pic.code);
-                            });
+                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingCardFeature(pic);});
                             //ThreadPool.QueueUserWorkItem(_callbackProcessingCardFeature, pic);
                             //ProcessingCardFeature(pic);
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            _basicBackgroundWorker.EnqueueWork(() => { ProcessingCardPicture(pic); Debug.Log(pic.code); });
+                            _basicBackgroundWorker.EnqueueWork(() => { ProcessingCardPicture(pic);});
                             //ThreadPool.QueueUserWorkItem(_callbackProcessingCardPicture, pic);
                             //ProcessingCardPicture(pic);
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingVerticleDrawing(pic); Debug.Log(pic.code); });
+                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingVerticleDrawing(pic);});
                             //ThreadPool.QueueUserWorkItem(_callbackProcessingVerticleDrawing, pic);
                             //ProcessingVerticleDrawing(pic);
                         }
