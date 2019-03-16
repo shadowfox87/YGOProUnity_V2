@@ -24,6 +24,10 @@ public class GameTextureManager
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
     static HttpDldFile df = new HttpDldFile();
+    //static readonly WaitCallback _callbackProcessingCardFeature = new WaitCallback(ProcessingCardFeature);
+    //static readonly WaitCallback _callbackProcessingCardPicture = new WaitCallback(ProcessingCardPicture);
+    //static readonly WaitCallback _callbackProcessingVerticleDrawing = new WaitCallback(ProcessingVerticleDrawing);
+    static readonly BasicBackgroundWorker _basicBackgroundWorker = new BasicBackgroundWorker();
 
     public class BitmapHelper
     {
@@ -228,15 +232,23 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            ProcessingCardFeature(pic);
+                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingCardFeature(pic);
+                                Debug.Log(pic.code);
+                            });
+                            //ThreadPool.QueueUserWorkItem(_callbackProcessingCardFeature, pic);
+                            //ProcessingCardFeature(pic);
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            ProcessingCardPicture(pic);
+                            _basicBackgroundWorker.EnqueueWork(() => { ProcessingCardPicture(pic); Debug.Log(pic.code); });
+                            //ThreadPool.QueueUserWorkItem(_callbackProcessingCardPicture, pic);
+                            //ProcessingCardPicture(pic);
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            ProcessingVerticleDrawing(pic);
+                            _basicBackgroundWorker.EnqueueWork(() => {ProcessingVerticleDrawing(pic); Debug.Log(pic.code); });
+                            //ThreadPool.QueueUserWorkItem(_callbackProcessingVerticleDrawing, pic);
+                            //ProcessingVerticleDrawing(pic);
                         }
                     }
                 }
@@ -1098,7 +1110,11 @@ public class GameTextureManager
         {
 
         }
-        Thread main = new Thread(thread_run);
+        Thread main = new Thread(thread_run)
+        {
+            //IsBackground = true,
+            //Priority = System.Threading.ThreadPriority.Normal
+        };
         main.Start();
     }
 }
