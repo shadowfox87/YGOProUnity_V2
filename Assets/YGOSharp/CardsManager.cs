@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using Assets.YGOSharp;
 using System.Linq;
+using Assets.YGOSharp.Extensions;
 
 namespace YGOSharp
 {
@@ -21,7 +22,7 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 Mobile\nOCGCORE 0x1348";
+            nullString += "YGOPro2 \nOCGCORE 0x1348";
             nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
             nullString += "English translation done by AntiMetaman.";
@@ -201,6 +202,11 @@ namespace YGOSharp
             )
         {
             List<Card> returnValue = new List<Card>();
+            var temp = getTypeFilter;
+            if (temp >= 0x8000000)
+            {
+                getTypeFilter -= 0x8000000;
+            }
             foreach (var item in _cards)
             {
                 Card card = item.Value;
@@ -213,29 +219,33 @@ namespace YGOSharp
                         || card.Id.ToString() == getName
                         )
                     {
-                        if (((card.Type & getTypeFilter)) == getTypeFilter || getTypeFilter == 0)
+                        bool[] BolleanArrayOfCardType = card.Type.ToBooleanArray();
+                        if ((temp >= 0x8000000 && ((BolleanArrayOfCardType.Count() >= 6 && !BolleanArrayOfCardType[BolleanArrayOfCardType.Count() - 6]) || BolleanArrayOfCardType.Count() < 6)) || temp <= 0x8000000)
                         {
-                            if ((card.Race & getRaceFilter) > 0 || getRaceFilter == 0)
+                            if ((card.Type & getTypeFilter) == getTypeFilter || getTypeFilter == 0)
                             {
-                                if ((card.Attribute & getAttributeFilter) > 0 || getAttributeFilter == 0)
+                                if ((card.Race & getRaceFilter) > 0 || getRaceFilter == 0)
                                 {
-                                    if (((card.Category & getCatagoryFilter)) == getCatagoryFilter || getCatagoryFilter == 0)
+                                    if ((card.Attribute & getAttributeFilter) > 0 || getAttributeFilter == 0)
                                     {
-                                        if (judgeint(getAttack, getAttack_UP, card.Attack))
+                                        if (((card.Category & getCatagoryFilter)) == getCatagoryFilter || getCatagoryFilter == 0)
                                         {
-                                            if (judgeint(getDefence, getDefence_UP, card.Defense))
+                                            if (judgeint(getAttack, getAttack_UP, card.Attack))
                                             {
-                                                if (judgeint(getLevel, getLevel_UP, card.Level))
+                                                if (judgeint(getDefence, getDefence_UP, card.Defense))
                                                 {
-                                                    if (judgeint(getP, getP_UP, card.LScale))
+                                                    if (judgeint(getLevel, getLevel_UP, card.Level))
                                                     {
-                                                        if (judgeint(getYear, getYear_UP, card.year))
+                                                        if (judgeint(getP, getP_UP, card.LScale))
                                                         {
-                                                            if (getBAN == -233 || banlist == null || banlist.GetQuantity(card.Id) == getBAN)
+                                                            if (judgeint(getYear, getYear_UP, card.year))
                                                             {
-                                                                if (getPack == "" || card.packFullName == getPack)
+                                                                if (getBAN == -233 || banlist == null || banlist.GetQuantity(card.Id) == getBAN)
                                                                 {
-                                                                    returnValue.Add(card);
+                                                                    if (getPack == "" || card.packFullName == getPack)
+                                                                    {
+                                                                        returnValue.Add(card);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -678,7 +688,8 @@ namespace YGOSharp
 
         internal static void initializeSec()
         {
-            packs.Sort((left, right) => {
+            packs.Sort((left, right) =>
+            {
                 if (left.year > right.year)
                 {
                     return -1;
