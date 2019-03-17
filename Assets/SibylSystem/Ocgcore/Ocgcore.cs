@@ -7069,7 +7069,6 @@ public class Ocgcore : ServantWithCardDescription
             {
                 if (my_p_cards.Count == 2)
                 {
-                    Debug.Log("oh");
                     gameField.me_left_p_num.GetComponent<number_loader>().set_number((int)my_p_cards[0].get_data().LScale, 3);
                     gameField.me_right_p_num.GetComponent<number_loader>().set_number((int)my_p_cards[1].get_data().LScale, 0);
                     gameField.mePHole = true;

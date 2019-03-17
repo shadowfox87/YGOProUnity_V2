@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
+/// <summary>Basic Background Worker Class that queues Actions and execute them in another thread.</summary>
 public class BasicBackgroundWorker
 {
     private readonly Thread _backgroundWorkThread;
@@ -13,12 +14,14 @@ public class BasicBackgroundWorker
         _backgroundWorkThread = new Thread(BackgroundThread)
         {
             IsBackground = true,
-            Priority = ThreadPriority.AboveNormal,
+            Priority = ThreadPriority.BelowNormal,
             Name = "BasicBackgroundWorker Thread"
         };
         _backgroundWorkThread.Start();
     }
 
+    /// <summary>Enqueues the work.</summary>
+    /// <param name="work">The work.</param>
     public void EnqueueWork(Action work)
     {
         lock (_queue)
