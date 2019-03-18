@@ -23,16 +23,14 @@ public class GameTextureManager
 
     static Dictionary<ulong, bool> addedMap = new Dictionary<ulong, bool>();
 
-    static HttpDldFile df = new HttpDldFile();
-    /// <summary>
-    /// The basic background worker for closeups.
-    /// </summary>
-    static readonly BasicBackgroundWorker _basicBackgroundWorkerCloseup = new BasicBackgroundWorker();
-    /// <summary>
-    /// The basic background worker for cards.
-    /// </summary>
-    static readonly BasicBackgroundWorker _basicBackgroundWorkerCard = new BasicBackgroundWorker();
-    static readonly BasicBackgroundWorker _basicBackgroundWorkerCardFeature = new BasicBackgroundWorker();
+    static readonly HttpDldFile df = new HttpDldFile();
+
+    static readonly BasicBackgroundWorker _basicBackgroundWorkerProcessing = new BasicBackgroundWorker(System.Threading.ThreadPriority.Normal);
+
+    static readonly BasicBackgroundWorker _basicBackgroundWorkerCardDownload = new BasicBackgroundWorker();
+
+    static readonly BasicBackgroundWorker _basicBackgroundWorkerCloseupDownload = new BasicBackgroundWorker();
+
     public class BitmapHelper
     {
         public System.Drawing.Color[,] colors = null;
@@ -206,6 +204,9 @@ public class GameTextureManager
 
     static void thread_run()
     {
+        df.DownloadCardCompleted += LoadCardPictureWhenDownloaded;
+        df.DownloadCloseupCompleted += LoadCloseupWhenDownloaded;
+        df.DownloadForCloseUpCompleted += LoadCloseupFromCardWhenDownloaded;
 
         while (Program.Running)
         {
@@ -234,20 +235,35 @@ public class GameTextureManager
                         {
                             Debug.Log("e 0" + e.ToString());
                         }
-                        if (pic.type == GameTextureType.card_feature)
+                        switch (pic.type)
                         {
-                            _basicBackgroundWorkerCardFeature.EnqueueWork(() =>
-                            {
-                                ProcessingCardFeature(pic);
-                            });
-                        }
-                        if (pic.type == GameTextureType.card_picture)
-                        {
-                            ProcessingCardPicture(pic);
-                        }
-                        if (pic.type == GameTextureType.card_verticle_drawing)
-                        {
-                            ProcessingVerticleDrawing(pic);
+                            case GameTextureType.card_feature:
+                                {
+                                    _basicBackgroundWorkerProcessing.EnqueueWork(() =>
+                                    {
+                                        ProcessingCardFeature(pic);
+                                    });
+
+                                    break;
+                                }
+                            case GameTextureType.card_picture:
+                                {
+                                    _basicBackgroundWorkerProcessing.EnqueueWork(() =>
+                                    {
+                                        ProcessingCardPicture(pic);
+                                    });
+
+                                    break;
+                                }
+                            case GameTextureType.card_verticle_drawing:
+                                {
+                                    _basicBackgroundWorkerProcessing.EnqueueWork(() =>
+                                    {
+                                        ProcessingVerticleDrawing(pic);
+                                    });
+
+                                    break;
+                                }
                         }
                     }
                 }
@@ -259,6 +275,53 @@ public class GameTextureManager
         }
     }
 
+    private static void LoadCloseupFromCardWhenDownloaded(object sender, EventArgs e)
+    {
+        var dlArgs = e as DownloadPicCompletedEventArgs;
+        LoadCloseupFromCardPicture(dlArgs.Pic, dlArgs.Filename, false);
+        LoadCardPicture(dlArgs.Pic, dlArgs.Filename);
+    }
+
+    private static void LoadCloseupWhenDownloaded(object sender, EventArgs e)
+    {
+        var dlArgs = e as DownloadPicCompletedEventArgs;
+        var pic = dlArgs.Pic;
+        if (dlArgs.DownloadSuccesful)
+        {
+            LoadCloseupPicture(pic, dlArgs.Filename);
+        }
+        else
+        {
+            if (!File.Exists("picture/card/" + pic.code.ToString() + ".png"))
+            {
+                _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
+                {
+                    while (_basicBackgroundWorkerCardDownload.QueueCount > 0)
+                    {
+                        if (File.Exists("picture/card/" + pic.code.ToString() + ".png"))
+                        {
+                            LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".png", false);
+                            return;
+                        }
+                    }
+                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
+                });
+            }
+            else
+            {
+                LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".png", false);
+            }
+
+        }
+
+    }
+
+    private static void LoadCardPictureWhenDownloaded(object sender, EventArgs e)
+    {
+        var dlArgs = e as DownloadPicCompletedEventArgs;
+        LoadCardPicture(dlArgs.Pic, dlArgs.Filename);
+    }
+
     private static void ProcessingCardFeature(PictureResource pic)
     {
         try
@@ -266,7 +329,7 @@ public class GameTextureManager
             if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
             {
                 string path = "picture/closeup/" + pic.code.ToString() + ".png";
-                #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
                 BitmapHelper bitmap = new BitmapHelper(path);
                 int left;
                 int right;
@@ -586,246 +649,57 @@ public class GameTextureManager
             }
         }
     }
-    /// <summary>
-    /// Processings the verticle drawings method for Event Handler.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="eventArgs">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private static void ProcessingVerticleDrawing(object sender, EventArgs eventArgs)
-    {
-        var DownloadArgs = eventArgs as DownloadPicCompletedEventArgs;
-        var pic = DownloadArgs.Pic;
-        var path = DownloadArgs.Filename;
-        if (!DownloadArgs.DownloadSuccesful)
-        {
-            GetCardPictureForCloseUp(pic);
-            return;
-        }
-        else
-        {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            BitmapHelper bitmap = new BitmapHelper(path);
-            int left;
-            int right;
-            int up;
-            int down;
-            CutTop(bitmap, out left, out right, out up, out down);
-            up = CutLeft(bitmap, up);
-            down = CutRight(bitmap, down);
-            right = CutButton(bitmap, right);
-            int width = right - left;
-            int height = down - up;
-            pic.hashed_data = new float[width, height, 4];
-            for (int w = 0; w < width; w++)
-            {
-                for (int h = 0; h < height; h++)
-                {
-                    System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                    pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                    pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                    pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                    pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
-                }
-            }
-            float wholeUNalpha = 0;
-            for (int w = 0; w < width; w++)
-            {
-                if (pic.hashed_data[w, 0, 3] > 0.1f)
-                {
-                    wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
-                }
-                if (pic.hashed_data[w, height - 1, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-            }
-            for (int h = 0; h < height; h++)
-            {
-                if (pic.hashed_data[0, h, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-                if (pic.hashed_data[width - 1, h, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-            }
-            if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
-            {
-                softVtype(pic, 0.7f);
-            }
-            caculateK(pic);
 
-            /*
-             *  以上处理其他平台无法正常使用
-             *  暂时只能直接贴图，以后再处理
-            */
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
-            byte[] data;
-            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                file.Seek(0, SeekOrigin.Begin);
-                data = new byte[file.Length];
-                file.Read(data, 0, (int)file.Length);
-            }
-            pic.data = data;
-#endif
-        }
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-        {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
-        }
-    }
     private static void ProcessingVerticleDrawing(PictureResource pic)
     {
         try
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-            #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
             if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value!="Series 10 HQ")
             {
                 df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
-            #endif
+#endif
             if (!File.Exists(path) && Program.I().setting.autoPicDownload)
             {
-                df.DownloadCloseupCompleted += ProcessingVerticleDrawing;
-                _basicBackgroundWorkerCloseup.EnqueueWork(() =>
+                _basicBackgroundWorkerCloseupDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic);
+                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
                 });
                 return;
             }
             if (!File.Exists(path))
             {
-                GetCardPictureForCloseUp(pic);
-                return;
-            }
-            else
-            {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-                BitmapHelper bitmap = new BitmapHelper(path);
-                int left;
-                int right;
-                int up;
-                int down;
-                CutTop(bitmap, out left, out right, out up, out down);
-                up = CutLeft(bitmap, up);
-                down = CutRight(bitmap, down);
-                right = CutButton(bitmap, right);
-                int width = right - left;
-                int height = down - up;
-                pic.hashed_data = new float[width, height, 4];
-                for (int w = 0; w < width; w++)
+                path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
                 {
-                    for (int h = 0; h < height; h++)
-                    {
-                        System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                        pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                        pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                        pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                        pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
-                    }
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
                 }
-                float wholeUNalpha = 0;
-                for (int w = 0; w < width; w++)
+                bool Iam8 = false;
+                //if (!File.Exists(path))
+                //{
+                //    Iam8 = true;
+                //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
+                //}
+                if (!File.Exists(path))
                 {
-                    if (pic.hashed_data[w, 0, 3] > 0.1f)
-                    {
-                        wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
-                    }
-                    if (pic.hashed_data[w, height - 1, 3] > 0.1f)
-                    {
-                        wholeUNalpha += 1;
-                    }
+                    Iam8 = true;
+                    path = "expansions/pics/" + pic.code.ToString() + ".jpg";
                 }
-                for (int h = 0; h < height; h++)
+                if (!File.Exists(path))
                 {
-                    if (pic.hashed_data[0, h, 3] > 0.1f)
-                    {
-                        wholeUNalpha += 1;
-                    }
-                    if (pic.hashed_data[width - 1, h, 3] > 0.1f)
-                    {
-                        wholeUNalpha += 1;
-                    }
+                    Iam8 = true;
+                    path = "pics/" + pic.code.ToString() + ".jpg";
                 }
-                if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
-                {
-                    softVtype(pic, 0.7f);
-                }
-                caculateK(pic);
+                LoadCloseupFromCardPicture(pic, path, Iam8);
+                //pic.autoMade = true;
 
                 /*
                  *  以上处理其他平台无法正常使用
                  *  暂时只能直接贴图，以后再处理
                 */
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
-            byte[] data;
-            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                file.Seek(0, SeekOrigin.Begin);
-                data = new byte[file.Length];
-                file.Read(data, 0, (int)file.Length);
-            }
-            pic.data = data;
-#endif
-            }
-
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.Log("e 3" + e.ToString());
-        }
-    }
-
-    /// <summary>Gets the card picture for close up.</summary>
-    /// <param name="pic">The card Picture for CloseUp.</param>
-    private static void GetCardPictureForCloseUp(PictureResource pic)
-    {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-        string path = "picture/card/" + pic.code.ToString() + ".png";
-        if (!File.Exists(path))
-        {
-            path = "picture/card/" + pic.code.ToString() + ".jpg";
-        }
-        bool Iam8 = false;
-        //if (!File.Exists(path))
-        //{
-        //    Iam8 = true;
-        //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-        //}
-        if (!File.Exists(path))
-        {
-            Iam8 = true;
-            path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path))
-        {
-            Iam8 = true;
-            path = "pics/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
-        {
-            df.DownloadForCloseUpCompleted += GetCuttedPicFromEvent;
-            _basicBackgroundWorkerCard.EnqueueWork(() =>
-            {
-                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
-            });
-            return;
-        }
-
-        GetCuttedPicFromPath(pic, path, Iam8);
-        //pic.autoMade = true;
-
-        /*
-         *  以上处理其他平台无法正常使用
-         *  暂时只能直接贴图，以后再处理
-        */
 #elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
             if (!File.Exists(path))
             {
@@ -839,19 +713,21 @@ public class GameTextureManager
                 data = new byte[file.Length];
                 file.Read(data, 0, (int)file.Length);
             }
-            pic.data = data;        
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
+            pic.data = data;
 #endif
+            }
+            else
+            {
+                LoadCloseupPicture(pic, path);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("e 3" + e.ToString());
+        }
     }
 
-    /// <summary>Gets the cutted pic from path.</summary>
-    /// <param name="pic">The picture.</param>
-    /// <param name="path">The path to the picture.</param>
-    /// <param name="Iam8">if set to <c>true</c> iam8.</param>
-    private static void GetCuttedPicFromPath(PictureResource pic, string path, bool Iam8)
+    private static void LoadCloseupFromCardPicture(PictureResource pic, string path, bool Iam8)
     {
         if (!File.Exists(path))
         {
@@ -865,13 +741,80 @@ public class GameTextureManager
             loadedList.Add(hashPic(pic.code, pic.type), pic);
         }
     }
-    /// <summary>Gets the cutted pic from eventHandler.</summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="eventArgs">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private static void GetCuttedPicFromEvent(object sender, EventArgs eventArgs)
+
+    private static void LoadCloseupPicture(PictureResource pic, string path)
     {
-        var DownloadArgs = eventArgs as DownloadPicCompletedEventArgs;
-        GetCuttedPicFromPath(DownloadArgs.Pic, DownloadArgs.Filename, false);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+        BitmapHelper bitmap = new BitmapHelper(path);
+        int left;
+        int right;
+        int up;
+        int down;
+        CutTop(bitmap, out left, out right, out up, out down);
+        up = CutLeft(bitmap, up);
+        down = CutRight(bitmap, down);
+        right = CutButton(bitmap, right);
+        int width = right - left;
+        int height = down - up;
+        pic.hashed_data = new float[width, height, 4];
+        for (int w = 0; w < width; w++)
+        {
+            for (int h = 0; h < height; h++)
+            {
+                System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
+                pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
+                pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
+                pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
+                pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
+            }
+        }
+        float wholeUNalpha = 0;
+        for (int w = 0; w < width; w++)
+        {
+            if (pic.hashed_data[w, 0, 3] > 0.1f)
+            {
+                wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
+            }
+            if (pic.hashed_data[w, height - 1, 3] > 0.1f)
+            {
+                wholeUNalpha += 1;
+            }
+        }
+        for (int h = 0; h < height; h++)
+        {
+            if (pic.hashed_data[0, h, 3] > 0.1f)
+            {
+                wholeUNalpha += 1;
+            }
+            if (pic.hashed_data[width - 1, h, 3] > 0.1f)
+            {
+                wholeUNalpha += 1;
+            }
+        }
+        if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
+        {
+            softVtype(pic, 0.7f);
+        }
+        caculateK(pic);
+
+        /*
+         *  以上处理其他平台无法正常使用
+         *  暂时只能直接贴图，以后再处理
+        */
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
+            byte[] data;
+            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                file.Seek(0, SeekOrigin.Begin);
+                data = new byte[file.Length];
+                file.Read(data, 0, (int)file.Length);
+            }
+            pic.data = data;
+#endif
+        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+        {
+            loadedList.Add(hashPic(pic.code, pic.type), pic);
+        }
     }
 
     private static void softVtype(PictureResource pic, float si)
@@ -922,14 +865,6 @@ public class GameTextureManager
                 pic.hashed_data[w, h, 3] = a;
             }
         }
-    }
-    /// <summary>Processes the card picture from event</summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="eventArgs">The <see cref="EventArgs"/> instance containing the event data.</param>
-    private static void ProcessingCardPicture(object sender, EventArgs eventArgs)
-    {
-        var DownloadArgs = eventArgs as DownloadPicCompletedEventArgs;
-        LoadCardPicture(DownloadArgs.Pic, DownloadArgs.Filename);
     }
     private static void ProcessingCardPicture(PictureResource pic)
     {
@@ -1018,21 +953,26 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (Program.I().setting.autoPicDownload && !File.Exists(path))
                 {
-                    df.DownloadCardCompleted += ProcessingCardPicture;
-                    _basicBackgroundWorkerCard.EnqueueWork(() =>
-                    {
-                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg",pic);
-                    });
-                return;
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
+            }
+
+            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+            {
+                path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
+                {
+                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 }
             }
 #endif
             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
             {
-                df.DownloadCardCompleted += ProcessingCardPicture;
-                _basicBackgroundWorkerCard.EnqueueWork(() =>
+                _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic);
+                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic,false);
+
                 });
                 return;
             }
@@ -1050,41 +990,44 @@ public class GameTextureManager
         }
     }
 
-
-    /// <summary>Loads the card picture.</summary>
-    /// <param name="pic">The pic.</param>
-    /// <param name="path">The path.</param>
     private static void LoadCardPicture(PictureResource pic, string path)
     {
-        if (!File.Exists(path))
+        try
         {
-            if (pic.code > 0)
+            if (!File.Exists(path))
             {
-                pic.u_data = unknown;
+                if (pic.code > 0)
+                {
+                    pic.u_data = unknown;
+                }
+                else
+                {
+                    pic.u_data = myBack;
+                }
+                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                {
+                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                }
             }
             else
             {
-                pic.u_data = myBack;
-            }
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
+                byte[] data;
+                using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    file.Seek(0, SeekOrigin.Begin);
+                    data = new byte[file.Length];
+                    file.Read(data, 0, (int)file.Length);
+                }
+                pic.data = data;
+                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                {
+                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                }
             }
         }
-        else
+        catch (Exception e)
         {
-            byte[] data;
-            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                file.Seek(0, SeekOrigin.Begin);
-                data = new byte[file.Length];
-                file.Read(data, 0, (int)file.Length);
-            }
-            pic.data = data;
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
+            Debug.Log("e 2" + e.ToString());
         }
     }
 
@@ -1256,12 +1199,7 @@ public class GameTextureManager
         {
 
         }
-        Thread main = new Thread(thread_run)
-        {
-            //IsBackground = true,
-            //Priority = System.Threading.ThreadPriority.Normal
-        };
+        Thread main = new Thread(thread_run);
         main.Start();
     }
 }
-

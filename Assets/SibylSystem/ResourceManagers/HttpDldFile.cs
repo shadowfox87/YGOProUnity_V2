@@ -66,168 +66,51 @@ public class HttpDldFile
     /// <param name="url">URL of the website containing the file.</param>
     /// <param name="filename">Full path with filename and extension.</param>
     /// <param name="picture"><see cref="GameTextureManager.PictureResource"/> required for EventHandler.</param>
-    /// <returns></returns>
-    public bool Download(string url, string filename, GameTextureManager.PictureResource picture)
+    public bool Download(string url, string filename, GameTextureManager.PictureResource picture, bool forCloseup)
     {
-        bool flag = false;
-        try
+        var flag = Download(url, filename);
+
+        if (filename.Contains("closeup"))
         {
-            if (File.Exists(filename))
+            EventHandler handler = DownloadCloseupCompleted;
+            if (handler != null)
             {
-                return true;
+                handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
             }
-                if (!Directory.Exists(Path.GetDirectoryName(filename)))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-            }
-
-            using (var client = new TimeoutWebClient())
-            {
-                ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
-
-                //authorization needed to acces github
-                if (Path.GetExtension(filename).Contains("png"))
-                {
-                    client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 6500;
-                }
-                if (Path.GetExtension(filename).Contains("jpg"))
-                {
-                    client.Timeout = 3500;
-                }
-                client.DownloadFile(new Uri(url), filename + ".tmp");
-            }
-            flag = true;
-            File.Move(filename + ".tmp", filename);
         }
-        catch (Exception)
+        if (filename.Contains("card") && forCloseup)
         {
-            flag = false;
+            EventHandler handler = DownloadForCloseUpCompleted;
+            if (handler != null)
+            {
+                handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
+            }
         }
-        finally
+        else if (filename.Contains("card"))
         {
-            if (filename.Contains("closeup"))
+            EventHandler handler = DownloadCardCompleted;
+            if (handler != null)
             {
-                EventHandler handler = DownloadCloseupCompleted;
-                if (handler != null)
-                {
-                    handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
-                }
+                handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
             }
-            if (filename.Contains("card"))
-            {
-                EventHandler handler = DownloadCardCompleted;
-                if (handler != null)
-                {
-                    handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
-                }
-            }
-        } 
-        return flag;
-    }
-    public bool Download(string url, string filename, GameTextureManager.PictureResource picture,bool ForCloseup)
-    {
-        bool flag = false;
-        try
-        {
-            if (File.Exists(filename))
-            {
-                return true;
-            }
-            if (!Directory.Exists(Path.GetDirectoryName(filename)))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-            }
-
-            using (var client = new TimeoutWebClient())
-            {
-                ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
-
-                //authorization needed to acces github
-                if (Path.GetExtension(filename).Contains("png"))
-                {
-                    client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 6500;
-                }
-                if (Path.GetExtension(filename).Contains("jpg"))
-                {
-                    client.Timeout = 3500;
-                }
-                client.DownloadFile(new Uri(url), filename + ".tmp");
-            }
-            flag = true;
-            File.Move(filename + ".tmp", filename);
-        }
-        catch (Exception)
-        {
-            flag = false;
-        }
-        finally
-        {
-            
-            if (filename.Contains("card"))
-            {
-                EventHandler handler = DownloadCardCompleted;
-                if (handler != null)
-                {
-                    handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
-                }
-                handler = DownloadForCloseUpCompleted;
-                if (handler != null)
-                {
-                    handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
-                }
-            }
-
         }
         return flag;
     }
+
+    /// <summary>Download method used for downloading fieldspell.</summary>
+    /// <param name="url">The URL.</param>
+    /// <param name="filename">The filename.</param>
+    /// <param name="player">The player's value</param>
     public bool DownloadField(string url, string filename, int player)
     {
-        bool flag = false;
-        try
-        {
-            if (!Directory.Exists(Path.GetDirectoryName(filename)))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-            }
+        var flag = Download(url, filename);
 
-            using (var client = new TimeoutWebClient())
-            {
-                ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
-
-                //authorization needed to acces github
-                if (Path.GetExtension(filename).Contains("png"))
-                {
-                    client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 6500;
-                }
-                if (Path.GetExtension(filename).Contains("jpg"))
-                {
-                    client.Timeout = 3500;
-                }
-                client.DownloadFile(new Uri(url), filename + ".tmp");
-            }
-            flag = true;
-            if (File.Exists(filename))
-            {
-                File.Delete(filename);
-            }
-            File.Move(filename + ".tmp", filename);
-        }
-        catch (Exception)
+        if (filename.Contains("field"))
         {
-            flag = false;
-        }
-        finally
-        {
-            if (filename.Contains("field"))
+            EventHandler handler = DownloadFieldCompleted;
+            if (handler != null)
             {
-                EventHandler handler = DownloadFieldCompleted;
-                if (handler != null)
-                {
-                    handler(this, new DownloadFieldCompletedEventArgs(player, flag,filename));
-                }
+                handler(this, new DownloadFieldCompletedEventArgs(player, flag, filename));
             }
         }
         return flag;
@@ -288,7 +171,7 @@ public class TimeoutWebClient : WebClient
 /// <summary>
 /// custom EventArgs used to give methods required variables when Download is completed.
 /// </summary>
-public class DownloadPicCompletedEventArgs:EventArgs
+public class DownloadPicCompletedEventArgs : EventArgs
 {
     public DownloadPicCompletedEventArgs(GameTextureManager.PictureResource pic, bool downloadSuccesful, string filename)
     {
@@ -302,7 +185,7 @@ public class DownloadPicCompletedEventArgs:EventArgs
     public string Filename { get; protected set; }
 }
 
-public class DownloadFieldCompletedEventArgs:EventArgs
+public class DownloadFieldCompletedEventArgs : EventArgs
 {
     public DownloadFieldCompletedEventArgs(int player, bool downloadSuccesful, string filename)
     {
@@ -313,5 +196,5 @@ public class DownloadFieldCompletedEventArgs:EventArgs
 
     public int Player { get; protected set; }
     public bool DownloadSuccesful { get; protected set; }
-    public string Filename { get;protected set; }
+    public string Filename { get; protected set; }
 }
