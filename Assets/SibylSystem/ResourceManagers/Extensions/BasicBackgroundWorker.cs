@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 /// <summary>Basic Background Worker Class that queues Actions and execute them in another thread.</summary>
 public class BasicBackgroundWorker
@@ -14,7 +15,7 @@ public class BasicBackgroundWorker
         _backgroundWorkThread = new Thread(BackgroundThread)
         {
             IsBackground = true,
-            Priority = ThreadPriority.BelowNormal,
+            Priority = System.Threading.ThreadPriority.BelowNormal,
             Name = "BasicBackgroundWorker Thread"
         };
         _backgroundWorkThread.Start();
@@ -51,7 +52,7 @@ public class BasicBackgroundWorker
             }
             catch (Exception ex)
             {
-                //Log exception that happened in backgroundWork
+                Debug.Log(ex);
             }
         }
     }

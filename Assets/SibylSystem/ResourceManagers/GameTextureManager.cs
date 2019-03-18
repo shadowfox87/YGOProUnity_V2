@@ -32,6 +32,7 @@ public class GameTextureManager
     /// The basic background worker for cards.
     /// </summary>
     static readonly BasicBackgroundWorker _basicBackgroundWorkerCard = new BasicBackgroundWorker();
+    static readonly BasicBackgroundWorker _basicBackgroundWorkerCardFeature = new BasicBackgroundWorker();
     public class BitmapHelper
     {
         public System.Drawing.Color[,] colors = null;
@@ -235,7 +236,10 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            ProcessingCardFeature(pic);
+                            _basicBackgroundWorkerCardFeature.EnqueueWork(() =>
+                            {
+                                ProcessingCardFeature(pic);
+                            });
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
@@ -262,7 +266,7 @@ public class GameTextureManager
             if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
             {
                 string path = "picture/closeup/" + pic.code.ToString() + ".png";
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
                 BitmapHelper bitmap = new BitmapHelper(path);
                 int left;
                 int right;
@@ -677,12 +681,12 @@ public class GameTextureManager
         try
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+            #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
             if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value!="Series 10 HQ")
             {
                 df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
-#endif
+            #endif
             if (!File.Exists(path) && Program.I().setting.autoPicDownload)
             {
                 df.DownloadCloseupCompleted += ProcessingVerticleDrawing;
@@ -690,7 +694,6 @@ public class GameTextureManager
                 {
                     df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic);
                 });
-                
                 return;
             }
             if (!File.Exists(path))
@@ -808,10 +811,10 @@ public class GameTextureManager
         }
         if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
         {
-            df.DownloadCardCompleted += GetCuttedPicFromEvent;
-            _basicBackgroundWorkerCloseup.EnqueueWork(() => 
+            df.DownloadForCloseUpCompleted += GetCuttedPicFromEvent;
+            _basicBackgroundWorkerCard.EnqueueWork(() =>
             {
-                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic);
+                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
             });
             return;
         }
@@ -836,12 +839,12 @@ public class GameTextureManager
                 data = new byte[file.Length];
                 file.Read(data, 0, (int)file.Length);
             }
-            pic.data = data;
+            pic.data = data;        
+            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            {
+                loadedList.Add(hashPic(pic.code, pic.type), pic);
+            }
 #endif
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-        {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
-        }
     }
 
     /// <summary>Gets the cutted pic from path.</summary>
@@ -868,19 +871,7 @@ public class GameTextureManager
     private static void GetCuttedPicFromEvent(object sender, EventArgs eventArgs)
     {
         var DownloadArgs = eventArgs as DownloadPicCompletedEventArgs;
-        var path = DownloadArgs.Filename;
-        var pic = DownloadArgs.Pic;
-        if (!DownloadArgs.DownloadSuccesful)
-        {
-            path = "picture/null.png";
-        }
-        pic.hashed_data = getCuttedPic(path, pic.pCard, false);
-        softVtype(pic, 0.5f);
-        pic.k = 1;
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-        {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
-        }
+        GetCuttedPicFromPath(DownloadArgs.Pic, DownloadArgs.Filename, false);
     }
 
     private static void softVtype(PictureResource pic, float si)
@@ -1038,14 +1029,11 @@ public class GameTextureManager
 #endif
             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
             {
-                //new Thread(() => { df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic); }).Start();
                 df.DownloadCardCompleted += ProcessingCardPicture;
                 _basicBackgroundWorkerCard.EnqueueWork(() =>
                 {
                     df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic);
                 });
-
-                
                 return;
             }
             //if (!File.Exists(path) && pic.code != 0)

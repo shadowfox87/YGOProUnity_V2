@@ -18,7 +18,8 @@ public class GameField : OCGobject
     public phaser Phase = null; 
     public bool mePHole = false;
     public bool opPHole = false;
-    static HttpDldFile df = new HttpDldFile();
+    static readonly HttpDldFile df = new HttpDldFile();
+    readonly BasicBackgroundWorker basicBackgroundWorkerField = new BasicBackgroundWorker();
 
     public List<thunder_locator> thunders = new List<thunder_locator>();
 
@@ -423,54 +424,44 @@ public class GameField : OCGobject
                     fieldCode[player] = code;
                     if (code > 0)
                     {
-                            Texture2D tex = null;
-                            if (File.Exists("picture/field/" + code.ToString() + ".png"))
-                            {
-                                tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
-                            }
-                            else if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
-                            {
-                                tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
-                            }
-                            else if (File.Exists("expansions/pics/field/" + code.ToString() + ".png"))
-                            {
-                                tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".png");
-                            }
-                            else if (File.Exists("expansions/pics/field/" + code.ToString() + ".jpg"))
-                            {
-                                tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".jpg");
-                            }
-                            else if (File.Exists("pics/field/" + code.ToString() + ".png"))
-                            {
-                                tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".png");
-                            }
-                            else if (File.Exists("pics/field/" + code.ToString() + ".jpg"))
-                            {
-                                tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".jpg");
-                            }
-                            else if (Program.I().setting.autoPicDownload)
-                            {
+                        Texture2D tex = null;
+                        if (File.Exists("picture/field/" + code.ToString() + ".png"))
+                        {
+                            tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
+                        {
+                            tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
+                        }
+                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".png"))
+                        {
+                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".jpg"))
+                        {
+                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".jpg");
+                        }
+                        else if (File.Exists("pics/field/" + code.ToString() + ".png"))
+                        {
+                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("pics/field/" + code.ToString() + ".jpg"))
+                        {
+                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".jpg");
+                        }
+                        else if (Program.I().setting.autoPicDownload)
+                        {
                             if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
                             {
+                                df.DownloadFieldCompleted += LoadFieldSpellTextureFromEvent;
                                 //HQ  Field
-                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
-                                if (File.Exists("picture/field/" + code.ToString() + ".png"))
-                                {
-                                    tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
-                                }
+                                basicBackgroundWorkerField.EnqueueWork(() =>{
+                                    df.DownloadField("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png", player);
+                                });
+                                return;
                             }
-                            }
-                            if (tex != null)
-                            {
-                                UIHelper.getByName<UITexture>(gameObject, "field_" + player.ToString()).mainTexture = tex;
-                                UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
-                                iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(1, 1, 1), 0.5f);
-                            }
-                            else
-                            {
-                                UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
-                                iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(0, 0, 0), 0.5f);
-                            }
+                        }
+                        LoadFieldSpellTexture(player, tex);
                     }
                     else
                     {
@@ -479,6 +470,34 @@ public class GameField : OCGobject
                     }
                 }
             }
+    }
+
+    private void LoadFieldSpellTextureFromEvent(object sender, EventArgs e)
+    {
+        var downloadArgs = e as DownloadFieldCompletedEventArgs;
+        string code = Path.GetFileNameWithoutExtension(downloadArgs.Filename);
+        var player = downloadArgs.Player;
+        Texture2D tex=null;
+        if (File.Exists("picture/field/" + code + ".png"))
+        {
+            tex = UIHelper.getTexture2D("picture/field/" + code + ".png");
+        }
+        LoadFieldSpellTexture(player, tex);
+    }
+
+    private void LoadFieldSpellTexture(int player, Texture2D tex)
+    {
+        if (tex != null)
+        {
+            UIHelper.getByName<UITexture>(gameObject, "field_" + player.ToString()).mainTexture = tex;
+            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
+            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(1, 1, 1), 0.5f);
+        }
+        else
+        {
+            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
+            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(0, 0, 0), 0.5f);
+        }
     }
 
     GameObject cookie_dark_hole;
