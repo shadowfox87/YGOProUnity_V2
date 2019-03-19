@@ -727,78 +727,88 @@ public class GameTextureManager
 
     private static void LoadCloseupFromCardPicture(PictureResource pic, string path, bool Iam8)
     {
-        if (!File.Exists(path))
+        try
         {
-            path = "picture/null.png";
+            if (!File.Exists(path))
+            {
+                path = "picture/null.png";
+            }
+            pic.hashed_data = getCuttedPic(path, pic.pCard, Iam8);
+            softVtype(pic, 0.5f);
+            pic.k = 1;
+            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            {
+                loadedList.Add(hashPic(pic.code, pic.type), pic);
+            }
         }
-        pic.hashed_data = getCuttedPic(path, pic.pCard, Iam8);
-        softVtype(pic, 0.5f);
-        pic.k = 1;
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+        catch
         {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
+
         }
+
     }
 
     private static void LoadCloseupPicture(PictureResource pic, string path)
     {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-        BitmapHelper bitmap = new BitmapHelper(path);
-        int left;
-        int right;
-        int up;
-        int down;
-        CutTop(bitmap, out left, out right, out up, out down);
-        up = CutLeft(bitmap, up);
-        down = CutRight(bitmap, down);
-        right = CutButton(bitmap, right);
-        int width = right - left;
-        int height = down - up;
-        pic.hashed_data = new float[width, height, 4];
-        for (int w = 0; w < width; w++)
+        try
         {
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+            BitmapHelper bitmap = new BitmapHelper(path);
+            int left;
+            int right;
+            int up;
+            int down;
+            CutTop(bitmap, out left, out right, out up, out down);
+            up = CutLeft(bitmap, up);
+            down = CutRight(bitmap, down);
+            right = CutButton(bitmap, right);
+            int width = right - left;
+            int height = down - up;
+            pic.hashed_data = new float[width, height, 4];
+            for (int w = 0; w < width; w++)
+            {
+                for (int h = 0; h < height; h++)
+                {
+                    System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
+                    pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
+                    pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
+                    pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
+                    pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
+                }
+            }
+            float wholeUNalpha = 0;
+            for (int w = 0; w < width; w++)
+            {
+                if (pic.hashed_data[w, 0, 3] > 0.1f)
+                {
+                    wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
+                }
+                if (pic.hashed_data[w, height - 1, 3] > 0.1f)
+                {
+                    wholeUNalpha += 1;
+                }
+            }
             for (int h = 0; h < height; h++)
             {
-                System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
+                if (pic.hashed_data[0, h, 3] > 0.1f)
+                {
+                    wholeUNalpha += 1;
+                }
+                if (pic.hashed_data[width - 1, h, 3] > 0.1f)
+                {
+                    wholeUNalpha += 1;
+                }
             }
-        }
-        float wholeUNalpha = 0;
-        for (int w = 0; w < width; w++)
-        {
-            if (pic.hashed_data[w, 0, 3] > 0.1f)
+            if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
             {
-                wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
+                softVtype(pic, 0.7f);
             }
-            if (pic.hashed_data[w, height - 1, 3] > 0.1f)
-            {
-                wholeUNalpha += 1;
-            }
-        }
-        for (int h = 0; h < height; h++)
-        {
-            if (pic.hashed_data[0, h, 3] > 0.1f)
-            {
-                wholeUNalpha += 1;
-            }
-            if (pic.hashed_data[width - 1, h, 3] > 0.1f)
-            {
-                wholeUNalpha += 1;
-            }
-        }
-        if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
-        {
-            softVtype(pic, 0.7f);
-        }
-        caculateK(pic);
+            caculateK(pic);
 
-        /*
-         *  以上处理其他平台无法正常使用
-         *  暂时只能直接贴图，以后再处理
-        */
+            /*
+             *  以上处理其他平台无法正常使用
+             *  暂时只能直接贴图，以后再处理
+            */
 #elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -809,10 +819,16 @@ public class GameTextureManager
             }
             pic.data = data;
 #endif
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-        {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
+            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            {
+                loadedList.Add(hashPic(pic.code, pic.type), pic);
+            }
         }
+        catch
+        {
+
+        }
+
     }
 
     private static void softVtype(PictureResource pic, float si)
