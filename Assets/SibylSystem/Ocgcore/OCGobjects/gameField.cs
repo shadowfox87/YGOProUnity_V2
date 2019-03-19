@@ -18,8 +18,7 @@ public class GameField : OCGobject
     public phaser Phase = null;
     public bool mePHole = false;
     public bool opPHole = false;
-    static readonly HttpDldFile df = new HttpDldFile();
-    readonly BasicBackgroundWorker basicBackgroundWorkerField = new BasicBackgroundWorker();
+    static HttpDldFile df = new HttpDldFile();
 
     public List<thunder_locator> thunders = new List<thunder_locator>();
 
@@ -126,7 +125,7 @@ public class GameField : OCGobject
         label.transform.localScale = new Vector3(0.03f, 0.03f, 0.03f);
         label.text = "";
         overCount = 0;
-        df.DownloadFieldCompleted += LoadFieldSpellTextureFromEvent;
+
         loadNewField();
     }
 
@@ -454,14 +453,24 @@ public class GameField : OCGobject
                             if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
                             {
                                 //HQ  Field
-                                basicBackgroundWorkerField.EnqueueWork(() =>
+                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                                if (File.Exists("picture/field/" + code.ToString() + ".png"))
                                 {
-                                    df.DownloadField("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png", player);
-                                });
-                                return;
+                                    tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
+                                }
                             }
                         }
-                        LoadFieldSpellTexture(player, tex);
+                        if (tex != null)
+                        {
+                            UIHelper.getByName<UITexture>(gameObject, "field_" + player.ToString()).mainTexture = tex;
+                            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
+                            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(1, 1, 1), 0.5f);
+                        }
+                        else
+                        {
+                            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
+                            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(0, 0, 0), 0.5f);
+                        }
                     }
                     else
                     {
@@ -470,34 +479,6 @@ public class GameField : OCGobject
                     }
                 }
             }
-    }
-
-    private void LoadFieldSpellTextureFromEvent(object sender, EventArgs e)
-    {
-        var downloadArgs = e as DownloadFieldCompletedEventArgs;
-        string code = Path.GetFileNameWithoutExtension(downloadArgs.Filename);
-        var player = downloadArgs.Player;
-        Texture2D tex = null;
-        if (File.Exists("picture/field/" + code + ".png"))
-        {
-            tex = UIHelper.getTexture2D("picture/field/" + code + ".png");
-        }
-        LoadFieldSpellTexture(player, tex);
-    }
-
-    private void LoadFieldSpellTexture(int player, Texture2D tex)
-    {
-        if (tex != null)
-        {
-            UIHelper.getByName<UITexture>(gameObject, "field_" + player.ToString()).mainTexture = tex;
-            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
-            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(1, 1, 1), 0.5f);
-        }
-        else
-        {
-            UIHelper.clearITWeen(UIHelper.getByName(gameObject, "obj_" + player.ToString()));
-            iTween.ScaleTo(UIHelper.getByName(gameObject, "obj_" + player.ToString()), new Vector3(0, 0, 0), 0.5f);
-        }
     }
 
     GameObject cookie_dark_hole;
