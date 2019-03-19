@@ -17,7 +17,6 @@ public class BasicBackgroundWorker
         {
             IsBackground = true,
             Priority = System.Threading.ThreadPriority.Normal
-            //Name = "BasicBackgroundWorker Thread"
         };
         _backgroundWorkThread.Start();
     }
@@ -26,9 +25,7 @@ public class BasicBackgroundWorker
     {
         _backgroundWorkThread = new Thread(BackgroundThread)
         {
-            //IsBackground = true,
             Priority = threadPriority,
-            //Name = "BasicBackgroundWorker Thread"
         };
         _backgroundWorkThread.Start();
     }

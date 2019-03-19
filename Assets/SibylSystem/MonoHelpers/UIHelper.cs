@@ -779,7 +779,10 @@ public static class UIHelper
         if (name.Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
         {
             HttpDldFile httpDldFile = new HttpDldFile();
-            httpDldFile.Download("https://raw.githubusercontent.com/szefo09/face/master/" + name + ".png", "texture/face/" + name + ".png");
+            if(!File.Exists("texture/face/" + name + ".png"))
+            {
+                httpDldFile.Download("https://raw.githubusercontent.com/szefo09/face/master/" + name + ".png", "texture/face/" + name + ".png");
+            }
             if (File.Exists("texture/face/" + name + ".png"))
             {
                 Texture2D face = UIHelper.getTexture2D("texture/face/" + name + ".png");
@@ -794,6 +797,7 @@ public static class UIHelper
             sum += buffer[i];
         }
         sum = sum % 100;
+        faces.Add(name, Program.I().face.faces[sum]);
         return Program.I().face.faces[sum];
     }
 

@@ -10,14 +10,12 @@ using UnityEngine;
 
 public class HttpDldFile
 {
+    /// <summary>Occurs when [card download for close up is completed].</summary>
     public event EventHandler DownloadForCloseUpCompleted;
-
     /// <summary>Occurs when [card download is completed].</summary>
     public event EventHandler DownloadCardCompleted;
     /// <summary>Occurs when [closeup download is completed].</summary>
     public event EventHandler DownloadCloseupCompleted;
-    /// <summary>Occurs when [download is completed].</summary>
-    public event EventHandler DownloadFieldCompleted;
 
     public bool Download(string url, string filename)
     {
@@ -92,25 +90,6 @@ public class HttpDldFile
             if (handler != null)
             {
                 handler(this, new DownloadPicCompletedEventArgs(picture, flag, filename));
-            }
-        }
-        return flag;
-    }
-
-    /// <summary>Download method used for downloading fieldspell.</summary>
-    /// <param name="url">The URL.</param>
-    /// <param name="filename">The filename.</param>
-    /// <param name="player">The player's value</param>
-    public bool DownloadField(string url, string filename, int player)
-    {
-        var flag = Download(url, filename);
-
-        if (filename.Contains("field"))
-        {
-            EventHandler handler = DownloadFieldCompleted;
-            if (handler != null)
-            {
-                handler(this, new DownloadFieldCompletedEventArgs(player, flag, filename));
             }
         }
         return flag;

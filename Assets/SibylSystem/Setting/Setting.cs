@@ -25,6 +25,7 @@ public class Setting : WindowServant2D
         batterySaving = UIHelper.getByName<UIToggle>(gameObject, "batterySaving").value = UIHelper.fromStringToBool(Config.Get("batterySaving", "0"));
         UIHelper.getByName<UIToggle>(gameObject, "full_").value = Screen.fullScreen;
         autoPicDownload = UIHelper.fromStringToBool(Config.Get("autoPicDownload_", "1"));
+        GameTextureManager.AutoPicDownload = autoPicDownload;
         autoDeckUpdate = UIHelper.fromStringToBool(Config.Get("autoDeckUpdate_", "1"));
         UIHelper.getByName<UIPopupList>(gameObject, "screen_").value = Config.Get("resolution_",
 #if UNITY_ANDROID || UNITY_IOS

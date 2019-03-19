@@ -448,16 +448,13 @@ public class GameField : OCGobject
                         {
                             tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".jpg");
                         }
-                        else if (Program.I().setting.autoPicDownload)
+                        if ( tex == null && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
                         {
-                            if (!File.Exists("picture/field/" + code.ToString() + ".jpg") && !File.Exists("picture/field/" + code.ToString() + ".png") && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable))
+                            //HQ  Field
+                            df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                            if (File.Exists("picture/field/" + code.ToString() + ".png"))
                             {
-                                //HQ  Field
-                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
-                                if (File.Exists("picture/field/" + code.ToString() + ".png"))
-                                {
-                                    tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
-                                }
+                                tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
                             }
                         }
                         if (tex != null)
