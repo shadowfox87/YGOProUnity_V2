@@ -189,7 +189,7 @@ public class ByteReader
 			if (split.Length == 2)
 			{
 				string key = split[0].Trim();
-				string val = split[1].Trim().Replace("\\n", "\n");
+				string val = split[1].Trim().Replace("/n", "\n");
 				dict[key] = val;
 			}
 		}

@@ -3211,7 +3211,7 @@ public class iTween : MonoBehaviour{
 						//using a path?
 						if(tweenArguments.Contains("path")){
 							GenerateMoveToPathTargets();
-							apply = new ApplyTween(ApplyMoveToPathTargets);
+                                apply = new ApplyTween(ApplyMoveToPathTargets);
 						}else{ //not using a path?
 							GenerateMoveToTargets();
 							apply = new ApplyTween(ApplyMoveToTargets);
@@ -4255,7 +4255,10 @@ public class iTween : MonoBehaviour{
 		vector3s[2].x = ease(vector3s[0].x,vector3s[1].x,percentage);
 		vector3s[2].y = ease(vector3s[0].y,vector3s[1].y,percentage);
 		vector3s[2].z = ease(vector3s[0].z,vector3s[1].z,percentage);
-		
+        if (float.IsNaN(vector3s[2].x))
+        {
+            vector3s[2].x = 0f;
+        }
 		//apply:	
 		if (isLocal) {
 			transform.localPosition=vector3s[2];
@@ -4266,7 +4269,11 @@ public class iTween : MonoBehaviour{
 		//dial in:
 		if(percentage==1){
 			if (isLocal) {
-				transform.localPosition=vector3s[1];		
+                if (float.IsNaN(vector3s[1].x))
+                {
+                    vector3s[1].x = 0f;
+                }
+                transform.localPosition=vector3s[1];		
 			}else{
 				transform.position=vector3s[1];
 			}

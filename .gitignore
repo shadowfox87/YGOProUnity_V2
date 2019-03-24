@@ -45,8 +45,13 @@ Release/
 AI_core_vs2017solution/core.VC.db
 AI_core_vs2017solution/core.VC.VC.opendb
 AI_core_vs2017solution/System.Servicemodel.Faltexception.dll
-/Assets/SibylSystem/ResourceManagers
+[Ll]ibrary_/
+AI_core_vs2017solution/.vs
+/sound/bgm/song.mp3
+/sound/bgm/song.ogg
+/updates/SHAs.txt
+/replay
+/Assets/SibylSystem/ResourceManagers/RepoData.cs.meta
+/Assets/SibylSystem/ResourceManagers/RepoData.cs
 /picture
 /sound
-/replay
-/updates

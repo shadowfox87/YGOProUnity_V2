@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
 
 public class Program : MonoBehaviour
 {
@@ -85,6 +86,7 @@ public class Program : MonoBehaviour
     public GameObject new_ui_setting;
     public GameObject new_ui_book;
     public GameObject new_ui_selectServer;
+    public GameObject new_ui_RoomList;
     public GameObject new_ui_gameInfo;
     public GameObject new_ui_cardDescription;
     public GameObject new_ui_search;
@@ -135,6 +137,7 @@ public class Program : MonoBehaviour
     public GameObject New_winCaculator;
     public GameObject New_winCaculatorRecord;
     public GameObject New_ocgcore_placeSelector;
+    public BGMController bgm;
     #endregion
 
     #region Initializement
@@ -283,58 +286,66 @@ public class Program : MonoBehaviour
             servants.Add(backGroundPic);
             backGroundPic.fixScreenProblem();
         });
+        UpdateClient();
         go(300, () =>
         {
-            InterString.initialize("config\\translation.conf");
+            InterString.initialize("config/translation.conf");
+            InterString.initialize("config" + AppLanguage.LanguageDir() + "/translation.conf");   //System Language
             GameTextureManager.initialize();
-            Config.initialize("config\\config.conf");
-            GameStringManager.initialize("config\\strings.conf");
-            if (File.Exists("cdb\\strings.conf"))
+            Config.initialize("config/config.conf");
+            GameStringManager.initialize("config/strings.conf");
+            if (File.Exists("config/strings.conf"))
             {
-                GameStringManager.initialize("cdb\\strings.conf");
+                GameStringManager.initialize("config/strings.conf");
             }
-            if (File.Exists("diy\\strings.conf"))
+            if (File.Exists("expansions/strings.conf"))
             {
-                GameStringManager.initialize("diy\\strings.conf");
+                GameStringManager.initialize("expansions/strings.conf");
             }
-            YGOSharp.BanlistManager.initialize("config\\lflist.conf");
+            YGOSharp.BanlistManager.initialize("config/lflist.conf");
 
-            var fileInfos = (new DirectoryInfo("cdb")).GetFiles();
+            FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray(); //load cards.cdb last this way
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 4)
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
                     {
-                        YGOSharp.CardsManager.initialize("cdb\\" + fileInfos[i].Name);
+                        YGOSharp.CardsManager.initialize("cdb/" + fileInfos[i].Name);
+                        YGOSharp.CardsManager.initialize("cdb" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);//System Language
                     }
                 }
             }
 
-            if (Directory.Exists("diy"))
-            {
-                fileInfos = (new DirectoryInfo("diy")).GetFiles();
-                for (int i = 0; i < fileInfos.Length; i++)
+            if (Directory.Exists("expansions"))
+                if (Directory.Exists("expansions" + AppLanguage.LanguageDir()))
                 {
-                    if (fileInfos[i].Name.Length > 4)
+                    fileInfos = (new DirectoryInfo("expansions")).GetFiles().OrderByDescending(x => x.Name).ToArray(); ;
+                    fileInfos = (new DirectoryInfo("expansions" + AppLanguage.LanguageDir())).GetFiles();
+                    for (int i = 0; i < fileInfos.Length; i++)
                     {
-                        if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
+                        if (fileInfos[i].Name.Length > 4)
                         {
-                            YGOSharp.CardsManager.initialize("diy\\" + fileInfos[i].Name);
+                            if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
+                            {
+                                YGOSharp.CardsManager.initialize("expansions/" + fileInfos[i].Name);
+                                YGOSharp.CardsManager.initialize("expansions" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
+                            }
                         }
                     }
                 }
-            }
 
 
             fileInfos = (new DirectoryInfo("pack")).GetFiles();
+            fileInfos = (new DirectoryInfo("pack" + AppLanguage.LanguageDir())).GetFiles();
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 3)
                 {
                     if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 3, 3) == ".db")
                     {
-                        YGOSharp.PacksManager.initialize("pack\\" + fileInfos[i].Name);
+                        YGOSharp.PacksManager.initialize("pack/" + fileInfos[i].Name);
+                        YGOSharp.PacksManager.initialize("pack" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
                     }
                 }
             }
@@ -343,9 +354,73 @@ public class Program : MonoBehaviour
             loadResources();
 
         });
-
     }
 
+    private void UpdateClient()
+    {
+        try
+        {
+            WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
+            while (!w.isDone)
+            {
+                if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(w.error))
+                {
+                    throw new Exception("No Internet connection!");
+                }
+            }
+            List<ApiFile> toDownload = new List<ApiFile>();
+            List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
+            if (!File.Exists("updates/SHAs.txt"))
+            {
+                Directory.CreateDirectory("updates");
+                toDownload.AddRange(apiFromGit);
+            }
+
+            if (File.Exists("updates/SHAs.txt"))
+            {
+                List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
+                foreach (ApiFile file in apiFromGit)
+                {
+                    if (local.FirstOrDefault(x => x.name == file.name)==null || file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
+                    {
+                        toDownload.Add(file);
+                    }
+                }
+                foreach (ApiFile f in local)
+                {
+                    if (apiFromGit.FirstOrDefault(x => x.name == f.name) == null || f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
+                    {
+                        if (File.Exists("cdb/" + f.name))
+                        {
+                            File.Delete("cdb/" + f.name);
+                        }
+                        if (File.Exists("config/" + f.name))
+                        {
+                            File.Delete("config/" + f.name);
+                        }
+
+                    }
+                }
+            }
+            HttpDldFile httpDldFile = new HttpDldFile();
+            foreach (var dl in toDownload)
+            {
+                if (Path.GetExtension(dl.name) == ".cdb" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                {
+                    httpDldFile.Download(dl.download_url, Path.Combine("cdb/", dl.name));
+                }
+                if (Path.GetExtension(dl.name) == ".conf" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                {
+                    httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
+                }
+            }
+            File.WriteAllText("updates/SHAs.txt", w.text);
+        }
+        catch (Exception e)
+        {
+            File.Delete("updates/SHAs.txt");
+        }
+    }
     public GameObject mouseParticle;
 
     static int lastChargeTime = 0;
@@ -727,6 +802,7 @@ public class Program : MonoBehaviour
     public DeckManager deckManager;
     public Ocgcore ocgcore;
     public SelectServer selectServer;
+    public RoomList roomList;
     public Book book;
     public puzzleMode puzzleMode;
     public AIRoom aiRoom;
@@ -748,6 +824,8 @@ public class Program : MonoBehaviour
         servants.Add(ocgcore);
         selectServer = new SelectServer();
         servants.Add(selectServer);
+        roomList = new RoomList();
+        servants.Add(roomList);
         book = new Book();
         servants.Add(book);
         selectReplay = new selectReplay();
@@ -804,6 +882,10 @@ public class Program : MonoBehaviour
         {
             aiRoom.hide();
         }
+        if(to != roomList && to != selectServer && roomList.isShowed)
+        {
+            roomList.hide();
+        }
 
         if (to == backGroundPic && backGroundPic.isShowed == false) backGroundPic.show();
         if (to == menu && menu.isShowed == false) menu.show();
@@ -816,6 +898,7 @@ public class Program : MonoBehaviour
         if (to == selectReplay && selectReplay.isShowed == false) selectReplay.show();
         if (to == puzzleMode && puzzleMode.isShowed == false) puzzleMode.show();
         if (to == aiRoom && aiRoom.isShowed == false) aiRoom.show();
+        if (to == roomList && !roomList.isShowed) roomList.show();
 
     }
 
@@ -829,7 +912,8 @@ public class Program : MonoBehaviour
         {
             Screen.SetResolution(1300, 700, false);
         }
-        Application.targetFrameRate = 120;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 144;
         mouseParticle = Instantiate(new_mouse);
         instance = this;
         initialize();
@@ -939,6 +1023,7 @@ public class Program : MonoBehaviour
     void gameStart()
     {
         backGroundPic.show();
+        bgm = gameObject.AddComponent<BGMController>();
         shiftToServant(menu);
     }
 

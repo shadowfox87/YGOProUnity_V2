@@ -6,19 +6,19 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 public static class UIHelper
 {
-    [DllImport("user32.dll")]
+    [DllImport("user32")]
     static extern bool FlashWindow(IntPtr handle, bool invert);
 
     public delegate bool WNDENUMPROC(IntPtr hwnd, uint lParam);
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32", SetLastError = true)]
     static extern bool EnumWindows(WNDENUMPROC lpEnumFunc, uint lParam);
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32", SetLastError = true)]
     static extern IntPtr GetParent(IntPtr hWnd);
-    [DllImport("user32.dll")]
+    [DllImport("user32")]
     static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref uint lpdwProcessId);
 
-    [DllImport("kernel32.dll")]
+    [DllImport("kernel32")]
     static extern void SetLastError(uint dwErrCode);
 
     static IntPtr GetProcessWnd()
@@ -50,7 +50,7 @@ public static class UIHelper
 
     public static void Flash()
     {
-        FlashWindow(GetProcessWnd(),true);
+        FlashWindow(GetProcessWnd(), true);
     }
 
     public enum RenderingMode
@@ -104,7 +104,7 @@ public static class UIHelper
         }
     }
 
-    internal static void registEvent(UIButton btn, Action function) 
+    internal static void registEvent(UIButton btn, Action function)
     {
         if (btn != null)
         {
@@ -120,9 +120,9 @@ public static class UIHelper
         }
     }
 
-    internal static Texture2D[] sliceField(Texture2D textureField_) 
+    internal static Texture2D[] sliceField(Texture2D textureField_)
     {
-        Texture2D textureField = ScaleTexture(textureField_,1024,819);
+        Texture2D textureField = ScaleTexture(textureField_, 1024, 819);
         Texture2D[] returnValue = new Texture2D[3];
         returnValue[0] = new Texture2D(textureField.width, textureField.height);
         returnValue[1] = new Texture2D(textureField.width, textureField.height);
@@ -193,7 +193,7 @@ public static class UIHelper
         return ptrFileName;
     }
 
-    public static T getByName<T>(GameObject father,string name) where T:Component
+    public static T getByName<T>(GameObject father, string name) where T : Component
     {
         T return_value = null;
         var all = father.transform.GetComponentsInChildren<T>();
@@ -209,7 +209,7 @@ public static class UIHelper
 
     public static void InterGameObject(GameObject father)
     {
-        var all = father.transform.GetComponentsInChildren<UILabel>();  
+        var all = father.transform.GetComponentsInChildren<UILabel>();
         for (int i = 0; i < all.Length; i++)
         {
             if ((all[i].name.Length > 1 && all[i].name[0] == '!') || all[i].name == "yes_" || all[i].name == "no_")
@@ -217,7 +217,7 @@ public static class UIHelper
                 all[i].text = InterString.Get(all[i].text);
             }
         }
-    } 
+    }
 
     public static GameObject getByName(GameObject father, string name)
     {
@@ -245,7 +245,7 @@ public static class UIHelper
         var all = father.transform.GetComponentsInChildren<UILabel>();
         for (int i = 0; i < all.Length; i++)
         {
-            if (all[i].name == name 
+            if (all[i].name == name
                 ||
                 (all[i].transform.parent != null && all[i].transform.parent.name == name)
                 ||
@@ -298,7 +298,7 @@ public static class UIHelper
         }
         else
         {
-            Program.DEBUGLOG("NO Lable"+ name);
+            Program.DEBUGLOG("NO Lable" + name);
         }
     }
 
@@ -313,12 +313,12 @@ public static class UIHelper
         return "";
     }
 
-    public static string[] Split(this string str,string s)
+    public static string[] Split(this string str, string s)
     {
         return str.Split(new string[] { s }, StringSplitOptions.RemoveEmptyEntries);
     }
 
-    public static void registEvent(GameObject father, string name, Action<GameObject, Servant.messageSystemValue> function, Servant.messageSystemValue value,string name2="")
+    public static void registEvent(GameObject father, string name, Action<GameObject, Servant.messageSystemValue> function, Servant.messageSystemValue value, string name2 = "")
     {
         UIInput input = getByName<UIInput>(father, name);
         if (input != null)
@@ -377,7 +377,7 @@ public static class UIHelper
 
     public static void registEvent(GameObject father, string name, Action function)
     {
-        UISlider slider = getByName<UISlider>(father, name);    
+        UISlider slider = getByName<UISlider>(father, name);
         if (slider != null)
         {
             MonoDelegate d = slider.gameObject.GetComponent<MonoDelegate>();
@@ -499,7 +499,7 @@ public static class UIHelper
     internal static Vector2 get_hang_lieArry(int v, int[] hangshu)
     {
         Vector2 return_value = Vector2.zero;
-        for (int i = 0; i < 4; i++) 
+        for (int i = 0; i < 4; i++)
         {
             if (v < hangshu[i])
             {
@@ -608,7 +608,7 @@ public static class UIHelper
         {
             gameObject.GetComponentInChildren<UILabel>().text = p;
         }
-        catch (Exception)   
+        catch (Exception)
         {
         }
     }
@@ -618,7 +618,7 @@ public static class UIHelper
         registEvent(gameObject, gameObject.name, act);
     }
 
-    internal static void trySetLableTextList(GameObject father,string text)
+    internal static void trySetLableTextList(GameObject father, string text)
     {
         try
         {
@@ -649,7 +649,7 @@ public static class UIHelper
     internal static void clearITWeen(GameObject gameObject)
     {
         iTween[] iTweens = gameObject.GetComponents<iTween>();
-        for (int i=0;i< iTweens.Length;i++)
+        for (int i = 0; i < iTweens.Length; i++)
         {
             MonoBehaviour.DestroyImmediate(iTweens[i]);
         }
@@ -667,7 +667,7 @@ public static class UIHelper
         {
             return_value = left + (right - left) * (float)i / ((float)(count - 1));
         }
-        return return_value; 
+        return return_value;
     }
 
     internal static float get_left_right_indexZuo(float v1, float v2, int v3, int count, int v4)
@@ -775,17 +775,33 @@ public static class UIHelper
                 return re;
             }
         }
-        byte[] buffer= System.Text.Encoding.UTF8.GetBytes(name);
+        else
+        if (name.Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
+        {
+            HttpDldFile httpDldFile = new HttpDldFile();
+            if(!File.Exists("texture/face/" + name + ".png"))
+            {
+                httpDldFile.Download("https://raw.githubusercontent.com/szefo09/face/master/" + name + ".png", "texture/face/" + name + ".png");
+            }
+            if (File.Exists("texture/face/" + name + ".png"))
+            {
+                Texture2D face = UIHelper.getTexture2D("texture/face/" + name + ".png");
+                faces.Add(name, face);
+                return face;
+            }
+        }
+        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(name);
         int sum = 0;
-        for (int i=0;i< buffer.Length;i++)
+        for (int i = 0; i < buffer.Length; i++)
         {
             sum += buffer[i];
         }
         sum = sum % 100;
+        faces.Add(name, Program.I().face.faces[sum]);
         return Program.I().face.faces[sum];
     }
 
-    public static Texture2D getTexture2D(string path) 
+    public static Texture2D getTexture2D(string path)
     {
         Texture2D pic = null;
         try
@@ -812,7 +828,7 @@ public static class UIHelper
     }
 
 
-    internal static void shiftButton(UIButton btn,bool enabled)
+    internal static void shiftButton(UIButton btn, bool enabled)
     {
         if (enabled)
         {
@@ -842,7 +858,7 @@ public static class UIHelper
         //}
     }
 
-    internal static void shiftUIToggle(UIToggle tog, bool canClick,bool canChange, string hint)      
+    internal static void shiftUIToggle(UIToggle tog, bool canClick, bool canChange, string hint)
     {
         try
         {
@@ -853,7 +869,7 @@ public static class UIHelper
             boxCollider.enabled = canClick;
             if (canClick)
             {
-                getByName<UISprite>(tog.gameObject, "Background").color= Color.white;
+                getByName<UISprite>(tog.gameObject, "Background").color = Color.white;
                 //getByName<UISprite>(tog.gameObject, "Checkmark").color = Color.white;
             }
             else
@@ -870,7 +886,7 @@ public static class UIHelper
     internal static string getBufferString(byte[] buffer)
     {
         string returnValue = "";
-        foreach (var item in buffer)    
+        foreach (var item in buffer)
         {
             returnValue += ((int)item).ToString() + ".";
         }
@@ -886,7 +902,7 @@ public static class UIHelper
         return s == "1";
     }
 
-    internal static string  fromBoolToString(bool s)
+    internal static string fromBoolToString(bool s)
     {
         if (s)
         {
@@ -905,7 +921,7 @@ public static class UIHelper
     }
 
 
-    public static int CompareTime(object x, object y)   
+    public static int CompareTime(object x, object y)
     {
         if (x == null && y == null)
         {
@@ -924,7 +940,7 @@ public static class UIHelper
         return yInfo.LastWriteTime.CompareTo(xInfo.LastWriteTime);
     }
 
-    public static int CompareName(object x, object y)   
+    public static int CompareName(object x, object y)
     {
         if (x == null && y == null)
         {
@@ -943,9 +959,9 @@ public static class UIHelper
         return xInfo.FullName.CompareTo(yInfo.FullName);
     }
 
-    internal static void playSound(string p, float val) 
+    internal static void playSound(string p, float val)
     {
-        if (Ocgcore.inSkiping) 
+        if (Ocgcore.inSkiping)
         {
             return;
         }
@@ -963,10 +979,10 @@ public static class UIHelper
             return;
         }
         path = Environment.CurrentDirectory.Replace("\\", "/") + "/" + path;
-        path = "file:///" + path;
+        path = new Uri(new Uri("file:///"), path).ToString();
         GameObject audio_helper = Program.I().ocgcore.create_s(Program.I().mod_audio_effect);
         audio_helper.GetComponent<audio_helper>().play(path, Program.I().setting.soundValue());
-        Program.I().destroy(audio_helper,5f);
+        Program.I().destroy(audio_helper, 5f);
     }
 
     internal static string getGPSstringLocation(GPS p1)
@@ -1068,24 +1084,24 @@ public static class UIHelper
         return res;
     }
 
-    internal static string getSuperName(string name,int code)
+    internal static string getSuperName(string name, int code)
     {
         string res = "";
         res = "[url=" + code.ToString() + "][u]" + name + "[/u][/url]";
         return res;
     }
 
-    internal static string getDName(string name, int code)  
+    internal static string getDName(string name, int code)
     {
         string res = "";
         res = "「[url=" + code.ToString() + "][u]" + name + "[/u][/url]」";
         return res;
     }
 
-    internal static float getScreenDistance(GameObject a,GameObject b)
+    internal static float getScreenDistance(GameObject a, GameObject b)
     {
-        Vector3 sa = Program.camera_game_main.WorldToScreenPoint(a.transform.position);sa.z = 0;
-        Vector3 sb = Program.camera_game_main.WorldToScreenPoint(b.transform.position);sb.z = 0;
+        Vector3 sa = Program.camera_game_main.WorldToScreenPoint(a.transform.position); sa.z = 0;
+        Vector3 sb = Program.camera_game_main.WorldToScreenPoint(b.transform.position); sb.z = 0;
         return Vector3.Distance(sa, sb);
     }
 
