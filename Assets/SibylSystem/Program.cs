@@ -1035,8 +1035,7 @@ public class Program : MonoBehaviour
     void OnApplicationQuit()
     {
         TcpHelper.SaveRecord();
-        cardDescription.save();
-        setting.saveWhenQuit();
+        SaveConfig();
         for (int i = 0; i < servants.Count; i++)
         {
             servants[i].OnQuit();
@@ -1056,6 +1055,13 @@ public class Program : MonoBehaviour
     public void quit()
     {
         OnApplicationQuit();
+    }
+
+    public void SaveConfig()
+    {
+        cardDescription.save();
+        setting.save();
+        setting.saveWhenQuit();
     }
 
     #endregion
