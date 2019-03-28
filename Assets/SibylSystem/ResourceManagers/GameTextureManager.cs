@@ -712,6 +712,10 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
+            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            {
+                loadedList.Add(hashPic(pic.code, pic.type), pic);
+            }
 #endif
             }
             else
