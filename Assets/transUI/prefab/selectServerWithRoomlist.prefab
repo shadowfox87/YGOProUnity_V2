@@ -4014,6 +4014,7 @@ MonoBehaviour:
   items:
   - '[TCG+OCG]Szefo'
   - '[TCG]Koishi'
+  - '[OCG]Koishi'
   - '[OCG]Mercury233'
   - Custom
   padding: {x: 4, y: 4}
@@ -4603,7 +4604,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: 0x1348
+  mText: 0x1349
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 1

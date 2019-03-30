@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -41,7 +40,7 @@ public class SelectServer : WindowServantSP
         inputPsw = UIHelper.getByName<UIInput>(gameObject, "psw_");
         inputPsw.defaultText = "";
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
-        inputVersion.defaultText = "0x1348";
+        inputVersion.defaultText = "0x1349";
         SetActiveFalse();
     }
     private void pickServer()
@@ -56,7 +55,7 @@ public class SelectServer : WindowServantSP
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "szefoserver.ddns.net";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
                     Config.Set("serversPicker", "[TCG+OCG]Szefo");
                     break;
                 }
@@ -64,7 +63,7 @@ public class SelectServer : WindowServantSP
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "1311";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
                     Config.Set("serversPicker", "[TCG]Koishi");
                     break;
                 }
@@ -72,7 +71,7 @@ public class SelectServer : WindowServantSP
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
                     Config.Set("serversPicker", "[OCG]Koishi");
                     break;
                 }
@@ -80,7 +79,7 @@ public class SelectServer : WindowServantSP
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "s1.ygo233.com";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "23333";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
+                    UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
                     Config.Set("serversPicker", "[OCG]Mercury233");
                     break;
                 }
@@ -136,8 +135,8 @@ public class SelectServer : WindowServantSP
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
         if (versionString == "")
         {
-            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
-            versionString = "0x1348";
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
+            versionString = "0x1349";
         }
         KF_onlineGame(Name, ipString, portString, versionString, pswString);
     }
@@ -154,8 +153,8 @@ public class SelectServer : WindowServantSP
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
         if (versionString == "")
         {
-            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
-            versionString = "0x1348";
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
+            versionString = "0x1349";
         }
         KF_onlineGame(Name, ipString, portString, versionString, pswString);
     }
@@ -275,8 +274,8 @@ public class SelectServer : WindowServantSP
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
         if (versionString == "")
         {
-            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1348";
-            versionString = "0x1348";
+            UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
+            versionString = "0x1349";
         }
         KF_onlineGame(Name, ipString, portString, versionString, pswString);
 

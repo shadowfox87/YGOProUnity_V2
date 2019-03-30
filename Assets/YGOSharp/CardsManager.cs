@@ -4,9 +4,7 @@ using Mono.Data.Sqlite;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Assets.YGOSharp;
 using System.Linq;
-using Assets.YGOSharp.Extensions;
 
 namespace YGOSharp
 {
@@ -22,7 +20,7 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 \nOCGCORE 0x1348";
+            nullString += "YGOPro2 \nOCGCORE 0x1349";
             nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
             nullString += "English translation done by AntiMetaman.";
