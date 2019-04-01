@@ -5,6 +5,8 @@ using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using System.Linq;
+using Assets.YGOSharp;
+using Assets.YGOSharp.Extensions;
 
 namespace YGOSharp
 {
