@@ -286,13 +286,13 @@ public class Program : MonoBehaviour
             servants.Add(backGroundPic);
             backGroundPic.fixScreenProblem();
         });
-        UpdateClient();
         go(300, () =>
         {
             InterString.initialize("config/translation.conf");
             InterString.initialize("config" + AppLanguage.LanguageDir() + "/translation.conf");   //System Language
             GameTextureManager.initialize();
             Config.initialize("config/config.conf");
+            UpdateClient();
             GameStringManager.initialize("config/strings.conf");
             if (File.Exists("config/strings.conf"))
             {
@@ -358,67 +358,70 @@ public class Program : MonoBehaviour
 
     private void UpdateClient()
     {
-        try
+        if(UIHelper.fromStringToBool(Config.Get("autoUpdateDownload_", "1")))
         {
-            WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
-            while (!w.isDone)
+            try
             {
-                if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(w.error))
+                WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
+                while (!w.isDone)
                 {
-                    throw new Exception("No Internet connection!");
-                }
-            }
-            List<ApiFile> toDownload = new List<ApiFile>();
-            List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
-            if (!File.Exists("updates/SHAs.txt"))
-            {
-                Directory.CreateDirectory("updates");
-                toDownload.AddRange(apiFromGit);
-            }
-
-            if (File.Exists("updates/SHAs.txt"))
-            {
-                List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
-                foreach (ApiFile file in apiFromGit)
-                {
-                    if (local.FirstOrDefault(x => x.name == file.name)==null || file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
+                    if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(w.error))
                     {
-                        toDownload.Add(file);
+                        throw new Exception("No Internet connection!");
                     }
                 }
-                foreach (ApiFile f in local)
+                List<ApiFile> toDownload = new List<ApiFile>();
+                List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
+                if (!File.Exists("updates/SHAs.txt"))
                 {
-                    if (apiFromGit.FirstOrDefault(x => x.name == f.name) == null || f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
-                    {
-                        if (File.Exists("cdb/" + f.name))
-                        {
-                            File.Delete("cdb/" + f.name);
-                        }
-                        if (File.Exists("config/" + f.name))
-                        {
-                            File.Delete("config/" + f.name);
-                        }
+                    Directory.CreateDirectory("updates");
+                    toDownload.AddRange(apiFromGit);
+                }
 
+                if (File.Exists("updates/SHAs.txt"))
+                {
+                    List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
+                    foreach (ApiFile file in apiFromGit)
+                    {
+                        if (local.FirstOrDefault(x => x.name == file.name) == null || file.sha != local.FirstOrDefault(x => x.name == file.name).sha)
+                        {
+                            toDownload.Add(file);
+                        }
+                    }
+                    foreach (ApiFile f in local)
+                    {
+                        if (apiFromGit.FirstOrDefault(x => x.name == f.name) == null || f.name != apiFromGit.FirstOrDefault(x => x.name == f.name).name)
+                        {
+                            if (File.Exists("cdb/" + f.name))
+                            {
+                                File.Delete("cdb/" + f.name);
+                            }
+                            if (File.Exists("config/" + f.name))
+                            {
+                                File.Delete("config/" + f.name);
+                            }
+
+                        }
                     }
                 }
+                HttpDldFile httpDldFile = new HttpDldFile();
+                foreach (var dl in toDownload)
+                {
+                    if (Path.GetExtension(dl.name) == ".cdb" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                    {
+                        httpDldFile.Download(dl.download_url, Path.Combine("cdb/", dl.name));
+                    }
+                    if (Path.GetExtension(dl.name) == ".conf" && !(Application.internetReachability == NetworkReachability.NotReachable))
+                    {
+                        httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
+                    }
+                }
+                File.WriteAllText("updates/SHAs.txt", w.text);
             }
-            HttpDldFile httpDldFile = new HttpDldFile();
-            foreach (var dl in toDownload)
+            catch (Exception e)
             {
-                if (Path.GetExtension(dl.name) == ".cdb" && !(Application.internetReachability == NetworkReachability.NotReachable))
-                {
-                    httpDldFile.Download(dl.download_url, Path.Combine("cdb/", dl.name));
-                }
-                if (Path.GetExtension(dl.name) == ".conf" && !(Application.internetReachability == NetworkReachability.NotReachable))
-                {
-                    httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
-                }
+                File.Delete("updates/SHAs.txt");
             }
-            File.WriteAllText("updates/SHAs.txt", w.text);
-        }
-        catch (Exception e)
-        {
-            File.Delete("updates/SHAs.txt");
         }
     }
     public GameObject mouseParticle;
