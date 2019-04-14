@@ -303,8 +303,32 @@ public class Program : MonoBehaviour
                 GameStringManager.initialize("expansions/strings.conf");
             }
             YGOSharp.BanlistManager.initialize("config/lflist.conf");
+            if (File.Exists("expansions/lflist.conf"))
+            {
+                YGOSharp.BanlistManager.initialize("expansions/lflist.conf");
+            }
+            FileInfo[] fileInfos;
+            if (Directory.Exists("expansions"))
+            {
+                fileInfos = (new DirectoryInfo("expansions")).GetFiles().Where(x => x.Extension == ".cdb").OrderBy(x => x.Name).ToArray();
+                if (Directory.Exists("expansions" + AppLanguage.LanguageDir()))
+                {
 
-            FileInfo[] fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray(); //load cards.cdb last this way
+                    fileInfos = (new DirectoryInfo("expansions" + AppLanguage.LanguageDir())).GetFiles().Where(x => x.Extension == ".cdb").OrderBy(x => x.Name).ToArray();
+                }
+                for (int i = 0; i < fileInfos.Length; i++)
+                {
+                    if (fileInfos[i].Name.Length > 4)
+                    {
+                        if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
+                        {
+                            YGOSharp.CardsManager.initialize("expansions/" + fileInfos[i].Name);
+                            YGOSharp.CardsManager.initialize("expansions" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
+                        }
+                    }
+                }
+            }
+            fileInfos = (new DirectoryInfo("cdb")).GetFiles().OrderByDescending(x => x.Name).ToArray();
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 4)
@@ -316,25 +340,6 @@ public class Program : MonoBehaviour
                     }
                 }
             }
-
-            if (Directory.Exists("expansions"))
-                if (Directory.Exists("expansions" + AppLanguage.LanguageDir()))
-                {
-                    fileInfos = (new DirectoryInfo("expansions")).GetFiles().OrderByDescending(x => x.Name).ToArray(); ;
-                    fileInfos = (new DirectoryInfo("expansions" + AppLanguage.LanguageDir())).GetFiles();
-                    for (int i = 0; i < fileInfos.Length; i++)
-                    {
-                        if (fileInfos[i].Name.Length > 4)
-                        {
-                            if (fileInfos[i].Name.Substring(fileInfos[i].Name.Length - 4, 4) == ".cdb")
-                            {
-                                YGOSharp.CardsManager.initialize("expansions/" + fileInfos[i].Name);
-                                YGOSharp.CardsManager.initialize("expansions" + AppLanguage.LanguageDir() + "/" + fileInfos[i].Name);
-                            }
-                        }
-                    }
-                }
-
 
             fileInfos = (new DirectoryInfo("pack")).GetFiles();
             fileInfos = (new DirectoryInfo("pack" + AppLanguage.LanguageDir())).GetFiles();
@@ -358,7 +363,7 @@ public class Program : MonoBehaviour
 
     private void UpdateClient()
     {
-        if(UIHelper.fromStringToBool(Config.Get("autoUpdateDownload_", "1")))
+        if (UIHelper.fromStringToBool(Config.Get("autoUpdateDownload_", "1")))
         {
             try
             {
@@ -885,7 +890,7 @@ public class Program : MonoBehaviour
         {
             aiRoom.hide();
         }
-        if(to != roomList && to != selectServer && roomList.isShowed)
+        if (to != roomList && to != selectServer && roomList.isShowed)
         {
             roomList.hide();
         }
@@ -939,7 +944,7 @@ public class Program : MonoBehaviour
 
     void Update()
     {
-       
+
         if (preWid != Screen.width || preheight != Screen.height)
         {
             Resources.UnloadUnusedAssets();

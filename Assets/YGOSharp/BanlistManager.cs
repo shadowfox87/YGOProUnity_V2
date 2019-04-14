@@ -9,7 +9,10 @@ namespace YGOSharp
 
         public static void initialize(string fileName)
         {
-            Banlists = new List<Banlist>();
+            if (Banlists == null)
+            {
+                Banlists = new List<Banlist>();
+            }
             Banlist current = null;
             StreamReader reader = new StreamReader(fileName);
             while (!reader.EndOfStream)
