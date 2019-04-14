@@ -60,11 +60,12 @@ public class Setting : WindowServant2D
         UIHelper.registEvent(gameObject, "handmPosition_", save);
         UIHelper.registEvent(gameObject, "spyer_", save);
         UIHelper.registEvent(gameObject, "high_", save);
+        UIHelper.registEvent(gameObject, "longField_", onChangeLongField);
         UIHelper.registEvent(gameObject, "size_", onChangeSize);
-        UIHelper.registEvent(gameObject, "alpha_", onChangeAlpha);
+        //UIHelper.registEvent(gameObject, "alpha_", onChangeAlpha);
         UIHelper.registEvent(gameObject, "vSize_", onChangeVsize);
         sliderSize = UIHelper.getByName<UISlider>(gameObject, "size_");
-        sliderAlpha = UIHelper.getByName<UISlider>(gameObject, "alpha_");
+        //sliderAlpha = UIHelper.getByName<UISlider>(gameObject, "alpha_");
         sliderVsize = UIHelper.getByName<UISlider>(gameObject, "vSize_");
         Program.go(2000, readVales);
         var collection = gameObject.GetComponentsInChildren<UIToggle>();
@@ -94,6 +95,7 @@ public class Setting : WindowServant2D
         UIHelper.registEvent(setting.Vlink.gameObject, onCP);
         onchangeMouse();
         onchangeCloud();
+        setScreenSizeValue();
     }
 
     private void batterySavingMode()
@@ -146,7 +148,7 @@ public class Setting : WindowServant2D
             setting.sliderVolum.forceValue(((float)(int.Parse(Config.Get("vol_", "750")))) / 1000f);
             setting.sliderSize.forceValue(((float)(int.Parse(Config.Get("size_", "500")))) / 1000f);
             setting.sliderSizeDrawing.forceValue(((float)(int.Parse(Config.Get("vSize_", "500")))) / 1000f);
-            setting.sliderAlpha.forceValue(((float)(int.Parse(Config.Get("alpha_", "666")))) / 1000f);
+            //setting.sliderAlpha.forceValue(((float)(int.Parse(Config.Get("alpha_", "666")))) / 1000f);
             onChangeAlpha();
             onChangeSize();
         }
@@ -164,6 +166,14 @@ public class Setting : WindowServant2D
     public void onchangeMouse()
     {
         Program.I().mouseParticle.SetActive(setting.mouseEffect.value);
+    }
+
+    //private int dontResizeTwice = 2;
+
+    public void setScreenSizeValue()
+    {
+        //dontResizeTwice = 3;
+        UIHelper.getByName<UIPopupList>(gameObject, "screen_").value = Screen.width.ToString() + "*" + Screen.height.ToString();
     }
 
     void onCP()
@@ -227,8 +237,14 @@ public class Setting : WindowServant2D
         {
             Program.transparency = 1.5f * sliderAlpha.value;
         }
+        Program.transparency = 1f;
     }
 
+    void onChangeLongField()
+    {
+        Program.longField = UIHelper.getByName<UIToggle>(gameObject, "longField_").value;
+        onCP();
+    }
 
     UISlider sliderVsize;
     void onChangeVsize()
@@ -266,6 +282,14 @@ public class Setting : WindowServant2D
 
     void resizeScreen()
     {
+        //if (dontResizeTwice > 0)
+        //{
+        //    dontResizeTwice--;
+        //    return;
+        //}
+        //dontResizeTwice = 2;
+        if (UIHelper.isMaximized())
+            UIHelper.RestoreWindow();
         string[] mats = UIHelper.getByName<UIPopupList>(gameObject, "screen_").value.Split(new string[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
         if (mats.Length == 2)
         {
@@ -281,7 +305,8 @@ public class Setting : WindowServant2D
         Config.Set("vol_", ((int)(UIHelper.getByName<UISlider>(gameObject, "vol_").value * 1000)).ToString());
         Config.Set("size_", ((int)(UIHelper.getByName<UISlider>(gameObject, "size_").value * 1000)).ToString());
         Config.Set("vSize_", ((int)(UIHelper.getByName<UISlider>(gameObject, "vSize_").value * 1000)).ToString());
-        Config.Set("alpha_", ((int)(UIHelper.getByName<UISlider>(gameObject, "alpha_").value * 1000)).ToString());
+        //Config.Set("alpha_", ((int)(UIHelper.getByName<UISlider>(gameObject, "alpha_").value * 1000)).ToString());
+        Config.Set("longField_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "longField_").value));
         var collection = gameObject.GetComponentsInChildren<UIToggle>();
         for (int i = 0; i < collection.Length; i++)
         {
@@ -294,6 +319,7 @@ public class Setting : WindowServant2D
         Config.Set("muteBGMAudio", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "muteBGM").value));
         Config.Set("showoffStar", setting.showoffStar.value.ToString());
         Config.Set("resize_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "resize_").value));
+        Config.Set("maximize_", UIHelper.fromBoolToString(UIHelper.isMaximized()));
     }
 
     public void save()

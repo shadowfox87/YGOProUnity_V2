@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using YGOSharp;
+using YGOSharp.OCGWrapper.Enums;
 
 public class GameStringHelper
 {
@@ -149,27 +151,27 @@ public class GameStringHelper
         {
         }
 
-        if (differ(card.Attribute,(int)game_attributes.ATTRIBUTE_EARTH))     
+        if (differ(card.Attribute, (int)CardAttribute.Earth))     
         {
             re = "[F4A460]" + re + "[-]";
         }
-        if (differ(card.Attribute, (int)game_attributes.ATTRIBUTE_WATER))
+        if (differ(card.Attribute, (int)CardAttribute.Water))
         {
             re = "[D1EEEE]" + re + "[-]";
         }
-        if (differ(card.Attribute, (int)game_attributes.ATTRIBUTE_FIRE))
+        if (differ(card.Attribute, (int)CardAttribute.Fire))
         {
             re = "[F08080]" + re + "[-]";
         }
-        if (differ(card.Attribute, (int)game_attributes.ATTRIBUTE_WIND))
+        if (differ(card.Attribute, (int)CardAttribute.Wind))
         {
             re = "[B3EE3A]" + re + "[-]";
         }
-        if (differ(card.Attribute, (int)game_attributes.ATTRIBUTE_LIGHT))
+        if (differ(card.Attribute, (int)CardAttribute.Light))
         {
             re = "[EEEE00]" + re + "[-]";
         }
-        if (differ(card.Attribute, (int)game_attributes.ATTRIBUTE_DARK))
+        if (differ(card.Attribute, (int)CardAttribute.Dark))
         {
             re = "[FF00FF]" + re + "[-]";
         }
@@ -182,9 +184,9 @@ public class GameStringHelper
         string re = "";
         try
         {
-            if (differ(card.Type, (long)game_type.TYPE_MONSTER)) re += "[ff8000]" + mainType(card.Type);
-            else if (differ(card.Type, (long)game_type.TYPE_SPELL)) re += "[7FFF00]" + mainType(card.Type);
-            else if (differ(card.Type, (long)game_type.TYPE_TRAP)) re += "[dda0dd]" + mainType(card.Type);
+            if (differ(card.Type, (long)CardType.Monster)) re += "[ff8000]" + mainType(card.Type);
+            else if (differ(card.Type, (long)CardType.Spell)) re += "[7FFF00]" + mainType(card.Type);
+            else if (differ(card.Type, (long)CardType.Trap)) re += "[dda0dd]" + mainType(card.Type);
             else re += "[ff8000]" + mainType(card.Type);
             re += "[-]";
         }
@@ -206,9 +208,9 @@ public class GameStringHelper
                 re += "[ff8000]";
                 re += "["+secondType(data.Type)+"]";
 
-                if ((data.Type & (int)game_type.link) == 0)
+                if ((data.Type & (int)CardType.Link) == 0)
                 {
-                    if ((data.Type & (int)game_type.TYPE_XYZ) > 0)
+                    if ((data.Type & (int)CardType.Xyz) > 0)
                     {
                         re += " " + race(data.Race) + fen + attribute(data.Attribute) + fen + data.Level.ToString() + "[sup]☆[/sup]";
                     }
@@ -251,7 +253,7 @@ public class GameStringHelper
                         re += "[sup]ATK[/sup]" + data.Attack.ToString() + "  ";
                     }
                 }
-                if ((data.Type & (int)game_type.link) == 0)
+                if ((data.Type & (int)CardType.Link) == 0)
                 {
                     if (data.Defense < 0)
                     {
@@ -326,12 +328,138 @@ public class GameStringHelper
         return re;
     }
 
+    public static string getSearchResult(YGOSharp.Card data)
+    {
+        string re = "";
+
+        try
+        {
+            if ((data.Type & 0x1) > 0)
+            {
+                re += "[ff8000]";
+
+                if ((data.Type & (int)CardType.Link) == 0)
+                {
+                    if ((data.Type & (int)CardType.Xyz) > 0)
+                    {
+                        re += race(data.Race) + fen + attribute(data.Attribute) + fen + data.Level.ToString() + "[sup]☆[/sup]";
+                    }
+                    else
+                    {
+                        re += race(data.Race) + fen + attribute(data.Attribute) + fen + data.Level.ToString() + "[sup]★[/sup]";
+                    }
+                }
+                else
+                {
+                    re += race(data.Race) + fen + attribute(data.Attribute);
+                }
+
+                if (data.LScale > 0) re += fen + data.LScale.ToString() + "[sup]P[/sup]";
+                re += "\n";
+                if (data.Attack < 0)
+                {
+                    re += "[sup]ATK[/sup]?  ";
+                }
+                else
+                {
+                    if (data.rAttack > 0)
+                    {
+                        int pos = data.Attack - data.rAttack;
+                        if (pos > 0)
+                        {
+                            re += "[sup]ATK[/sup]" + data.Attack.ToString() + "(↑" + pos.ToString() + ")  ";
+                        }
+                        if (pos < 0)
+                        {
+                            re += "[sup]ATK[/sup]" + data.Attack.ToString() + "(↓" + (-pos).ToString() + ")  ";
+                        }
+                        if (pos == 0)
+                        {
+                            re += "[sup]ATK[/sup]" + data.Attack.ToString() + "  ";
+                        }
+                    }
+                    else
+                    {
+                        re += "[sup]ATK[/sup]" + data.Attack.ToString() + "  ";
+                    }
+                }
+                if ((data.Type & (int)CardType.Link) == 0)
+                {
+                    if (data.Defense < 0)
+                    {
+                        re += "[sup]DEF[/sup]?";
+                    }
+                    else
+                    {
+                        if (data.rAttack > 0)
+                        {
+                            int pos = data.Defense - data.rDefense;
+                            if (pos > 0)
+                            {
+                                re += "[sup]DEF[/sup]" + data.Defense.ToString() + "(↑" + pos.ToString() + ")";
+                            }
+                            if (pos < 0)
+                            {
+                                re += "[sup]DEF[/sup]" + data.Defense.ToString() + "(↓" + (-pos).ToString() + ")";
+                            }
+                            if (pos == 0)
+                            {
+                                re += "[sup]DEF[/sup]" + data.Defense.ToString();
+                            }
+                        }
+                        else
+                        {
+                            re += "[sup]DEF[/sup]" + data.Defense.ToString();
+                        }
+                    }
+                }
+                else
+                {
+                    re += "[sup]LINK[/sup]" + data.Level.ToString();
+                }
+            }
+            else if ((data.Type & 0x2) > 0)
+            {
+                re += "[7FFF00]";
+                re += secondType(data.Type);
+                if (data.LScale > 0) re += fen + data.LScale.ToString() + "[sup]P[/sup]";
+            }
+            else if ((data.Type & 0x4) > 0)
+            {
+                re += "[dda0dd]";
+                re += secondType(data.Type);
+            }
+            else
+            {
+                re += "[ff8000]";
+            }
+            if (data.Alias > 0)
+            {
+                if (data.Alias != data.Id)
+                {
+                    string name = YGOSharp.CardsManager.Get(data.Alias).Name;
+                    if (name != data.Name)
+                    {
+                        re += "\n[" + YGOSharp.CardsManager.Get(data.Alias).Name + "]";
+                    }
+                }
+            }
+            re += "[-]";
+        }
+        catch (Exception e)
+        {
+        }
+        return re;
+    }
+
     public static string getSetName(long Setcode)
     {
-        string returnValue = "";
+        var returnValue = new List<string>();
+        int lastBaseType = 0xfff;
         for (int i = 0; i < GameStringManager.xilies.Count; i++)
         {
-            if (YGOSharp.CardsManager.IfSetCard(GameStringManager.xilies[i].hashCode, Setcode))
+            int currentHash = GameStringManager.xilies[i].hashCode;
+            if (YGOSharp.CardsManager.IfSetCard(currentHash, Setcode))
             {
                 if (!returnValue.Contains(GameStringManager.xilies[i].content))
                 {
