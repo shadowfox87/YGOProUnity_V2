@@ -1746,7 +1746,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 174420}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 108, y: 0, z: 0}
+  m_LocalPosition: {x: 110, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 496774}
@@ -2136,7 +2136,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 310, z: 0}
+  m_Size: {x: 25, y: 310, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6592788
 BoxCollider:
@@ -2148,7 +2148,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 40.000008, z: 0}
+  m_Size: {x: 25, y: 40.000008, z: 0}
   m_Center: {x: 0, y: -56.970013, z: 0}
 --- !u!65 &6595604
 BoxCollider:
@@ -3733,7 +3733,7 @@ MonoBehaviour:
   anchorOffset: 0
   softBorderPadding: 1
   renderQueue: 0
-  startingRenderQueue: 3012
+  startingRenderQueue: 3011
   mClipTexture: {fileID: 2800000, guid: b1f30c8a0354cd94dade78759be28008, type: 3}
   mAlpha: 1
   mClipping: 1
@@ -3772,7 +3772,7 @@ MonoBehaviour:
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 0.27450982}
   mPivot: 4
-  mWidth: 10
+  mWidth: 25
   mHeight: 310
   mDepth: 12
   autoResizeBoxCollider: 1
@@ -3920,11 +3920,11 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 466302}
     relative: 1
-    absolute: -10
+    absolute: -15
   rightAnchor:
     target: {fileID: 466302}
     relative: 1
-    absolute: 0
+    absolute: 10
   bottomAnchor:
     target: {fileID: 466302}
     relative: 0
@@ -3936,13 +3936,13 @@ MonoBehaviour:
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 10
+  mWidth: 25
   mHeight: 310
   mDepth: 11
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 0.032258064
+  aspectRatio: 0.077419356
   mType: 0
   mFillDirection: 4
   mFillAmount: 1
@@ -4901,7 +4901,7 @@ MonoBehaviour:
   anchorOffset: 0
   softBorderPadding: 1
   renderQueue: 0
-  startingRenderQueue: 3011
+  startingRenderQueue: 3012
   mClipTexture: {fileID: 2800000, guid: b1f30c8a0354cd94dade78759be28008, type: 3}
   mAlpha: 1
   mClipping: 1
