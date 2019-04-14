@@ -34,12 +34,7 @@ public class HttpDldFile
                 //authorization needed to acces github
                 if (Path.GetExtension(filename).Contains("png"))
                 {
-                    client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
-                    client.Timeout = 6500;
-                }
-                if (Path.GetExtension(filename).Contains("jpg"))
-                {
-                    client.Timeout = 3500;
+                    //client.Headers.Add(HttpRequestHeader.Authorization, string.Concat("token ", RepoData.GetToken()));
                 }
                 client.DownloadFile(new Uri(url), filename + ".tmp");
             }
@@ -131,7 +126,7 @@ public class TimeoutWebClient : WebClient
 
     public TimeoutWebClient()
     {
-        Timeout = 10000;
+        Timeout = 20000;
     }
     public TimeoutWebClient(int timeout)
     {

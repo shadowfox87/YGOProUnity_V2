@@ -304,7 +304,7 @@ public class GameTextureManager
                             return;
                         }
                     }
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
                 });
             }
             else
@@ -664,7 +664,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCloseupDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("https://raw.githubusercontent.com/coccvo/YGOTCGOCGPicsNoBG/master/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
                 });
                 return;
             }
@@ -957,7 +957,7 @@ public class GameTextureManager
                             path = "picture/card/" + pic.code.ToString() + ".png";
                             if (!File.Exists(path) && pic.code != 0 && AutoPicDownload)
                             {
-                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                             }
                             break;
                         }
@@ -982,7 +982,7 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".png";
                 if (!File.Exists(path))
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 }
             }
 #endif
@@ -990,7 +990,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic,false);
 
                 });
                 return;
