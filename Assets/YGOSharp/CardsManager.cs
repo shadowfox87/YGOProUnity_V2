@@ -2,8 +2,11 @@
 using System.Data;
 using Mono.Data.Sqlite;
 using System;
-using System.IO;
 using System.Text.RegularExpressions;
+using UnityEngine;
+using Assets.YGOSharp;
+using System.Linq;
+using Assets.YGOSharp.Extensions;
 
 namespace YGOSharp
 {
@@ -19,12 +22,25 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "欢迎使用：\r\nYGOPro2 For Android";
+            nullString += "YGOPro2 Mobile\nOCGCORE 0x1349";
+            nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
+            nullString += "English translation done by AntiMetaman.";
+            nullString += "\r\n";
+            //if (File.Exists("config/link.conf"))
+            //{
+            nullString += "\r\n";
+            nullString += "[url=http://ygopro2.lofter.com/lisence][u]http://ygopro2.lofter.com/lisence[/u][/url]";
+            nullString += "\r\n\r\n";
+            nullString += "[url=https://duelistsunite.org/][u]Official english website.[/u][/url]\r\n";
+            nullString += "[url=https://discord.gg/NTd2vJJ][u]Official english discord.[/u][/url]\r\n";
+            //}
+            nullString += "\r\n\r\n";
+            //nullString += "\r\n[url=https://jq.qq.com/?_wv=1027&k=44aGRzz][u]428563714[/u][/url]";
             nullString += "源码：";
-			nullString += "\r\n「Android」\r\n[url=https://github.com/Unicorn369/YGOPro2_Droid][u]https://github.com/Unicorn369/YGOPro2_Droid[/u][/url]";
-			//nullString += "\r\nWindows：[url=https://github.com/lllyasviel/YGOProUnity_V2][u]https://github.com/lllyasviel/YGOProUnity_V2[/u][/url]";
-			nullString += "\r\n\r\n「Windows」\r\n[url=https://github.com/mercury233/ygopro2][u]https://github.com/mercury233/ygopro2[/u][/url]";
+            nullString += "\r\n「Android」\r\n[url=https://github.com/Unicorn369/YGOPro2_Droid][u]https://github.com/Unicorn369/YGOPro2_Droid[/u][/url]";
+            //nullString += "\r\nWindows：[url=https://github.com/lllyasviel/YGOProUnity_V2][u]https://github.com/lllyasviel/YGOProUnity_V2[/u][/url]";
+            nullString += "\r\n\r\n「Windows」\r\n[url=https://github.com/mercury233/ygopro2][u]https://github.com/mercury233/ygopro2[/u][/url]";
             using (SqliteConnection connection = new SqliteConnection("Data Source=" + databaseFullPath))
             {
                 connection.Open();
@@ -44,8 +60,20 @@ namespace YGOSharp
 
         internal static Card GetCard(int id)
         {
+
             if (_cards.ContainsKey(id))
+            {
                 return _cards[id].clone();
+            }
+            else if (id.ToString().Length >= 9)
+            {
+                int possibleOfficialID = GetOfficialID(id);
+                if (possibleOfficialID != 0)
+                {
+                    return _cards[possibleOfficialID].clone();
+                }
+            }
+
             return null;
         }
 
@@ -71,10 +99,76 @@ namespace YGOSharp
                 }
                 if (returnValue == null)
                 {
-                    returnValue = new Card();
+                    if (id.ToString().Length >= 9)
+                    {
+                        int possibleOfficialID = GetOfficialID(id);
+                        if (possibleOfficialID != 0)
+                        {
+                            returnValue = Get(possibleOfficialID);
+                        }
+                        else
+                        {
+                            returnValue = new Card();
+                        }
+                    }
+                    else
+                    {
+                        returnValue = new Card();
+                    }
+
                 }
             }
             return returnValue;
+        }
+        private static string WebsiteData;
+        static int GetOfficialID(int id)
+        {
+            if (!Program.I().setting.autoDeckUpdate)
+            {
+                return 0;
+            }
+            try
+            {
+                if (WebsiteData == null)
+                {
+                    WWW www = new WWW("http://eeriecode.altervista.org/tools/get_beta_cards.php");
+
+                    while (!www.isDone)
+                    {
+                        if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(www.error))
+                        {
+                            throw new Exception("No Internet connection!");
+                        }
+                    }
+                    if (www.error!=null)
+                    {
+                        Debug.Log(www.error);
+                        WebsiteData = " ";
+                    }
+                    else
+                    {
+                        WebsiteData = www.text;
+                        WebsiteData = "{\"betaToOfficialCards\":" + WebsiteData + "}";
+                    }
+                }
+
+                BetaToOfficialCardListObject betaToOfficialCards = JsonUtility.FromJson<BetaToOfficialCardListObject>(WebsiteData);
+                var card = betaToOfficialCards.betaToOfficialCards.FirstOrDefault(x => x.ucode == id.ToString());
+                if (card==null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    int newid = int.Parse(card.ocode,System.Globalization.NumberFormatInfo.InvariantInfo);
+                    return newid;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            return 0;
         }
 
         private static void LoadCard(IDataRecord reader)
@@ -108,41 +202,51 @@ namespace YGOSharp
             )
         {
             List<Card> returnValue = new List<Card>();
+            var temp = getTypeFilter;
+            if (temp >= 0x8000000)
+            {
+                getTypeFilter -= 0x8000000;
+            }
             foreach (var item in _cards)
             {
                 Card card = item.Value;
                 if ((card.Type & (uint)game_type.TYPE_TOKEN) == 0)
                 {
-                    if (getName == "" 
-                        || Regex.Replace(card.Name, getName,"miaowu", RegexOptions.IgnoreCase) != card.Name
+                    if (getName == ""
+                        || Regex.Replace(card.Name, getName, "miaowu", RegexOptions.IgnoreCase) != card.Name
                         || Regex.Replace(card.Desc, getName, "miaowu", RegexOptions.IgnoreCase) != card.Desc
                         || Regex.Replace(card.strSetName, getName, "miaowu", RegexOptions.IgnoreCase) != card.strSetName
                         || card.Id.ToString() == getName
                         )
                     {
-                        if (((card.Type & getTypeFilter)) == getTypeFilter || getTypeFilter == 0)
+                        bool[] BolleanArrayOfCardType = card.Type.ToBooleanArray();
+                        if ((temp >= 0x8000000 && ((BolleanArrayOfCardType.Count() >= 6 && !BolleanArrayOfCardType[BolleanArrayOfCardType.Count() - 6]) || BolleanArrayOfCardType.Count() < 6)) || temp <= 0x8000000)
                         {
-                            if ((card.Race & getRaceFilter) >0 || getRaceFilter == 0)
+
+                            if (((card.Type & getTypeFilter)) == getTypeFilter || getTypeFilter == 0)
                             {
-                                if ((card.Attribute & getAttributeFilter) > 0 || getAttributeFilter == 0)
+                                if ((card.Race & getRaceFilter) > 0 || getRaceFilter == 0)
                                 {
-                                    if (((card.Category & getCatagoryFilter))== getCatagoryFilter || getCatagoryFilter == 0)
+                                    if ((card.Attribute & getAttributeFilter) > 0 || getAttributeFilter == 0)
                                     {
-                                        if (judgeint(getAttack, getAttack_UP, card.Attack))
+                                        if (((card.Category & getCatagoryFilter)) == getCatagoryFilter || getCatagoryFilter == 0)
                                         {
-                                            if (judgeint(getDefence, getDefence_UP, card.Defense))
+                                            if (judgeint(getAttack, getAttack_UP, card.Attack))
                                             {
-                                                if (judgeint(getLevel, getLevel_UP, card.Level))
+                                                if (judgeint(getDefence, getDefence_UP, card.Defense))
                                                 {
-                                                    if (judgeint(getP, getP_UP, card.LScale))
+                                                    if (judgeint(getLevel, getLevel_UP, card.Level))
                                                     {
-                                                        if (judgeint(getYear, getYear_UP, card.year))
+                                                        if (judgeint(getP, getP_UP, card.LScale))
                                                         {
-                                                            if (getBAN == -233 || banlist == null || banlist.GetQuantity(card.Id) == getBAN)
+                                                            if (judgeint(getYear, getYear_UP, card.year))
                                                             {
-                                                                if (getPack == "" || card.packFullName == getPack)
+                                                                if (getBAN == -233 || banlist == null || banlist.GetQuantity(card.Id) == getBAN)
                                                                 {
-                                                                    returnValue.Add(card);
+                                                                    if (getPack == "" || card.packFullName == getPack)
+                                                                    {
+                                                                        returnValue.Add(card);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -203,7 +307,7 @@ namespace YGOSharp
                         || card.Id.ToString() == getName
                         )
                 {
-                    if (getsearchCode.Count == 0|| is_declarable(card, getsearchCode))
+                    if (getsearchCode.Count == 0 || is_declarable(card, getsearchCode))
                     {
                         returnValue.Add(card);
                     }
@@ -521,7 +625,7 @@ namespace YGOSharp
     {
         public class packName
         {
-           public string fullName;
+            public string fullName;
             public string shortName;
             public int year;
             public int month;
@@ -560,7 +664,7 @@ namespace YGOSharp
                                         c.day = int.Parse(mats[1]);
                                         c.year = int.Parse(mats[2]);
                                     }
-                                    if (!pacDic.ContainsKey(c.packFullName))    
+                                    if (!pacDic.ContainsKey(c.packFullName))
                                     {
                                         pacDic.Add(c.packFullName, c.packShortNam);
                                         packName p = new packName();

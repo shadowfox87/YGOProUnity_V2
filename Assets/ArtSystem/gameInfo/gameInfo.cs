@@ -126,7 +126,7 @@ public class gameInfo : MonoBehaviour
             height = 116;
         }
          width = (150 * kb) + 15f;
-        float localPositionPanX = (((float)Screen.width - 150 * kb) / 2) - 15f;
+        float localPositionPanX = (((float)Screen.width - 225 * kb) / 2) - 15f;
         float localPositionPanY = 0;
         float localPositionPanY_ = instance_btnPan.transform.localPosition.y + (localPositionPanY - instance_btnPan.transform.localPosition.y) * 0.2f;
         instance_btnPan.height += (int)(((float)height - (float)instance_btnPan.height) * 0.2f);

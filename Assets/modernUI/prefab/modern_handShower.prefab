@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - component: {fileID: 462578}
   - component: {fileID: 11451184}
-  m_Layer: 11
+  m_Layer: 10
   m_Name: modern_handShower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,9 +67,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 124728}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.35, y: 1.35, z: 1.13}
   m_Children:
   - {fileID: 465264}
   - {fileID: 460148}
@@ -104,8 +104,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  op: 0
-  me: 0
+  op: 1
+  me: 1
   texture_0: {fileID: 11462276}
   texture_1: {fileID: 11483434}
   GameObject_0: {fileID: 142742}

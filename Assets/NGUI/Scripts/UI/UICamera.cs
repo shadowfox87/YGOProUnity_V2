@@ -236,7 +236,7 @@ public class UICamera : MonoBehaviour
 	/// Whether the joystick and controller events will be processed.
 	/// </summary>
 
-	public bool useController = true;
+	public bool useController = false;
 
 	[System.Obsolete("Use new OnDragStart / OnDragOver / OnDragOut / OnDragEnd events instead")]
 	public bool stickyPress { get { return true; } }
@@ -1582,7 +1582,7 @@ public class UICamera : MonoBehaviour
 		mWidth = Screen.width;
 		mHeight = Screen.height;
 
-#if (UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_WP_8_1 || UNITY_BLACKBERRY || UNITY_WINRT || UNITY_METRO)
+#if (UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_WP_8_1 || UNITY_BLACKBERRY || UNITY_WINRT || UNITY_METRO)
 		currentScheme = ControlScheme.Touch;
 #else
 		if (Application.platform == RuntimePlatform.PS3 ||

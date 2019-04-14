@@ -602,7 +602,7 @@ public class UIPopupList : UIWidgetContainer
 			{
 				UIPlaySound snd = sounds[i];
 				if (snd.trigger == UIPlaySound.Trigger.OnClick)
-					NGUITools.PlaySound(snd.audioClip, snd.volume, 1f);
+					NGUITools.PlaySound(snd.audioClip, snd.volume,Program.I().setting.vol()/10);
 			}
 			CloseSelf();
 		}

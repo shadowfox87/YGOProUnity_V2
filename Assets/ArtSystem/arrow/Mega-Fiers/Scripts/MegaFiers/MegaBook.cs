@@ -64,7 +64,7 @@ public class MegaBook : MonoBehaviour
 		if ( bookalpha > 100.0f )
 			bookalpha = 100.0f;
 
-		if ( front.transform.GetChildCount() > 0 )
+		if ( front.transform.childCount > 0 )
 		{
 			Transform child = front.transform.GetChild(0);
 			if ( child != null )
@@ -75,7 +75,7 @@ public class MegaBook : MonoBehaviour
 			}
 		}
 
-		if ( back.transform.GetChildCount() > 0 )
+		if ( back.transform.childCount > 0 )
 		{
 			Transform child = back.transform.GetChild(0);
 			if ( child != null )

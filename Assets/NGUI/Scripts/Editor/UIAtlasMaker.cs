@@ -173,7 +173,7 @@ public class UIAtlasMaker : EditorWindow
 		int maxSize = SystemInfo.maxTextureSize;
 #endif
 
-#if UNITY_ANDROID || UNITY_IPHONE
+#if UNITY_ANDROID || UNITY_IOS
 		maxSize = Mathf.Min(maxSize, NGUISettings.allow4096 ? 4096 : 2048);
 #endif
 		if (NGUISettings.unityPacking)
@@ -875,7 +875,7 @@ public class UIAtlasMaker : EditorWindow
 			GUILayout.EndHorizontal();
 		}
 
-#if UNITY_IPHONE || UNITY_ANDROID
+#if UNITY_IOS || UNITY_ANDROID
 		GUILayout.BeginHorizontal();
 		NGUISettings.allow4096 = EditorGUILayout.Toggle("4096x4096", NGUISettings.allow4096, GUILayout.Width(100f));
 		GUILayout.Label("if off, limit atlases to 2048x2048");

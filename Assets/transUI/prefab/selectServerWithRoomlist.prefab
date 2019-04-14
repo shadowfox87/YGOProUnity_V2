@@ -1116,7 +1116,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 143810}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalPosition: {x: -307, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 409530}
@@ -1394,7 +1394,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 165716}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -310, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 410166}
@@ -1839,7 +1839,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 20, y: 20, z: 0}
+  m_Size: {x: 50, y: 50, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6545488
 BoxCollider:
@@ -2573,26 +2573,26 @@ MonoBehaviour:
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 3
   mWidth: 210
-  mHeight: 18
+  mHeight: 24
   mDepth: 11
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 11.666667
+  aspectRatio: 8.75
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: '[TCG&OCG]Szefoserver'
-  mFontSize: 18
+  mText: '[TCG&OCG]Szefo'
+  mFontSize: 24
   mFontStyle: 0
-  mAlignment: 0
+  mAlignment: 1
   mEncoding: 1
   mMaxLineCount: 1
   mEffectStyle: 1
   mEffectColor: {r: 0, g: 0, b: 0, a: 1}
   mSymbols: 1
   mEffectDistance: {x: 1, y: 1}
-  mOverflow: 0
+  mOverflow: 3
   mMaterial: {fileID: 0}
   mApplyGradient: 1
   mGradientTop: {r: 1, g: 1, b: 1, a: 1}
@@ -3517,24 +3517,24 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 410166}
     relative: 1
-    absolute: -39
+    absolute: -54
   rightAnchor:
     target: {fileID: 410166}
     relative: 1
-    absolute: -19
+    absolute: -4
   bottomAnchor:
     target: {fileID: 410166}
     relative: 1
-    absolute: -47
+    absolute: -62
   topAnchor:
     target: {fileID: 410166}
     relative: 1
-    absolute: -27
+    absolute: -12
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 20
-  mHeight: 20
+  mWidth: 50
+  mHeight: 50
   mDepth: 1
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
@@ -4005,15 +4005,16 @@ MonoBehaviour:
   atlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   bitmapFont: {fileID: 0}
   trueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
-  fontSize: 18
+  fontSize: 24
   fontStyle: 0
   backgroundSprite: Button
   highlightSprite: Button
   position: 0
   alignment: 1
   items:
-  - '[TCG+OCG]Szefoserver'
+  - '[TCG+OCG]Szefo'
   - '[TCG]Koishi'
+  - '[OCG]Koishi'
   - '[OCG]Mercury233'
   - Custom
   padding: {x: 4, y: 4}
@@ -4029,11 +4030,7 @@ MonoBehaviour:
     mMethodName: SetCurrentSelection
     mParameters: []
     oneShot: 0
-  - mTarget: {fileID: 11438462}
-    mMethodName: function
-    mParameters: []
-    oneShot: 0
-  mSelectedItem: '[TCG+OCG]Szefoserver'
+  mSelectedItem: '[TCG+OCG]Szefo'
   mPanel: {fileID: 0}
   mBackground: {fileID: 0}
   mHighlight: {fileID: 0}

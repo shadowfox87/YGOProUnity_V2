@@ -2123,7 +2123,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 30, y: 30, z: 0}
+  m_Size: {x: 60, y: 60, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6588816
 BoxCollider:
@@ -2977,24 +2977,24 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -44
+    absolute: -59
   rightAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -14
+    absolute: 1
   bottomAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -52
+    absolute: -67
   topAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -22
+    absolute: -7
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 30
-  mHeight: 30
+  mWidth: 60
+  mHeight: 60
   mDepth: 1
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
@@ -3573,7 +3573,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 2.8888888
+  aspectRatio: 2.7857144
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   mFont: {fileID: 0}
@@ -4922,6 +4922,7 @@ MonoBehaviour:
   mod: {fileID: 120608, guid: b102b714e94a8bf4abf4b4ada52e4158, type: 2}
   panel: {fileID: 11449098}
   scrollBar: {fileID: 11425126}
+  heightOfEach: 20
   preHeight: 120
 --- !u!114 &11473742
 MonoBehaviour:

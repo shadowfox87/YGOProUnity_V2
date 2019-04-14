@@ -141,7 +141,7 @@ public class GameStringHelper
             re += "[b]" + card.Name + "[/b]";
             re += "\n";
             re += "[sup]" + limitot + "[/sup]";
-            re += "\r";
+            re += "\n";
             re += "[sup]" + card.Id.ToString() + "[/sup]";
             re += "\n";
         }
@@ -333,8 +333,15 @@ public class GameStringHelper
         {
             if (YGOSharp.CardsManager.IfSetCard(GameStringManager.xilies[i].hashCode, Setcode))
             {
-                returnValue = GameStringManager.xilies[i].content + " ";
+                if (!returnValue.Contains(GameStringManager.xilies[i].content))
+                {
+                    returnValue += GameStringManager.xilies[i].content + ", ";
+                }
             }
+        }
+        if (returnValue.Length > 2)
+        {
+            returnValue = returnValue.Substring(0, returnValue.Length - 2);
         }
 
         return returnValue;

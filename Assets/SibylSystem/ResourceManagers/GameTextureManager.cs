@@ -121,7 +121,7 @@ public class GameTextureManager
         public float k = 1;
         //public bool autoMade = false;
         public byte[] data = null;
-        public float[, ,] hashed_data = null;
+        public float[,,] hashed_data = null;
         public Texture2D u_data = null;
         public Texture2D nullReturen = null;
         public PictureResource(GameTextureType t, long c, Texture2D n)
@@ -144,7 +144,7 @@ public class GameTextureManager
 
     public static Texture2D opBack = null;
 
-    public static Texture2D unknown = null; 
+    public static Texture2D unknown = null;
 
     public static Texture2D attack = null;
 
@@ -152,7 +152,7 @@ public class GameTextureManager
 
     public static Texture2D bar = null;
 
-    public static Texture2D exBar = null;   
+    public static Texture2D exBar = null;
 
     public static Texture2D lp = null;
 
@@ -198,6 +198,7 @@ public class GameTextureManager
 
     static void thread_run()
     {
+
         while (Program.Running)
         {
             try
@@ -207,12 +208,12 @@ public class GameTextureManager
                 while (waitLoadStack.Count > 0)
                 {
                     thu++;
-                    if (thu==10)    
+                    if (thu == 10)
                     {
                         Thread.Sleep(50);
                         thu = 0;
                     }
-                    if (bLock==false)
+                    if (bLock == false)
                     {
                         PictureResource pic;
 
@@ -227,41 +228,20 @@ public class GameTextureManager
                         }
                         if (pic.type == GameTextureType.card_feature)
                         {
-                            try
-                            {
-                                ProcessingCardFeature(pic);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.Log("e 1" + e.ToString());
-                            }
+                            ProcessingCardFeature(pic);
                         }
                         if (pic.type == GameTextureType.card_picture)
                         {
-                            try
-                            {
-                                ProcessingCardPicture(pic);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.Log("e 2" + e.ToString());
-                            }
+                            ProcessingCardPicture(pic);
                         }
                         if (pic.type == GameTextureType.card_verticle_drawing)
                         {
-                            try
-                            {
-                                ProcessingVerticleDrawing(pic);
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.Log("e 3" + e.ToString());
-                            }
+                            ProcessingVerticleDrawing(pic);
                         }
                     }
                 }
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 Debug.Log("erroe 1" + e.ToString());
             }
@@ -270,45 +250,47 @@ public class GameTextureManager
 
     private static void ProcessingCardFeature(PictureResource pic)
     {
-        if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
+        try
         {
-            string path = "picture/closeup/" + pic.code.ToString() + ".png";
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            BitmapHelper bitmap = new BitmapHelper(path);
-            int left;
-            int right;
-            int up;
-            int down;
-            CutTop(bitmap, out left, out right, out up, out down);
-            up = CutLeft(bitmap, up);
-            down = CutRight(bitmap, down);
-            right = CutButton(bitmap, right);
-            int width = right - left;
-            int height = down - up;
-            pic.hashed_data = new float[width, height, 4];
-            for (int w = 0; w < width; w++)
+            if (File.Exists("picture/closeup/" + pic.code.ToString() + ".png"))
             {
-                for (int h = 0; h < height; h++)
+                string path = "picture/closeup/" + pic.code.ToString() + ".png";
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                BitmapHelper bitmap = new BitmapHelper(path);
+                int left;
+                int right;
+                int up;
+                int down;
+                CutTop(bitmap, out left, out right, out up, out down);
+                up = CutLeft(bitmap, up);
+                down = CutRight(bitmap, down);
+                right = CutButton(bitmap, right);
+                int width = right - left;
+                int height = down - up;
+                pic.hashed_data = new float[width, height, 4];
+                for (int w = 0; w < width; w++)
                 {
-                    System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                    float a = (float)color.A / 255f;
-                    if (w < 40) if (a > (float)w / (float)40) a = (float)w / (float)40;
-                    if (w > (width - 40)) if (a > 1f - (float)(w - (width - 40)) / (float)40) a = 1f - (float)(w - (width - 40)) / (float)40;
-                    if (h < 40) if (a > (float)h / (float)40) a = (float)h / (float)40;
-                    if (h > (height - 40)) if (a > 1f - (float)(h - (height - 40)) / (float)40) a = 1f - (float)(h - (height - 40)) / (float)40;
-                    pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                    pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                    pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                    pic.hashed_data[w, height - h - 1, 3] = a;
+                    for (int h = 0; h < height; h++)
+                    {
+                        System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
+                        float a = (float)color.A / 255f;
+                        if (w < 40) if (a > (float)w / (float)40) a = (float)w / (float)40;
+                        if (w > (width - 40)) if (a > 1f - (float)(w - (width - 40)) / (float)40) a = 1f - (float)(w - (width - 40)) / (float)40;
+                        if (h < 40) if (a > (float)h / (float)40) a = (float)h / (float)40;
+                        if (h > (height - 40)) if (a > 1f - (float)(h - (height - 40)) / (float)40) a = 1f - (float)(h - (height - 40)) / (float)40;
+                        pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
+                        pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
+                        pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
+                        pic.hashed_data[w, height - h - 1, 3] = a;
+                    }
                 }
-            }
-            caculateK(pic);
+                caculateK(pic);
 
-            /*
-             *  以上处理其他平台无法正常使用
-             *  暂时只能直接贴图，以后再处理
-            */
-            #elif UNITY_ANDROID || UNITY_IPHONE //Android、iPhone
+                /*
+                 *  以上处理其他平台无法正常使用
+                 *  暂时只能直接贴图，以后再处理
+                */
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX//Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -317,49 +299,8 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-            #endif
+#endif
 
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
-        }
-        else
-        {
-            string path = "picture/card/" + pic.code.ToString() + ".png";
-            if (!File.Exists(path))
-            {
-                path = "picture/card/" + pic.code.ToString() + ".jpg";
-            }
-            bool Iam8 = false;
-            if (!File.Exists(path))
-            {
-                Iam8 = true;
-                path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                Iam8 = true;
-                path = "pics/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                Iam8 = true;
-                path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                pic.hashed_data = new float[10, 10, 4];
-                for (int w = 0; w < 10; w++)
-                {
-                    for (int h = 0; h < 10; h++)
-                    {
-                        pic.hashed_data[w, h, 0] = 0;
-                        pic.hashed_data[w, h, 1] = 0;
-                        pic.hashed_data[w, h, 2] = 0;
-                        pic.hashed_data[w, h, 3] = 0;
-                    }
-                }
                 if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
                 {
                     loadedList.Add(hashPic(pic.code, pic.type), pic);
@@ -367,39 +308,82 @@ public class GameTextureManager
             }
             else
             {
-                pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
-                int width = pic.hashed_data.GetLength(0);
-                int height = pic.hashed_data.GetLength(1);
-                int size = (int)(height * 0.8);
-                int empWidth = (width - size) / 2;
-                int empHeight = (height - size) / 2;
-                int right = width - empWidth;
-                int buttom = height - empHeight;
-                for (int w = 0; w < width; w++)
+                string path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
                 {
-                    for (int h = 0; h < height; h++)
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
+                //if (!File.Exists(path))
+                //{
+                //    Iam8 = true;
+                //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
+                //}
+                if (!File.Exists(path))
+                {
+                    path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+                }
+                if (!File.Exists(path))
+                {
+                    path = "pics/" + pic.code.ToString() + ".jpg";
+                }
+                if (!File.Exists(path))
+                {
+                    pic.hashed_data = new float[10, 10, 4];
+                    for (int w = 0; w < 10; w++)
                     {
-                        float a = pic.hashed_data[w, h, 3];
-                        if (w < empWidth)
-                            if (a > ((float)w) / (float)empWidth)
-                                a = ((float)w) / (float)empWidth;
-                        if (h < empHeight)
-                            if (a > ((float)h) / (float)empHeight)
-                                a = ((float)h) / (float)empHeight;
-                        if (w > right)
-                            if (a > 1f - ((float)(w - right)) / (float)empWidth)
-                                a = 1f - ((float)(w - right)) / (float)empWidth;
-                        if (h > buttom)
-                            if (a > 1f - ((float)(h - buttom)) / (float)empHeight)
-                                a = 1f - ((float)(h - buttom)) / (float)empHeight;
-                        pic.hashed_data[w, h, 3] = a * 0.7f;
+                        for (int h = 0; h < 10; h++)
+                        {
+                            pic.hashed_data[w, h, 0] = 0;
+                            pic.hashed_data[w, h, 1] = 0;
+                            pic.hashed_data[w, h, 2] = 0;
+                            pic.hashed_data[w, h, 3] = 0;
+                        }
+                    }
+                    if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                    {
+                        loadedList.Add(hashPic(pic.code, pic.type), pic);
                     }
                 }
-                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                else
                 {
-                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                    pic.hashed_data = getCuttedPic(path, pic.pCard, false);
+                    int width = pic.hashed_data.GetLength(0);
+                    int height = pic.hashed_data.GetLength(1);
+                    int size = (int)(height * 0.8);
+                    int empWidth = (width - size) / 2;
+                    int empHeight = (height - size) / 2;
+                    int right = width - empWidth;
+                    int buttom = height - empHeight;
+                    for (int w = 0; w < width; w++)
+                    {
+                        for (int h = 0; h < height; h++)
+                        {
+                            float a = pic.hashed_data[w, h, 3];
+                            if (w < empWidth)
+                                if (a > ((float)w) / (float)empWidth)
+                                    a = ((float)w) / (float)empWidth;
+                            if (h < empHeight)
+                                if (a > ((float)h) / (float)empHeight)
+                                    a = ((float)h) / (float)empHeight;
+                            if (w > right)
+                                if (a > 1f - ((float)(w - right)) / (float)empWidth)
+                                    a = 1f - ((float)(w - right)) / (float)empWidth;
+                            if (h > buttom)
+                                if (a > 1f - ((float)(h - buttom)) / (float)empHeight)
+                                    a = 1f - ((float)(h - buttom)) / (float)empHeight;
+                            pic.hashed_data[w, h, 3] = a * 0.7f;
+                        }
+                    }
+                    if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                    {
+                        loadedList.Add(hashPic(pic.code, pic.type), pic);
+                    }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Debug.Log("e 1" + e.ToString());
         }
     }
 
@@ -439,7 +423,7 @@ public class GameTextureManager
         int width = pic.hashed_data.GetLength(0);
         int height = pic.hashed_data.GetLength(1);
         int h = 0;
-        for (h = height-1; h >0; h--)
+        for (h = height - 1; h > 0; h--)
         {
             int all = 0;
             for (int w = 0; w < width; w++)
@@ -454,7 +438,7 @@ public class GameTextureManager
                 break;
             }
         }
-        pic.k =((float)h) / ((float)height);
+        pic.k = ((float)h) / ((float)height);
         if (pic.k > 1)
         {
             pic.k = 1f;
@@ -465,12 +449,12 @@ public class GameTextureManager
         }
     }
 
-    private static float[,,] getCuttedPic(string path,bool pCard,bool EightEdition)
+    private static float[,,] getCuttedPic(string path, bool pCard, bool EightEdition)
     {
         BitmapHelper bitmap = new BitmapHelper(path);
         int left = 0, top = 0, right = bitmap.colors.GetLength(0), buttom = bitmap.colors.GetLength(1);
         //right is width and buttom is height now
-        if (EightEdition)   
+        if (EightEdition)
         {
             if (pCard)
             {
@@ -594,50 +578,66 @@ public class GameTextureManager
 
     private static void ProcessingVerticleDrawing(PictureResource pic)
     {
-        string path = "picture/closeup/" + pic.code.ToString() + ".png";
-        if (!File.Exists(path))
+        try
         {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            path = "picture/card/" + pic.code.ToString() + ".png";
-            if (!File.Exists(path))
+            string path = "picture/closeup/" + pic.code.ToString() + ".png";
+#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+            if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value != "Series 10 HQ")
             {
-                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
-            bool Iam8 = false;
-            if (!File.Exists(path))
+#endif
+            if (!File.Exists(path) && Program.I().setting.autoPicDownload)
             {
-                Iam8 = true;
-                path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                Iam8 = true;
-                path = "pics/" + pic.code.ToString() + ".jpg";
+                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
             if (!File.Exists(path))
             {
-                Iam8 = true;
-                path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-            }
-            if (!File.Exists(path))
-            {
-                path = "textures/unknown.jpg";//YGOMobile Paths
-            }
-            if (!File.Exists(path))
-            {
-                return;
-            }
-            pic.hashed_data = getCuttedPic(path, pic.pCard,Iam8);
-            softVtype(pic, 0.5f);
-            pic.k = 1;
-            //pic.autoMade = true;
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
+                {
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
+                bool Iam8 = false;
+                //if (!File.Exists(path))
+                //{
+                //    Iam8 = true;
+                //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
+                //}
+                if (!File.Exists(path))
+                {
+                    Iam8 = true;
+                    path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+                }
+                if (!File.Exists(path))
+                {
+                    Iam8 = true;
+                    path = "pics/" + pic.code.ToString() + ".jpg";
+                }
+                //if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+                //{
+                //    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                //    path = "picture/card/" + pic.code.ToString() + ".png";
+                //}
+                if (!File.Exists(path))
+                {
+                    path = "picture/null.png";
+                }
+                pic.hashed_data = getCuttedPic(path, pic.pCard, Iam8);
+                softVtype(pic, 0.5f);
+                pic.k = 1;
+                //pic.autoMade = true;
 
-            /*
-             *  以上处理其他平台无法正常使用
-             *  暂时只能直接贴图，以后再处理
-            */
-            #elif UNITY_ANDROID || UNITY_IPHONE //Android、iPhone
-            path = "picture/null.png";
+                /*
+                 *  以上处理其他平台无法正常使用
+                 *  暂时只能直接贴图，以后再处理
+                */
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
+            if (!File.Exists(path))
+            {
+                path = "picture/null.png";
+            }
 
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -647,81 +647,68 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-            //#elif UNITY_IPHONE //iPhone Test (Android not support)
-            //path = Application.streamingAssetsPath + "/closeup/" + pic.code.ToString() + ".png";
-            //if (File.Exists(path))
-            //{
-            //    www = new WWW(path);
-            //    byte[] data = www.bytes;
-            //    pic.data = data;
-            //} else {
-            //    path = Application.streamingAssetsPath + "/null.png"
-            //    www = new WWW(path);
-            //    byte[] data = www.bytes;
-            //    pic.data = data;
-            //}
-            #endif
-        }
-        else
-        {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            BitmapHelper bitmap = new BitmapHelper(path);
-            int left;
-            int right;
-            int up;
-            int down;
-            CutTop(bitmap, out left, out right, out up, out down);
-            up = CutLeft(bitmap, up);
-            down = CutRight(bitmap, down);
-            right = CutButton(bitmap, right);
-            int width = right - left;
-            int height = down - up;
-            pic.hashed_data = new float[width, height, 4];
-            for (int w = 0; w < width; w++)
+#endif
+            }
+            else
             {
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                BitmapHelper bitmap = new BitmapHelper(path);
+                int left;
+                int right;
+                int up;
+                int down;
+                CutTop(bitmap, out left, out right, out up, out down);
+                up = CutLeft(bitmap, up);
+                down = CutRight(bitmap, down);
+                right = CutButton(bitmap, right);
+                int width = right - left;
+                int height = down - up;
+                pic.hashed_data = new float[width, height, 4];
+                for (int w = 0; w < width; w++)
+                {
+                    for (int h = 0; h < height; h++)
+                    {
+                        System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
+                        pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
+                        pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
+                        pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
+                        pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
+                    }
+                }
+                float wholeUNalpha = 0;
+                for (int w = 0; w < width; w++)
+                {
+                    if (pic.hashed_data[w, 0, 3] > 0.1f)
+                    {
+                        wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
+                    }
+                    if (pic.hashed_data[w, height - 1, 3] > 0.1f)
+                    {
+                        wholeUNalpha += 1;
+                    }
+                }
                 for (int h = 0; h < height; h++)
                 {
-                    System.Drawing.Color color = bitmap.GetPixel(left + w, up + h);
-                    pic.hashed_data[w, height - h - 1, 0] = (float)color.R / 255f;
-                    pic.hashed_data[w, height - h - 1, 1] = (float)color.G / 255f;
-                    pic.hashed_data[w, height - h - 1, 2] = (float)color.B / 255f;
-                    pic.hashed_data[w, height - h - 1, 3] = (float)color.A / 255f;
+                    if (pic.hashed_data[0, h, 3] > 0.1f)
+                    {
+                        wholeUNalpha += 1;
+                    }
+                    if (pic.hashed_data[width - 1, h, 3] > 0.1f)
+                    {
+                        wholeUNalpha += 1;
+                    }
                 }
-            }
-            float wholeUNalpha = 0;
-            for (int w = 0; w < width; w++)
-            {
-                if (pic.hashed_data[w, 0, 3] > 0.1f)
+                if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
                 {
-                    wholeUNalpha += ((float)Math.Abs(w - width / 2)) / ((float)(width / 2));
+                    softVtype(pic, 0.7f);
                 }
-                if (pic.hashed_data[w, height - 1, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-            }
-            for (int h = 0; h < height; h++)
-            {
-                if (pic.hashed_data[0, h, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-                if (pic.hashed_data[width - 1, h, 3] > 0.1f)
-                {
-                    wholeUNalpha += 1;
-                }
-            }
-            if (wholeUNalpha >= ((width + height) * 0.5f * 0.12f))
-            {
-                softVtype(pic,0.7f);
-            }
-            caculateK(pic);
+                caculateK(pic);
 
-            /*
-             *  以上处理其他平台无法正常使用
-             *  暂时只能直接贴图，以后再处理
-            */
-            #elif UNITY_ANDROID || UNITY_IPHONE //Android、iPhone
+                /*
+                 *  以上处理其他平台无法正常使用
+                 *  暂时只能直接贴图，以后再处理
+                */
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
             byte[] data;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
@@ -730,12 +717,17 @@ public class GameTextureManager
                 file.Read(data, 0, (int)file.Length);
             }
             pic.data = data;
-            #endif
-        }
+#endif
+            }
 
-        if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+            {
+                loadedList.Add(hashPic(pic.code, pic.type), pic);
+            }
+        }
+        catch (Exception e)
         {
-            loadedList.Add(hashPic(pic.code, pic.type), pic);
+            Debug.Log("e 3" + e.ToString());
         }
     }
 
@@ -791,72 +783,150 @@ public class GameTextureManager
 
     private static void ProcessingCardPicture(PictureResource pic)
     {
-        string path = "picture/card/" + pic.code.ToString() + ".png";
-        if (!File.Exists(path))
+        try
         {
-            path = "picture/card/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path))
-        {
-            path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path))
-        {
-            path = "pics/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path))
-        {
-            path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-        }
-        #if UNITY_ANDROID || UNITY_IPHONE //Android、iPhone
-        if (!File.Exists(path) && pic.code != 0)
-        {
-            //YGOMobile (177x254)
-            df.Download("http://android.ygopro.win/YGOMobile/pics/" + pic.code.ToString() + ".jpg", "expansions/pics/" + pic.code.ToString() + ".jpg");
-            path = "expansions/pics/" + pic.code.ToString() + ".jpg";
-        }
-        #endif
-        if (!File.Exists(path) && pic.code != 0)
-        {
-            //YGOPro2 (421x614)
-            df.Download("http://update.ygopro.win/ygopro2-data/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
-            path = "picture/card/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path) && pic.code != 0)
-        {
-            //YGOPro2 pre(336x490)
-            df.Download("http://update.ygopro.win/ygopro2-data/expansions/pics/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
-            path = "picture/card/" + pic.code.ToString() + ".jpg";
-        }
-        if (!File.Exists(path))
-        {
-            if (pic.code > 0)
+            string path = "picture/card/" + pic.code.ToString() + ".png";
+            if (!File.Exists(path))
             {
-                pic.u_data = unknown;
+                path = "picture/card/" + pic.code.ToString() + ".jpg";
+            }
+            if (!File.Exists(path))
+            {
+                path = "expansions/pics/" + pic.code.ToString() + ".png";
+            }
+            if (!File.Exists(path))
+            {
+                path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+            }
+            if (!File.Exists(path))
+            {
+                path = "pics/" + pic.code.ToString() + ".png";
+            }
+            if (!File.Exists(path))
+            {
+                path = "pics/" + pic.code.ToString() + ".jpg";
+            }
+            //if (!File.Exists(path) && pic.code != 0)
+            //{
+            //    //下载卡图(177x254)
+            //    //df.Download("http://android.ygopro.win/YGOMobile/pics/" + pic.code.ToString() + ".jpg", "expansions/pics/" + pic.code.ToString() + ".jpg");
+            //   // path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+            //}
+#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
+            if (Program.I().setting != null)
+            {
+                switch (Program.I().setting.pictureDownloadVersion.value)
+                {
+                    case "Series 10":
+                        {
+                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            if (!File.Exists(path))
+                            {
+                                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                                if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                                {
+                                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                }
+                            }
+                            break;
+                        }
+                    case "Anime":
+                        {
+                            path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
+                            if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                            {
+                                df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
+                                if (!File.Exists(path))
+                                {
+                                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                                    if (!File.Exists(path))
+                                    {
+                                        df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    case "Series 10 HQ":
+                        {
+                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+                            {
+                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
             }
             else
             {
-                pic.u_data = myBack;
+                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                if (Program.I().setting.autoPicDownload && !File.Exists(path))
+                {
+                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                }
             }
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+
+            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
             {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
+                path = "picture/card/" + pic.code.ToString() + ".png";
+                if (!File.Exists(path))
+                {
+                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                }
+            }
+#endif
+            if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
+            {
+                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                path = "picture/card/" + pic.code.ToString() + ".png";
+            }
+            //if (!File.Exists(path) && pic.code != 0)
+            //{
+            //    //下载先行卡卡图(336x490)
+            //    //df.Download("http://update.ygopro.win/ygopro2-data/expansions/pics/" + pic.code.ToString() + ".jpg", "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg");
+            //    //path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
+            //}
+            if (!File.Exists(path))
+            {
+                if (pic.code > 0)
+                {
+                    pic.u_data = unknown;
+                }
+                else
+                {
+                    pic.u_data = myBack;
+                }
+                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                {
+                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                }
+            }
+            else
+            {
+                byte[] data;
+                using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    file.Seek(0, SeekOrigin.Begin);
+                    data = new byte[file.Length];
+                    file.Read(data, 0, (int)file.Length);
+                }
+                pic.data = data;
+                if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
+                {
+                    loadedList.Add(hashPic(pic.code, pic.type), pic);
+                }
             }
         }
-        else
+        catch (Exception e)
         {
-            byte[] data;
-            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                file.Seek(0, SeekOrigin.Begin);
-                data = new byte[file.Length];
-                file.Read(data, 0, (int)file.Length);
-            }
-            pic.data = data;
-            if (!loadedList.ContainsKey(hashPic(pic.code, pic.type)))
-            {
-                loadedList.Add(hashPic(pic.code, pic.type), pic);
-            }
+            Debug.Log("e 2" + e.ToString());
         }
     }
 
@@ -940,14 +1010,14 @@ public class GameTextureManager
         return ret;
     }
 
-    public static bool uiLoaded=false;
+    public static bool uiLoaded = false;
 
     public static Texture2D get(string name)
     {
         if (uiLoaded == false)
         {
             uiLoaded = true;
-            FileInfo[] fileInfos = (new DirectoryInfo("textures/ui")).GetFiles();//YGOMobile Paths
+            FileInfo[] fileInfos = (new DirectoryInfo("texture/ui")).GetFiles();
             for (int i = 0; i < fileInfos.Length; i++)
             {
                 if (fileInfos[i].Name.Length > 4)
@@ -956,7 +1026,7 @@ public class GameTextureManager
                     {
                         UIPictureResource r = new UIPictureResource();
                         r.name = fileInfos[i].Name.Substring(0, fileInfos[i].Name.Length - 4);
-                        r.data = UIHelper.getTexture2D("textures/ui/" + fileInfos[i].Name);//YGOMobile Paths
+                        r.data = UIHelper.getTexture2D("texture/ui/" + fileInfos[i].Name);
                         allUI.Add(r);
                     }
                 }
@@ -977,44 +1047,44 @@ public class GameTextureManager
         return re;
     }
 
-    public static UnityEngine.Color chainColor= UnityEngine.Color.white;
+    public static UnityEngine.Color chainColor = UnityEngine.Color.white;
 
     internal static void initialize()
     {
-        attack = UIHelper.getTexture2D("textures/attack.png");//YGOMobile Paths
-        myBack = UIHelper.getTexture2D("textures/cover.jpg");//YGOMobile Paths
-        opBack = UIHelper.getTexture2D("textures/cover2.jpg");//YGOMobile Paths
-        unknown = UIHelper.getTexture2D("textures/unknown.jpg");//YGOMobile Paths
-        negated = UIHelper.getTexture2D("textures/negated.png");//YGOMobile Paths
-        bar = UIHelper.getTexture2D("textures/duel/healthBar/bg.png");//YGOMobile Paths
-        exBar = UIHelper.getTexture2D("textures/duel/healthBar/excited.png");//YGOMobile Paths
-        time = UIHelper.getTexture2D("textures/duel/healthBar/t.png");//YGOMobile Paths
-        lp = UIHelper.getTexture2D("textures/duel/healthBar/lp.png");//YGOMobile Paths
-        L = UIHelper.getTexture2D("textures/duel/L.png");//YGOMobile Paths
-        R = UIHelper.getTexture2D("textures/duel/R.png");//YGOMobile Paths
-        LINK = UIHelper.getTexture2D("textures/duel/link.png");//YGOMobile Paths
-        LINKm = UIHelper.getTexture2D("textures/duel/linkMask.png");//YGOMobile Paths
-        Chain = UIHelper.getTexture2D("textures/chain.png");//YGOMobile Paths
-        Mask = UIHelper.getTexture2D("textures/mask.png");//YGOMobile Paths
+        attack = UIHelper.getTexture2D("texture/duel/attack.png");
+        myBack = UIHelper.getTexture2D("texture/duel/me.jpg");
+        opBack = UIHelper.getTexture2D("texture/duel/opponent.jpg");
+        unknown = UIHelper.getTexture2D("texture/duel/unknown.jpg");
+        negated = UIHelper.getTexture2D("texture/duel/negated.png");
+        bar = UIHelper.getTexture2D("texture/duel/healthBar/bg.png");
+        exBar = UIHelper.getTexture2D("texture/duel/healthBar/excited.png");
+        time = UIHelper.getTexture2D("texture/duel/healthBar/t.png");
+        lp = UIHelper.getTexture2D("texture/duel/healthBar/lp.png");
+        L = UIHelper.getTexture2D("texture/duel/L.png");
+        R = UIHelper.getTexture2D("texture/duel/R.png");
+        LINK = UIHelper.getTexture2D("texture/duel/link.png");
+        LINKm = UIHelper.getTexture2D("texture/duel/linkMask.png");
+        Chain = UIHelper.getTexture2D("texture/duel/chain.png");
+        Mask = UIHelper.getTexture2D("texture/duel/mask.png");
 
 
-        nt = UIHelper.getTexture2D("textures/duel/phase/nt.png");//YGOMobile Paths
-        bp = UIHelper.getTexture2D("textures/duel/phase/bp.png");//YGOMobile Paths
-        ep = UIHelper.getTexture2D("textures/duel/phase/ep.png");//YGOMobile Paths
-        mp1 = UIHelper.getTexture2D("textures/duel/phase/mp1.png");//YGOMobile Paths
-        mp2 = UIHelper.getTexture2D("textures/duel/phase/mp2.png");//YGOMobile Paths
-        dp = UIHelper.getTexture2D("textures/duel/phase/dp.png");//YGOMobile Paths
-        sp = UIHelper.getTexture2D("textures/duel/phase/sp.png");//YGOMobile Paths
+        nt = UIHelper.getTexture2D("texture/duel/phase/nt.png");
+        bp = UIHelper.getTexture2D("texture/duel/phase/bp.png");
+        ep = UIHelper.getTexture2D("texture/duel/phase/ep.png");
+        mp1 = UIHelper.getTexture2D("texture/duel/phase/mp1.png");
+        mp2 = UIHelper.getTexture2D("texture/duel/phase/mp2.png");
+        dp = UIHelper.getTexture2D("texture/duel/phase/dp.png");
+        sp = UIHelper.getTexture2D("texture/duel/phase/sp.png");
 
-        phase = UIHelper.getTexture2D("textures/duel/phase/phase.png");//YGOMobile Paths
+        phase = UIHelper.getTexture2D("texture/duel/phase/phase.png");
 
-        rs = UIHelper.getTexture2D("textures/duel/phase/rs.png");//YGOMobile Paths
-        ts = UIHelper.getTexture2D("textures/duel/phase/ts.png");//YGOMobile Paths
+        rs = UIHelper.getTexture2D("texture/duel/phase/rs.png");
+        ts = UIHelper.getTexture2D("texture/duel/phase/ts.png");
 
-        N = new Texture2D(10,10);
-        for (int i = 0; i < 10; i++)    
+        N = new Texture2D(10, 10);
+        for (int i = 0; i < 10; i++)
         {
-            for (int a = 0; a < 10; a++)    
+            for (int a = 0; a < 10; a++)
             {
                 N.SetPixel(i, a, new UnityEngine.Color(0, 0, 0, 0));
             }
@@ -1022,9 +1092,9 @@ public class GameTextureManager
         N.Apply();
         try
         {
-            ColorUtility.TryParseHtmlString(File.ReadAllText("textures/duel/chainColor.txt"), out chainColor);//YGOMobile Paths
+            ColorUtility.TryParseHtmlString(File.ReadAllText("texture/duel/chainColor.txt"), out chainColor);
         }
-        catch (Exception)   
+        catch (Exception)
         {
 
         }

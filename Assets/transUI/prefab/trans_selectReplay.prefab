@@ -273,7 +273,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &163040
 GameObject:
   m_ObjectHideFlags: 1
@@ -429,7 +429,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &181490
 GameObject:
   m_ObjectHideFlags: 1
@@ -966,7 +966,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 197804}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3546, y: -1242, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 484960}
@@ -1197,7 +1197,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 30, y: 30, z: 0}
+  m_Size: {x: 50, y: 50, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6593234
 BoxCollider:
@@ -1966,24 +1966,24 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 423206}
     relative: 1
-    absolute: -44
+    absolute: -54
   rightAnchor:
     target: {fileID: 423206}
     relative: 1
-    absolute: -14
+    absolute: -4
   bottomAnchor:
     target: {fileID: 423206}
     relative: 1
-    absolute: -52
+    absolute: -62
   topAnchor:
     target: {fileID: 423206}
     relative: 1
-    absolute: -22
+    absolute: -12
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 30
-  mHeight: 30
+  mWidth: 50
+  mHeight: 50
   mDepth: 1
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
@@ -2332,7 +2332,7 @@ MonoBehaviour:
   anchorOffset: 0
   softBorderPadding: 1
   renderQueue: 0
-  startingRenderQueue: 3007
+  startingRenderQueue: 3001
   mClipTexture: {fileID: 0}
   mAlpha: 1
   mClipping: 3
@@ -3201,7 +3201,7 @@ MonoBehaviour:
   anchorOffset: 0
   softBorderPadding: 1
   renderQueue: 0
-  startingRenderQueue: 3012
+  startingRenderQueue: 3006
   mClipTexture: {fileID: 0}
   mAlpha: 1
   mClipping: 3
@@ -3454,6 +3454,7 @@ MonoBehaviour:
   mod: {fileID: 120608, guid: b102b714e94a8bf4abf4b4ada52e4158, type: 2}
   panel: {fileID: 11477694}
   scrollBar: {fileID: 11440754}
+  heightOfEach: 20
   preHeight: 0
 --- !u!114 &11491170
 MonoBehaviour:

@@ -27,5 +27,6 @@
         Pendulum = 0x1000000,
         sp = 0x2000000,
         link = 0x4000000,
+        NonEffect = 0x8000000,
     }
 }

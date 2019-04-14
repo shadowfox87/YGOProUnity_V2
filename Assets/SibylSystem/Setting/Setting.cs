@@ -5,6 +5,11 @@ public class Setting : WindowServant2D
     private EventDelegate onChange;
 
     public LAZYsetting setting;
+    public UIToggle isBGMMute;
+    public UIPopupList pictureDownloadVersion;
+    public bool batterySaving;
+    public bool autoPicDownload;
+    public bool autoDeckUpdate;
 
     public override void initialize()
     {
@@ -14,16 +19,33 @@ public class Setting : WindowServant2D
         UIHelper.registEvent(gameObject, "screen_", resizeScreen);
         UIHelper.registEvent(gameObject, "full_", resizeScreen);
         UIHelper.registEvent(gameObject, "resize_", resizeScreen);
+        UIHelper.registEvent(gameObject, "resize_", resizeScreen);
+        UIHelper.registEvent(gameObject, "batterySaving", batterySavingMode);
+        UIHelper.getByName<UIPopupList>(gameObject, "pictureSelect").value = Config.Get("pictureVersion", "Series 10");
+        pictureDownloadVersion = UIHelper.getByName<UIPopupList>(gameObject, "pictureSelect");
+        isBGMMute = UIHelper.getByName<UIToggle>(gameObject, "muteBGM");
+        UIHelper.getByName<UIToggle>(gameObject, "muteBGM").value = UIHelper.fromStringToBool(Config.Get("muteBGMAudio", "0"));
+        batterySaving = UIHelper.getByName<UIToggle>(gameObject, "batterySaving").value = UIHelper.fromStringToBool(Config.Get("batterySaving", "0"));
         UIHelper.getByName<UIToggle>(gameObject, "full_").value = Screen.fullScreen;
-        UIHelper.getByName<UIPopupList>(gameObject, "screen_").value = Screen.width.ToString() + "*" + Screen.height.ToString();
+        autoPicDownload = UIHelper.fromStringToBool(Config.Get("autoPicDownload_", "1"));
+        autoDeckUpdate = UIHelper.fromStringToBool(Config.Get("autoDeckUpdate_", "1"));
+        UIHelper.getByName<UIPopupList>(gameObject, "screen_").value = Config.Get("resolution_",
+#if UNITY_ANDROID || UNITY_IOS
+            "1280*720" //Gives people the freedom to change their resolution on mobile.
+#else
+            Screen.width.ToString() + "*" + Screen.height.ToString()
+#endif
+            );
         UIHelper.getByName<UIToggle>(gameObject, "ignoreWatcher_").value = UIHelper.fromStringToBool(Config.Get("ignoreWatcher_", "0"));
         UIHelper.getByName<UIToggle>(gameObject, "ignoreOP_").value = UIHelper.fromStringToBool(Config.Get("ignoreOP_", "0"));
         UIHelper.getByName<UIToggle>(gameObject, "smartSelect_").value = UIHelper.fromStringToBool(Config.Get("smartSelect_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "autoChain_").value = UIHelper.fromStringToBool(Config.Get("autoChain_", "1"));
-        UIHelper.getByName<UIToggle>(gameObject, "handPosition_").value = UIHelper.fromStringToBool(Config.Get("handPosition_", "0"));
-        UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value = UIHelper.fromStringToBool(Config.Get("handmPosition_", "0"));
+        UIHelper.getByName<UIToggle>(gameObject, "handPosition_").value = UIHelper.fromStringToBool(Config.Get("handPosition_", "1"));
+        UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value = UIHelper.fromStringToBool(Config.Get("handmPosition_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "spyer_").value = UIHelper.fromStringToBool(Config.Get("spyer_", "1"));
-        UIHelper.getByName<UIToggle>(gameObject, "resize_").value = UIHelper.fromStringToBool(Config.Get("resize_", "0"));
+        UIHelper.getByName<UIToggle>(gameObject, "resize_").value = UIHelper.fromStringToBool(Config.Get("resize_", "1"));
+        UIHelper.registEvent(gameObject, "muteBGM", muteBGM);
+        UIHelper.registEvent(gameObject, "vol_", onVolChange);
         if (QualitySettings.GetQualityLevel()<3)
         {
             UIHelper.getByName<UIToggle>(gameObject, "high_").value = false;
@@ -32,6 +54,7 @@ public class Setting : WindowServant2D
         {
             UIHelper.getByName<UIToggle>(gameObject, "high_").value = true;
         }
+        pictureDownloadVersion.onChange.Add(new EventDelegate(ReloadPictures));
         UIHelper.registEvent(gameObject, "ignoreWatcher_", save);
         UIHelper.registEvent(gameObject, "ignoreOP_", save);
         UIHelper.registEvent(gameObject, "smartSelect_", save);
@@ -76,6 +99,56 @@ public class Setting : WindowServant2D
         onchangeCloud();
     }
 
+    private void batterySavingMode()
+    {
+        if (batterySaving)
+        {
+            Application.targetFrameRate = 30;
+        }
+        else
+        {
+            Application.targetFrameRate = 60;
+        }
+        batterySaving = !batterySaving;
+        save();
+    }
+
+    private void ReloadPictures()
+    {
+        if (UIHelper.getByName<UIPopupList>(gameObject, "pictureSelect").value!= Config.Get("pictureVersion", "Series 10")) {
+            RMSshow_onlyYes("","To apply this change FULLY, please RESTART the game!" ,null); }
+        save();
+    }
+
+    private void muteBGM()
+    {
+        if (!isBGMMute.value)
+        {
+            if (Program.I().bgm != null)
+            {
+                Program.I().bgm.Start();
+            }
+        }
+        else
+        {
+            if (Program.I().bgm != null && Program.I().bgm.audioSource != null)
+            {
+                Program.I().bgm.audioSource.Stop();
+            }
+                
+        }
+        save();
+    }
+
+    private void onVolChange()
+    {
+        try
+        {
+            Program.I().bgm.changeBGMVol(UIHelper.getByName<UISlider>(gameObject, "vol_").value);
+        }
+        catch { }
+    }
+
     private void readVales()
     {
         try
@@ -109,7 +182,7 @@ public class Setting : WindowServant2D
         {
             Program.I().ocgcore.realize(true);
         }
-        catch (Exception e) 
+        catch 
         {
         }
     }
@@ -197,6 +270,7 @@ public class Setting : WindowServant2D
 
     void onClickExit()
     {
+        Program.I().SaveConfig();
         hide();
     }
 
@@ -206,12 +280,16 @@ public class Setting : WindowServant2D
         if (mats.Length == 2)
         {
             Screen.SetResolution(int.Parse(mats[0]), int.Parse(mats[1]), UIHelper.getByName<UIToggle>(gameObject, "full_").value);
+            Config.Set("resolution_", UIHelper.getByName<UIPopupList>(gameObject, "screen_").value);
+            setting.resizeSettingsWindow(int.Parse(mats[0]));
+            ResizeChatWithResolutionChange.resizeFontSizeWithWidth(int.Parse(mats[0]));
         }
         Program.go(100, () => { Program.I().fixScreenProblems(); });
     }
 
     public void saveWhenQuit()
     {
+
         Config.Set("vol_", ((int)(UIHelper.getByName<UISlider>(gameObject, "vol_").value * 1000)).ToString());
         Config.Set("size_", ((int)(UIHelper.getByName<UISlider>(gameObject, "size_").value * 1000)).ToString());
         Config.Set("vSize_", ((int)(UIHelper.getByName<UISlider>(gameObject, "vSize_").value * 1000)).ToString());
@@ -225,14 +303,18 @@ public class Setting : WindowServant2D
             }
         }
         Config.Set("showoffATK", setting.showoffATK.value.ToString());
+        Config.Set("muteBGMAudio", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "muteBGM").value));
         Config.Set("showoffStar", setting.showoffStar.value.ToString());
         Config.Set("resize_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "resize_").value));
     }
 
     public void save()
     {
+        Config.Set("batterySaving", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "batterySaving").value));
+        Config.Set("pictureVersion", UIHelper.getByName<UIPopupList>(gameObject, "pictureSelect").value);
         Config.Set("ignoreWatcher_",UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "ignoreWatcher_").value));
         Config.Set("ignoreOP_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "ignoreOP_").value));
+        Config.Set("muteBGMAudio", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "muteBGM").value));
         Config.Set("smartSelect_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "smartSelect_").value));
         Config.Set("autoChain_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "autoChain_").value));
         Config.Set("handPosition_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "handPosition_").value));

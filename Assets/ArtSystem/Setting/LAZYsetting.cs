@@ -39,14 +39,23 @@ public class LAZYsetting : MonoBehaviour {
     public UIToggle handm;
 
     public UIToggle spyer;
-
+    double baseWidth;
+    double currentWidth;
     // Use this for initialization
     void Start () {
-	
-	}
+     baseWidth = 1280;
+     currentWidth = baseWidth;
+    }
+    public void resizeSettingsWindow(int newWidth)
+    {
+        if (currentWidth!=0 && currentWidth != newWidth)
+        {
+            transform.localScale = new Vector3((float)(newWidth / baseWidth), (float)(newWidth / baseWidth), 0);
+            currentWidth = newWidth;
+        }
+    }
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update() { 
 	}
 }

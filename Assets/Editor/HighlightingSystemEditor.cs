@@ -17,7 +17,7 @@ public class HighlightingSystemEditor : Editor
 	
 	public override void OnInspectorGUI()
 	{
-		#if UNITY_IPHONE
+		#if UNITY_IOS
 		if (Handheld.use32BitDisplayBuffer == false)
 		{
 			EditorGUILayout.HelpBox("Highlighting System requires 32-bit display buffer. Set the 'Use 32-bit Display Buffer' checkbox under the 'Resolution and Presentation' section of Player Settings.", MessageType.Error);

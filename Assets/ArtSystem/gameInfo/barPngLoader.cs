@@ -20,7 +20,7 @@ public class barPngLoader : MonoBehaviour {
         api_timeBar.mainTexture = GameTextureManager.time;
         try
         {
-            string[] allLines = (File.ReadAllText("textures/duel/healthBar/config.txt").Replace("\r", "").Replace(" ", "").Split("\n"));//YGOMobile Paths
+            string[] allLines = (File.ReadAllText("texture/duel/healthBar/config.txt").Replace("\r", "").Replace(" ", "").Split("\n"));
             foreach (var item in allLines)
             {
                 string[] mats = item.Split("=");

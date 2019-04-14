@@ -578,7 +578,7 @@ public static class Localization
 		// Ensure we have a language to work with
 		if (!localizationHasBeenSet) language = PlayerPrefs.GetString("Language", "English");
 
-#if UNITY_IPHONE || UNITY_ANDROID
+#if UNITY_IOS || UNITY_ANDROID
 		string mobKey = key + " Mobile";
 		if (mDictionary.ContainsKey(mobKey)) return true;
 		else if (mOldDictionary.ContainsKey(mobKey)) return true;
