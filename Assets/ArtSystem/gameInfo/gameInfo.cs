@@ -7,8 +7,6 @@ public class gameUIbutton
     public string hashString;
     public GameObject gameObject;
     public int response;
-    public bool dying;
-    public bool dead;
 }
 
 public class gameInfo : MonoBehaviour
@@ -71,7 +69,7 @@ public class gameInfo : MonoBehaviour
             me.transform.SetParent(gameObject.transform);
             opponent = ((GameObject)MonoBehaviour.Instantiate(mod_healthBar, new Vector3(1000, 0, 0), Quaternion.identity)).GetComponent<barPngLoader>();
             opponent.transform.SetParent(gameObject.transform);
-            
+
             Transform[] Transforms = me.GetComponentsInChildren<Transform>();
             foreach (Transform child in Transforms)
             {
@@ -93,7 +91,7 @@ public class gameInfo : MonoBehaviour
         {
             k = 1.2f;
         }
-        if (k <0.8f)
+        if (k < 0.8f)
         {
             k = 0.8f;
         }
@@ -111,60 +109,36 @@ public class gameInfo : MonoBehaviour
         instance_btnPan.gameObject.transform.localScale = ksb;
         opponent.transform.localScale = ks;
         me.transform.localScale = ks;
-        if (!swaped) 
+        if (!swaped)
         {
-            opponent.transform.localPosition = new Vector3(Screen.width / 2-14, Screen.height / 2 - 14);
+            opponent.transform.localPosition = new Vector3(Screen.width / 2 - 14, Screen.height / 2 - 14);
             me.transform.localPosition = new Vector3(Screen.width / 2 - 14, Screen.height / 2 - 14 - k * (float)(opponent.under.height));
         }
         else
         {
             me.transform.localPosition = new Vector3(Screen.width / 2 - 14, Screen.height / 2 - 14);
-            opponent.transform.localPosition = new Vector3(Screen.width / 2-14, Screen.height / 2 - 14 - k * (float)(opponent.under.height));
+            opponent.transform.localPosition = new Vector3(Screen.width / 2 - 14, Screen.height / 2 - 14 - k * (float)(opponent.under.height));
         }
 
         float height = 132 + 50 * (HashedButtons.Count);
-        if (HashedButtons.Count==0)  
+        if (HashedButtons.Count == 0)
         {
             height = 116;
         }
-         width = (150 * kb) + 15f;
+        width = (150 * kb) + 15f;
         float localPositionPanX = (((float)Screen.width - 225 * kb) / 2) - 15f;
         float localPositionPanY = 0;
         float localPositionPanY_ = instance_btnPan.transform.localPosition.y + (localPositionPanY - instance_btnPan.transform.localPosition.y) * 0.2f;
         instance_btnPan.height += (int)(((float)height - (float)instance_btnPan.height) * 0.2f);
         instance_btnPan.transform.localPosition = new Vector3(localPositionPanX, localPositionPanY_, 0);
-        instance_lab.transform.localPosition = new Vector3(Screen.width/2-315, -Screen.height / 2+90, 0);
-        int j = 0;
+        instance_lab.transform.localPosition = new Vector3(Screen.width / 2 - 315, -Screen.height / 2 + 90, 0);
         for (int i = 0; i < HashedButtons.Count; i++)
         {
             if (HashedButtons[i].gameObject != null)
             {
-                if (HashedButtons[i].dying)
-                {
-                    HashedButtons[i].gameObject.transform.localPosition += (new Vector3(0, -120, 0) - HashedButtons[i].gameObject.transform.localPosition) * Program.deltaTime * 20f;
-                    if (Math.Abs(HashedButtons[i].gameObject.transform.localPosition.y - -120) < 1)
-                        HashedButtons[i].dead = true;
-                }
-                else
-                {
-                    HashedButtons[i].gameObject.transform.localPosition += (new Vector3(0, -145 - j * 50, 0) - HashedButtons[i].gameObject.transform.localPosition) * Program.deltaTime * 10f;
-                    j++;
-                }
+                HashedButtons[i].gameObject.transform.localPosition += (new Vector3(0, height / 2 - 142 - i * 50, 0) - HashedButtons[i].gameObject.transform.localPosition) * Program.deltaTime * 10f;
             }
-            else
-                HashedButtons[i].dead = true;
         }
-        for (int i = HashedButtons.Count - 1; i >= 0; i--)
-        {
-            if (HashedButtons[i].dead)
-                HashedButtons.RemoveAt(i);
-        }
-        height = 132 + (50 * j);
-        if (j == 0)
-        {
-            height = 116;
-        }
-        instance_btnPan.height += (int)(((float)height - (float)instance_btnPan.height) * 0.2f);
         if (Program.TimePassed() - lastTickTime > 1000)
         {
             lastTickTime = Program.TimePassed();
@@ -195,12 +169,11 @@ public class gameInfo : MonoBehaviour
         {
             child.gameObject.layer = instance_btnPan.gameObject.layer;
         }
-        hashedButton.gameObject.transform.SetParent(instance_btnPan.transform,false);
+        hashedButton.gameObject.transform.SetParent(instance_btnPan.transform, false);
         hashedButton.gameObject.transform.localScale = Vector3.zero;
-        hashedButton.gameObject.transform.localPosition= new Vector3(0, -120, 0);
+        hashedButton.gameObject.transform.localPosition = Vector3.zero;
         hashedButton.gameObject.transform.localEulerAngles = Vector3.zero;
         iTween.ScaleTo(hashedButton.gameObject, new Vector3(0.9f, 0.9f, 0.9f), 0.3f);
-        hashedButton.dying = false;
         HashedButtons.Add(hashedButton);
         refreshLine();
     }
@@ -249,9 +222,9 @@ public class gameInfo : MonoBehaviour
         {
             if (remove.gameObject != null)
             {
-                Program.I().destroy(remove.gameObject, 0.3f, true);
+                Program.I().destroy(remove.gameObject, 0.6f, true);
             }
-            remove.dying = true;
+            HashedButtons.Remove(remove);
         }
         refreshLine();
     }
@@ -269,24 +242,16 @@ public class gameInfo : MonoBehaviour
         {
             if (HashedButtons[i].gameObject != null)
             {
-                Program.I().destroy(HashedButtons[i].gameObject, 0.3f, true);
+                Program.I().destroy(HashedButtons[i].gameObject, 0.6f, true);
             }
-            HashedButtons[i].dying = true;
         }
+        HashedButtons.Clear();
         refreshLine();
     }
 
     void refreshLine()
     {
-        int j = 0;
-        for (int i = 0; i < HashedButtons.Count; i++)
-        {
-            if (!HashedButtons[i].dying)
-            {
-                j++;
-            }
-        }
-        line.SetActive(j > 0);
+        line.SetActive(HashedButtons.Count > 0);
     }
 
     int[] time = new int[2];
@@ -320,7 +285,7 @@ public class gameInfo : MonoBehaviour
     }
 
 
-    public void setTimeStill(int player)    
+    public void setTimeStill(int player)
     {
         time[0] = Program.I().ocgcore.timeLimit;
         time[1] = Program.I().ocgcore.timeLimit;
@@ -338,16 +303,8 @@ public class gameInfo : MonoBehaviour
             opponent.under.mainTexture = GameTextureManager.exBar;
             me.under.mainTexture = GameTextureManager.bar;
         }
-        if (Program.I().ocgcore.timeLimit == 0)
-        {
-            me.api_timeHint.text = "infinite";
-            opponent.api_timeHint.text = "infinite";
-        }
-        else
-        {
-            me.api_timeHint.text = "paused";
-            opponent.api_timeHint.text = "paused";
-        }
+        me.api_timeHint.text = "paused";
+        opponent.api_timeHint.text = "paused";
     }
 
     public bool amIdanger()
@@ -357,10 +314,6 @@ public class gameInfo : MonoBehaviour
 
     void setTimeAbsolutely(int player, int t)
     {
-        if (Program.I().ocgcore.timeLimit == 0)
-        {
-            return;
-        }
         if (player == 0)
         {
             me.api_timeHint.text = t.ToString() + "/" + Program.I().ocgcore.timeLimit.ToString();
@@ -394,11 +347,11 @@ public class gameInfo : MonoBehaviour
             opponent.api_healthBar.gameObject.transform.localPosition.y,
             opponent.api_healthBar.gameObject.transform.localPosition.z), 1f);
         instance_lab.Clear();
-        if (Program.I().ocgcore.confirmedCards.Count>0)
+        if (Program.I().ocgcore.confirmedCards.Count > 0)
         {
             instance_lab.Add(GameStringHelper.yijingqueren);
         }
-        foreach (var item in Program.I().ocgcore.confirmedCards)    
+        foreach (var item in Program.I().ocgcore.confirmedCards)
         {
             instance_lab.Add(item);
         }
@@ -425,7 +378,7 @@ public class gameInfo : MonoBehaviour
             {
                 time[0]--;
             }
-            if (amIdanger())  
+            if (amIdanger())
             {
                 if (Program.I().ocgcore != null)
                 {
@@ -446,12 +399,12 @@ public class gameInfo : MonoBehaviour
 
     public enum chainCondition
     {
-        standard,no,all,smart
+        standard, no, all, smart
     }
 
     public void set_condition(chainCondition c)
     {
-        switch (c)  
+        switch (c)
         {
             case chainCondition.standard:
                 toggle_all.value = false;
