@@ -1922,8 +1922,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101874}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 275.00003, y: 161.00002, z: 0}
-  m_LocalScale: {x: 2.1545582, y: 2.1545577, z: 2.1545577}
+  m_LocalPosition: {x: 275, y: 161, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 451664}
   m_RootOrder: 1
@@ -2136,7 +2136,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 20, y: 20, z: 0}
+  m_Size: {x: 40, y: 40, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6584112
 BoxCollider:
@@ -2985,24 +2985,24 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -39
+    absolute: -49
   rightAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -19
+    absolute: -9
   bottomAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -47
+    absolute: -57
   topAnchor:
     target: {fileID: 451664}
     relative: 1
-    absolute: -27
+    absolute: -17
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 20
-  mHeight: 20
+  mWidth: 40
+  mHeight: 40
   mDepth: 1
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
@@ -5906,7 +5906,7 @@ MonoBehaviour:
   mod: {fileID: 120608, guid: b102b714e94a8bf4abf4b4ada52e4158, type: 2}
   panel: {fileID: 11404508}
   scrollBar: {fileID: 11417292}
-  heightOfEach: 40
+  heightOfEach: 22
   preHeight: 120
 --- !u!114 &11495112
 MonoBehaviour:
