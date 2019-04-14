@@ -454,12 +454,10 @@ public class GameStringHelper
 
     public static string getSetName(long Setcode)
     {
-        var returnValue = new List<string>();
-        int lastBaseType = 0xfff;
+        string returnValue = "";
         for (int i = 0; i < GameStringManager.xilies.Count; i++)
         {
-            int currentHash = GameStringManager.xilies[i].hashCode;
-            if (YGOSharp.CardsManager.IfSetCard(currentHash, Setcode))
+            if (YGOSharp.CardsManager.IfSetCard(GameStringManager.xilies[i].hashCode, Setcode))
             {
                 if (!returnValue.Contains(GameStringManager.xilies[i].content))
                 {
@@ -471,7 +469,7 @@ public class GameStringHelper
         {
             returnValue = returnValue.Substring(0, returnValue.Length - 2);
         }
-        
+
         return returnValue;
     }
 }

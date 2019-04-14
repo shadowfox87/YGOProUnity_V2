@@ -3257,25 +3257,32 @@ public class Ocgcore : ServantWithCardDescription
                     if (cr == 0)
                     {
                         desc = GameStringManager.get(200);
+                        Debug.Log(desc);
                         Regex forReplaceFirst = new Regex("\\[%ls\\]");
                         desc = forReplaceFirst.Replace(desc, GameStringManager.formatLocation(gps), 1);
+                        Debug.Log(desc);
                         desc = forReplaceFirst.Replace(desc, displayname, 1);
+                        Debug.Log(desc);
                     }
                     else if (cr == 221)
                     {
                         desc = GameStringManager.get(221);
+                        Debug.Log(desc);
                         Regex forReplaceFirst = new Regex("\\[%ls\\]");
                         desc = forReplaceFirst.Replace(desc, GameStringManager.formatLocation(gps), 1);
+                        Debug.Log(desc);
                         desc = forReplaceFirst.Replace(desc, displayname, 1);
-                        desc = desc + "\n" + GameStringManager.get(223);
+                        Debug.Log(desc);
                     }
                     else
                     {
                         desc = GameStringManager.get(cr);
+                        Debug.Log(desc);
                         Regex forReplaceFirst = new Regex("\\[%ls\\]");
                         desc = forReplaceFirst.Replace(desc, displayname, 1);
+                        Debug.Log(desc);
                     }
-                    string hin = ES_hint + "，\n" + desc;
+                    string hin = desc;
                     RMSshow_yesOrNo("return", hin, new messageSystemValue { value = "1", hint = "yes" }, new messageSystemValue { value = "0", hint = "no" });
                     card.add_one_decoration(Program.I().mod_ocgcore_decoration_chain_selecting, 4, Vector3.zero, "chain_selecting");
                     card.currentFlash = gameCard.flashType.Active;

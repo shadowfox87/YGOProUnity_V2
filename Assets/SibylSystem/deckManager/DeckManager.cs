@@ -1407,7 +1407,7 @@ public class DeckManager : ServantWithCardDescription
                 deck.ISide.Add(card);
                 deck.Side.Add(card.cardData.Id);
             }
-            else if (.cardData.IsExtraCard())
+            else if (card.cardData.IsExtraCard())
             {
                 deck.IExtra.Add(card);
                 deck.Extra.Add(card.cardData.Id);
@@ -1492,14 +1492,7 @@ public class DeckManager : ServantWithCardDescription
                                 break;
                             default:
                                 {
-                                    YGOSharp.Card card = YGOSharp.CardsManager.Get(code);
-                                    if ((card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Fusion) > 0
-                                        ||
-                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Synchro) > 0
-                                        ||
-                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.Xyz) > 0
-                                         ||
-                                        (card.Type & (UInt32)YGOSharp.OCGWrapper.Enums.CardType.link) > 0)
+                                    if (card.IsExtraCard())
                                     {
                                         deck.Extra.Add(code);
                                         deck.Deck_O.Extra.Add(code);
