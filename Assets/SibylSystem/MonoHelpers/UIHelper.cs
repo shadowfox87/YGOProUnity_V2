@@ -2,38 +2,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using YGOSharp.OCGWrapper.Enums;
+
 public static class UIHelper
 {
     [DllImport("user32")]
     static extern bool FlashWindow(IntPtr handle, bool invert);
 
-    public delegate bool WNDENUMPROC(IntPtr hwnd, uint lParam);
+    public delegate bool WNDENUMPROC(IntPtr hwnd, IntPtr lParam);
     [DllImport("user32", SetLastError = true)]
-    static extern bool EnumWindows(WNDENUMPROC lpEnumFunc, uint lParam);
+    static extern bool EnumWindows(WNDENUMPROC lpEnumFunc, IntPtr lParam);
 
     [DllImport("user32", SetLastError = true)]
     static extern IntPtr GetParent(IntPtr hWnd);
     [DllImport("user32")]
-    static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref uint lpdwProcessId);
+    static extern uint GetWindowThreadProcessId(IntPtr hWnd, ref IntPtr lpdwProcessId);
+    [DllImport("user32")]
+    static extern int GetClassNameW(IntPtr hWnd, [MarshalAs(UnmanagedType.LPWStr)]StringBuilder lpString, int nMaxCount);
+    [DllImport("user32")]
+    static extern bool IsZoomed(IntPtr hWnd);
+    [DllImport("user32")]
+    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("kernel32")]
     static extern void SetLastError(uint dwErrCode);
 
+    static IntPtr myHWND = IntPtr.Zero;
+
     static IntPtr GetProcessWnd()
     {
+        if (myHWND != IntPtr.Zero)
+            return myHWND;
+
         IntPtr ptrWnd = IntPtr.Zero;
-        uint pid = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;  // 当前进程 ID
+        IntPtr pid = (IntPtr)System.Diagnostics.Process.GetCurrentProcess().Id;  // 当前进程 ID
 
-        bool bResult = EnumWindows(new WNDENUMPROC(delegate (IntPtr hwnd, uint lParam)
+        bool bResult = EnumWindows(new WNDENUMPROC(delegate (IntPtr hwnd, IntPtr mypid)
         {
-            uint id = 0;
+            IntPtr id = IntPtr.Zero;
 
-            if (GetParent(hwnd) == IntPtr.Zero)
+            StringBuilder ClassName = new StringBuilder(256);
+            GetClassNameW(hwnd, ClassName, ClassName.Capacity);
+            
+            if (string.Compare(ClassName.ToString(), "UnityWndClass", true, System.Globalization.CultureInfo.InvariantCulture) == 0)
             {
                 GetWindowThreadProcessId(hwnd, ref id);
-                if (id == lParam)    // 找到进程对应的主窗口句柄
+                if (id == mypid)    // 找到进程对应的主窗口句柄
                 {
                     ptrWnd = hwnd;   // 把句柄缓存起来
                     SetLastError(0);    // 设置无错误
@@ -45,12 +62,46 @@ public static class UIHelper
 
         }), pid);
 
-        return (!bResult && Marshal.GetLastWin32Error() == 0) ? ptrWnd : IntPtr.Zero;
+        if (!bResult && Marshal.GetLastWin32Error() == 0)
+        {
+            myHWND = ptrWnd;
+        }
+
+        return myHWND;
     }
 
     public static void Flash()
     {
         FlashWindow(GetProcessWnd(), true);
+    }
+
+    public static bool isMaximized()
+    {
+#if UNITY_STANDALONE_WIN
+        return IsZoomed(GetProcessWnd());
+#else
+        // not a easy thing to check window status on non-windows desktop...
+        return false;
+#endif
+    }
+
+    public static void MaximizeWindow()
+    {
+#if UNITY_STANDALONE_WIN
+        ShowWindow(GetProcessWnd(), 3); // SW_MAXIMIZE
+#endif
+    }
+
+    public static void RestoreWindow()
+    {
+#if UNITY_STANDALONE_WIN
+        ShowWindow(GetProcessWnd(), 9); // SW_RESTORE
+#endif
+    }
+
+    public static bool shouldMaximize()
+    {
+        return fromStringToBool(Config.Get("maximize_", "0"));
     }
 
     public enum RenderingMode
@@ -993,31 +1044,31 @@ public static class UIHelper
         {
             res += InterString.Get("对方");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_DECK) > 0)
+        if ((p1.location & (UInt32)CardLocation.Deck) > 0)
         {
             res += InterString.Get("卡组");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+        if ((p1.location & (UInt32)CardLocation.Extra) > 0)
         {
             res += InterString.Get("额外");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+        if ((p1.location & (UInt32)CardLocation.Grave) > 0)
         {
             res += InterString.Get("墓地");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_HAND) > 0)
+        if ((p1.location & (UInt32)CardLocation.Hand) > 0)
         {
             res += InterString.Get("手牌");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+        if ((p1.location & (UInt32)CardLocation.MonsterZone) > 0)
         {
             res += InterString.Get("前场");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_REMOVED) > 0)
+        if ((p1.location & (UInt32)CardLocation.Removed) > 0)
         {
             res += InterString.Get("除外");
         }
-        if ((p1.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+        if ((p1.location & (UInt32)CardLocation.SpellZone) > 0)
         {
             res += InterString.Get("后场");
         }
@@ -1027,41 +1078,41 @@ public static class UIHelper
     //internal static string getGPSstringPosition(GPS p1) 
     //{
     //    string res = "";
-    //    if ((p1.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+    //    if ((p1.location & (UInt32)CardLocation.Overlay) > 0)
     //    {
     //        res += InterString.Get("(被叠放)");
     //    }
     //    else
     //    {
-    //        if ((p1.position & (UInt32)game_position.POS_FACEUP_ATTACK) > 0)
+    //        if ((p1.position & (UInt32)CardPosition.FaceUpAttack) > 0)
     //        {
     //            res += InterString.Get("(表侧攻击)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_FACEUP_DEFENSE) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.FaceUp_DEFENSE) > 0)
     //        {
-    //            res += InterString.Get("(表侧防御)");
+    //            res += InterString.Get("(表侧守备)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_FACEDOWN_ATTACK) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.FaceDownAttack) > 0)
     //        {
     //            res += InterString.Get("(里侧攻击)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_FACEDOWN_DEFENSE) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.FaceDown_DEFENSE) > 0)
     //        {
-    //            res += InterString.Get("(里侧防御)");
+    //            res += InterString.Get("(里侧守备)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_ATTACK) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.Attack) > 0)
     //        {
     //            res += InterString.Get("(攻击)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_DEFENSE) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.POS_DEFENSE) > 0)
     //        {
-    //            res += InterString.Get("(防御)");
+    //            res += InterString.Get("(守备)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_FACEUP) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.FaceUp) > 0)
     //        {
     //            res += InterString.Get("(表侧)");
     //        }
-    //        else if ((p1.position & (UInt32)game_position.POS_DEFENSE) > 0)
+    //        else if ((p1.position & (UInt32)CardPosition.POS_DEFENSE) > 0)
     //        {
     //            res += InterString.Get("(里侧)");
     //        }
@@ -1108,5 +1159,14 @@ public static class UIHelper
         Transform[] Transforms = child.GetComponentsInChildren<Transform>();
         foreach (Transform achild in Transforms)
             achild.gameObject.layer = parent.layer;
+    }
+
+    internal static Vector3 get_close(Vector3 input_vector, Camera cam, float l)
+    {
+        Vector3 o = Vector3.zero;
+        Vector3 scr = cam.WorldToScreenPoint(input_vector);
+        scr.z -= l;
+        o = cam.ScreenToWorldPoint(scr);
+        return o;
     }
 }

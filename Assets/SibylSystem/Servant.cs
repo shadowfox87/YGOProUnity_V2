@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using YGOSharp.OCGWrapper.Enums;
+
 public class Servant
 {
     public GameObject gameObject;
@@ -301,6 +303,7 @@ public class Servant
             false,
             Program.ui_main_2d
             );
+        UIHelper.InterGameObject(toolBar);
         fixScreenProblem();
     }
 
@@ -655,7 +658,7 @@ public class Servant
         sp.width = 470;
         for (int i = 0; i < options.Count; i++)
         {
-            Vector2 v = ui_helper.get_hang_lie(i, 5);
+            Vector2 v = UIHelper.get_hang_lie(i, 5);
             float hang = v.x;
             float lie = v.y;
             GameObject btn = create
@@ -692,14 +695,24 @@ public class Servant
         UIHelper.registEvent(currentMSwindow, "atk_", ES_RMSpremono, atk);
         UIHelper.registEvent(currentMSwindow, "def_", ES_RMSpremono, def);
 
+        UITexture atkpic = UIHelper.getByName<UITexture>(currentMSwindow, "atkPic_");
+        UIButton defbutton = UIHelper.getByName<UIButton>(currentMSwindow, "def_");
+        if (Int32.Parse(atk.value) == (int)CardPosition.FaceUpDefence)
+        {
+            atkpic.transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+            defbutton.transform.localPosition = new Vector3(72.8f, 2f, 0f);
+        }
+        else
+        {
+            atkpic.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+            defbutton.transform.localPosition = new Vector3(62.8f, 0f, 0f);
+        }
+
         cardPicLoader cardPicLoader_ = currentMSwindow.AddComponent<cardPicLoader>();
         cardPicLoader_.code = code;
-        cardPicLoader_.uiTexture = UIHelper.getByName<UITexture>(currentMSwindow, "atkPic_");
+        cardPicLoader_.uiTexture = atkpic;
         cardPicLoader_ = currentMSwindow.AddComponent<cardPicLoader>();
-        if (Int32.Parse(def.value) != 8)
-            cardPicLoader_.code = code;
-        else
-            cardPicLoader_.code = 0;
+        cardPicLoader_.code = (Int32.Parse(def.value) == (int)CardPosition.FaceDownDefence) ? 0 : code;
         cardPicLoader_.uiTexture = UIHelper.getByName<UITexture>(currentMSwindow, "defPic_");
     }
 

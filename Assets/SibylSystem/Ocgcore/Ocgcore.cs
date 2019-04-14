@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using YGOSharp.OCGWrapper.Enums;
 public class Ocgcore : ServantWithCardDescription
@@ -76,39 +77,39 @@ public class Ocgcore : ServantWithCardDescription
     gameCardCondition get_point_worldcondition(GPS p)
     {
         gameCardCondition return_value = gameCardCondition.floating_clickable;
-        if ((p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+        if ((p.location & (UInt32)CardLocation.Deck) > 0)
         {
             return_value = gameCardCondition.still_unclickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+        if ((p.location & (UInt32)CardLocation.Extra) > 0)
         {
             return_value = gameCardCondition.still_unclickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+        if ((p.location & (UInt32)CardLocation.MonsterZone) > 0)
         {
             return_value = gameCardCondition.floating_clickable;
-            if ((p.position & (UInt32)game_position.POS_FACEUP) > 0)
+            if ((p.position & (UInt32)CardPosition.FaceUp) > 0)
             {
                 return_value = gameCardCondition.verticle_clickable;
             }
         }
-        if ((p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+        if ((p.location & (UInt32)CardLocation.SpellZone) > 0)
         {
             return_value = gameCardCondition.floating_clickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+        if ((p.location & (UInt32)CardLocation.Grave) > 0)
         {
             return_value = gameCardCondition.still_unclickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_HAND) > 0)
+        if ((p.location & (UInt32)CardLocation.Hand) > 0)
         {
             return_value = gameCardCondition.floating_clickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_REMOVED) > 0)
+        if ((p.location & (UInt32)CardLocation.Removed) > 0)
         {
             return_value = gameCardCondition.still_unclickable;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+        if ((p.location & (UInt32)CardLocation.Overlay) > 0)
         {
             return_value = gameCardCondition.still_unclickable;
         }
@@ -119,7 +120,7 @@ public class Ocgcore : ServantWithCardDescription
     {
         Vector3 return_value = Vector3.zero;
         float real = (Program.fieldSize - 1) * 0.9f + 1f;
-        if ((p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+        if ((p.location & (UInt32)CardLocation.Deck) > 0)
         {
             if (p.controller == 0)
             {
@@ -131,7 +132,7 @@ public class Ocgcore : ServantWithCardDescription
             }
             return_value.y += p.sequence * 0.03f;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+        if ((p.location & (UInt32)CardLocation.Extra) > 0)
         {
             if (p.controller == 0)
             {
@@ -143,7 +144,7 @@ public class Ocgcore : ServantWithCardDescription
             }
             return_value.y += p.sequence * 0.03f;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+        if ((p.location & (UInt32)CardLocation.Grave) > 0)
         {
             if (MasterRule >= 4)
             {
@@ -170,7 +171,7 @@ public class Ocgcore : ServantWithCardDescription
 
             return_value.y += p.sequence * 0.03f;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_REMOVED) > 0)
+        if ((p.location & (UInt32)CardLocation.Removed) > 0)
         {
             if (MasterRule >= 4)
             {
@@ -197,7 +198,7 @@ public class Ocgcore : ServantWithCardDescription
 
             return_value.y += p.sequence * 0.03f;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+        if ((p.location & (UInt32)CardLocation.MonsterZone) > 0)
         {
             UInt32 realIndex = p.sequence;
             if (p.controller == 0)
@@ -253,7 +254,7 @@ public class Ocgcore : ServantWithCardDescription
             }
             return_value.x *= real;
         }
-        if ((p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+        if ((p.location & (UInt32)CardLocation.SpellZone) > 0)
         {
             if (p.sequence < 5 || ((p.sequence == 6 || p.sequence == 7) && MasterRule >= 4))
             {
@@ -370,18 +371,18 @@ public class Ocgcore : ServantWithCardDescription
                 }
             }
         }
-        if ((p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+        if ((p.location & (UInt32)CardLocation.Overlay) > 0)
         {
             if (c != null)
             {
                 int pposition = c.overFatherCount - 1 - p.position;
-                return_value.y -= (pposition + 2) * 1f;
-                return_value.x += (pposition + 1) * 0.6f;
+                return_value.y -= (pposition + 2) * 0.25f;
+                return_value.x += (pposition + 1) * 0.15f;
             }
             else
             {
-                return_value.y -= (p.position + 2) * 1f;
-                return_value.x += (p.position + 1) * 0.6f;
+                return_value.y -= (p.position + 2) * 0.25f;
+                return_value.x += (p.position + 1) * 0.15f;
             }
 
         }
@@ -412,10 +413,10 @@ public class Ocgcore : ServantWithCardDescription
 
         Program.go(1, () =>
         {
-            MHS_creatBundle(60, localPlayer(0), game_location.LOCATION_DECK);
-            MHS_creatBundle(15, localPlayer(0), game_location.LOCATION_EXTRA);
-            MHS_creatBundle(60, localPlayer(1), game_location.LOCATION_DECK);
-            MHS_creatBundle(15, localPlayer(1), game_location.LOCATION_EXTRA);
+            MHS_creatBundle(60, localPlayer(0), CardLocation.Deck);
+            MHS_creatBundle(15, localPlayer(0), CardLocation.Extra);
+            MHS_creatBundle(60, localPlayer(1), CardLocation.Deck);
+            MHS_creatBundle(15, localPlayer(1), CardLocation.Extra);
             for (int i = 0; i < cards.Count; i++)
             {
                 cards[i].hide();
@@ -1226,7 +1227,7 @@ public class Ocgcore : ServantWithCardDescription
     public void forceMSquit()
     {
         Package p = new Package();
-        p.Fuction = (int)YGOSharp.OCGWrapper.Enums.GameMessage.sibyl_quit;
+        p.Fuction = (int)GameMessage.sibyl_quit;
         Packages.Add(p);
     }
 
@@ -1335,6 +1336,7 @@ public class Ocgcore : ServantWithCardDescription
                 logicalClearChain();
                 surrended = false;
                 Program.I().room.duelEnded = false;
+                Program.I().room.joinWithReconnect = false;
                 turns = 0;
                 deckReserved = false;
                 keys.Insert(0, currentMessageIndex);
@@ -1342,13 +1344,14 @@ public class Ocgcore : ServantWithCardDescription
                 md5Maker = 0;
                 for (int i = 0; i < cards.Count; i++)
                 {
-                    cards[i].p.location = (UInt32)game_location.LOCATION_UNKNOWN;
+                    cards[i].p.location = (UInt32)CardLocation.Unknown;
                 }
                 int playertype = r.ReadByte();
                 isFirst = ((playertype & 0xf) > 0) ? false : true;
                 gameInfo.swaped = false;
                 isObserver = ((playertype & 0xf0) > 0) ? true : false;
-                r.ReadByte(); // duel_rule
+                if (r.BaseStream.Length > 17) // dumb fix for yrp3d replay older than v1.034.9
+                    r.ReadByte(); // duel_rule
                 life_0 = r.ReadInt32();
                 life_1 = r.ReadInt32();
                 lpLimit = life_0;
@@ -1366,10 +1369,10 @@ public class Ocgcore : ServantWithCardDescription
                     }
                 }
                 cookie_matchKill = 0;
-                MHS_creatBundle(r.ReadInt16(), localPlayer(0), game_location.LOCATION_DECK);
-                MHS_creatBundle(r.ReadInt16(), localPlayer(0), game_location.LOCATION_EXTRA);
-                MHS_creatBundle(r.ReadInt16(), localPlayer(1), game_location.LOCATION_DECK);
-                MHS_creatBundle(r.ReadInt16(), localPlayer(1), game_location.LOCATION_EXTRA);
+                MHS_creatBundle(r.ReadInt16(), localPlayer(0), CardLocation.Deck);
+                MHS_creatBundle(r.ReadInt16(), localPlayer(0), CardLocation.Extra);
+                MHS_creatBundle(r.ReadInt16(), localPlayer(1), CardLocation.Deck);
+                MHS_creatBundle(r.ReadInt16(), localPlayer(1), CardLocation.Extra);
                 gameField.clearDisabled();
                 if (Program.I().room.mode == 0)
                 {
@@ -1399,7 +1402,7 @@ public class Ocgcore : ServantWithCardDescription
                 gameField.currentPhase = GameField.ph.dp;
                 result = duelResult.disLink;
                 deckReserved = false;
-                isFirst = true;
+                //isFirst = true;
                 gameInfo.swaped = false;
                 logicalClearChain();
                 surrended = false;
@@ -1410,7 +1413,7 @@ public class Ocgcore : ServantWithCardDescription
                 md5Maker = 0;
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     {
-                        cards[i].p.location = (UInt32)game_location.LOCATION_UNKNOWN;
+                        cards[i].p.location = (UInt32)CardLocation.Unknown;
                     }
                 cookie_matchKill = 0;
 
@@ -1448,7 +1451,7 @@ public class Ocgcore : ServantWithCardDescription
                             gps = new GPS
                             {
                                 controller = (UInt32)player,
-                                location = (UInt32)game_location.LOCATION_MZONE,
+                                location = (UInt32)CardLocation.MonsterZone,
                                 position = (int)r.ReadByte(),
                                 sequence = (UInt32)i,
                             };
@@ -1456,7 +1459,7 @@ public class Ocgcore : ServantWithCardDescription
                             val = r.ReadByte();
                             for (int xyz = 0; xyz < val; ++xyz)
                             {
-                                gps.location |= (UInt32)game_location.LOCATION_OVERLAY;
+                                gps.location |= (UInt32)CardLocation.Overlay;
                                 gps.position = xyz;
                                 GCS_cardCreate(gps);
                             }
@@ -1470,7 +1473,7 @@ public class Ocgcore : ServantWithCardDescription
                             gps = new GPS
                             {
                                 controller = (UInt32)player,
-                                location = (UInt32)game_location.LOCATION_SZONE,
+                                location = (UInt32)CardLocation.SpellZone,
                                 position = (int)r.ReadByte(),
                                 sequence = (UInt32)i,
                             };
@@ -1483,8 +1486,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_DECK,
-                            position = (int)game_position.POS_FACEDOWN_ATTACK,
+                            location = (UInt32)CardLocation.Deck,
+                            position = (int)CardPosition.FaceDownAttack,
                             sequence = (UInt32)i,
                         };
                         GCS_cardCreate(gps);
@@ -1495,8 +1498,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_HAND,
-                            position = (int)game_position.POS_FACEDOWN_ATTACK,
+                            location = (UInt32)CardLocation.Hand,
+                            position = (int)CardPosition.FaceDownAttack,
                             sequence = (UInt32)i,
                         };
                         GCS_cardCreate(gps);
@@ -1507,8 +1510,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_GRAVE,
-                            position = (int)game_position.POS_FACEUP_ATTACK,
+                            location = (UInt32)CardLocation.Grave,
+                            position = (int)CardPosition.FaceUpAttack,
                             sequence = (UInt32)i,
                         };
                         GCS_cardCreate(gps);
@@ -1519,8 +1522,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_REMOVED,
-                            position = (int)game_position.POS_FACEUP_ATTACK,
+                            location = (UInt32)CardLocation.Removed,
+                            position = (int)CardPosition.FaceUpAttack,
                             sequence = (UInt32)i,
                         };
                         GCS_cardCreate(gps);
@@ -1532,8 +1535,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_EXTRA,
-                            position = (int)game_position.POS_FACEDOWN_ATTACK,
+                            location = (UInt32)CardLocation.Extra,
+                            position = (int)CardPosition.FaceDownAttack,
                             sequence = (UInt32)i,
                         };
                         GCS_cardCreate(gps);
@@ -1543,8 +1546,8 @@ public class Ocgcore : ServantWithCardDescription
                         gps = new GPS
                         {
                             controller = (UInt32)player,
-                            location = (UInt32)game_location.LOCATION_EXTRA,
-                            position = (int)game_position.POS_FACEUP_ATTACK,
+                            location = (UInt32)CardLocation.Extra,
+                            position = (int)CardPosition.FaceUpAttack,
                             sequence = (UInt32)(val + i),
                         };
                         GCS_cardCreate(gps);
@@ -1824,14 +1827,21 @@ public class Ocgcore : ServantWithCardDescription
                 break;
             case GameMessage.HandResult:
                 data = r.ReadByte();
-                int data1 = data & 0x3;
-                int data2 = (data >> 2) & 0x3;
-                string res1 = (data1 == 1 ? "剪刀" : (data1 == 2 ? "布" : "石头"));
-                string res2 = (data2 == 1 ? "剪刀" : (data2 == 2 ? "布" : "石头"));
+                int res1 = (data & 0x3) - 1;
+                int res2 = ((data >> 2) & 0x3) - 1;
                 if (isFirst)
-                    printDuelLog("猜拳结果：你好像出了" + res2 + data2.ToString() + "，对方好像出了" + res1 + data1.ToString());
+                {
+                    Program.I().new_ui_handShower.GetComponent<handShower>().me = res1;
+                    Program.I().new_ui_handShower.GetComponent<handShower>().op = res2;
+                }
                 else
-                    printDuelLog("猜拳结果：你好像出了" + data1.ToString() + res1 + "，对方好像出了" + res2 + data2.ToString());
+                {
+                    Program.I().new_ui_handShower.GetComponent<handShower>().me = res2;
+                    Program.I().new_ui_handShower.GetComponent<handShower>().op = res1;
+                }
+                GameObject handres = create(Program.I().new_ui_handShower, Vector3.zero, Vector3.zero, false, Program.ui_main_2d);
+                destroy(handres, 10f);
+                Sleep(60);
                 break;
             case GameMessage.Attack:
                 game_card = GCS_cardGet(r.ReadGPS(), false);
@@ -1861,7 +1871,7 @@ public class Ocgcore : ServantWithCardDescription
                     //printDuelLog(derectattack);
                 }
                 break;
-            case GameMessage.AttackDiabled:
+            case GameMessage.AttackDisabled:
                 ES_hint = InterString.Get("攻击被无效时");
                 //printDuelLog(InterString.Get("攻击被无效"));
                 break;
@@ -1874,7 +1884,7 @@ public class Ocgcore : ServantWithCardDescription
                 if (card != null)
                 {
                     card.set_code(code);
-                    card.p.position = (int)game_position.POS_FACEUP_ATTACK;
+                    card.p.position = (int)CardPosition.FaceUpAttack;
                     card.refreshData();
                     ES_hint = InterString.Get("「[?]」反转召唤宣言时", card.get_data().Name);
                     if (card.p.controller == 0)
@@ -1931,24 +1941,24 @@ public class Ocgcore : ServantWithCardDescription
                 ES_hint = InterString.Get("玩家抽卡时");
                 controller = localPlayer(r.ReadByte());
                 count = r.ReadByte();
-                int deckCC = MHS_getBundle(controller, (int)game_location.LOCATION_DECK).Count;
+                int deckCC = MHS_getBundle(controller, (int)CardLocation.Deck).Count;
                 for (int isa = 0; isa < count; isa++)
                 {
                     card = GCS_cardMove(
                         new GPS
                         {
                             controller = (UInt32)controller,
-                            location = (UInt32)game_location.LOCATION_DECK,
+                            location = (UInt32)CardLocation.Deck,
                             sequence = (UInt32)(deckCC - 1 - isa),
-                            position = (int)game_position.POS_FACEDOWN_ATTACK,
+                            position = (int)CardPosition.FaceDownAttack,
                         }
                     ,
                     new GPS
                     {
                         controller = (UInt32)controller,
-                        location = (UInt32)game_location.LOCATION_HAND,
+                        location = (UInt32)CardLocation.Hand,
                         sequence = (UInt32)(1000),
-                        position = (int)game_position.POS_FACEDOWN_ATTACK,
+                        position = (int)CardPosition.FaceDownAttack,
                     }
                     , false);
                     card.set_code(r.ReadInt32() & 0x7fffffff);
@@ -1988,12 +1998,12 @@ public class Ocgcore : ServantWithCardDescription
                     }
                 }
                 int mcount = r.ReadByte();
-                var cardsInDeck = MHS_resizeBundle(mcount, controller, game_location.LOCATION_DECK);
+                var cardsInDeck = MHS_resizeBundle(mcount, controller, CardLocation.Deck);
                 int ecount = r.ReadByte();
-                var cardsInExtra = MHS_resizeBundle(ecount, controller, game_location.LOCATION_EXTRA);
+                var cardsInExtra = MHS_resizeBundle(ecount, controller, CardLocation.Extra);
                 int pcount = r.ReadByte();
                 int hcount = r.ReadByte();
-                var cardsInHand = MHS_resizeBundle(hcount, controller, game_location.LOCATION_HAND);
+                var cardsInHand = MHS_resizeBundle(hcount, controller, CardLocation.Hand);
                 if (cardsInDeck.Count > 0)
                 {
                     cardsInDeck[cardsInDeck.Count - 1].set_code(r.ReadInt32());
@@ -2010,7 +2020,7 @@ public class Ocgcore : ServantWithCardDescription
                 {
                     if (cardsInExtra.Count - 1 - i > 0)
                     {
-                        cardsInExtra[cardsInExtra.Count - 1 - i].p.position = (int)game_position.POS_FACEUP_ATTACK;
+                        cardsInExtra[cardsInExtra.Count - 1 - i].p.position = (int)CardPosition.FaceUpAttack;
                     }
                 }
                 if (controller == 0)
@@ -2227,7 +2237,7 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.ConfirmDecktop:
                 player = localPlayer(r.ReadByte());
                 count = r.ReadByte();
-                int countOfDeck = countLocation(player, game_location.LOCATION_DECK);
+                int countOfDeck = countLocation(player, CardLocation.Deck);
                 for (int i = 0; i < count; i++)
                 {
                     code = r.ReadInt32();
@@ -2235,7 +2245,7 @@ public class Ocgcore : ServantWithCardDescription
                     card = GCS_cardGet(new GPS
                     {
                         controller = (UInt32)player,
-                        location = (UInt32)game_location.LOCATION_DECK,
+                        location = (UInt32)CardLocation.Deck,
                         sequence = (UInt32)(countOfDeck - 1 - i),
                     }, false);
                     if (card != null)
@@ -2272,11 +2282,11 @@ public class Ocgcore : ServantWithCardDescription
                 break;
             case GameMessage.DeckTop:
                 player = localPlayer(r.ReadByte());
-                int countOfDeck_ = countLocation(player, game_location.LOCATION_DECK);
+                int countOfDeck_ = countLocation(player, CardLocation.Deck);
                 gps = new GPS
                 {
                     controller = (UInt32)player,
-                    location = (UInt32)game_location.LOCATION_DECK,
+                    location = (UInt32)CardLocation.Deck,
                     sequence = (UInt32)(countOfDeck_ - 1 - r.ReadByte()),
                 };
                 code = r.ReadInt32();
@@ -2300,7 +2310,7 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Deck) > 0)
                         {
                             if (cards[i].p.controller == player)
                             {
@@ -2313,7 +2323,7 @@ public class Ocgcore : ServantWithCardDescription
                 player = localPlayer(r.ReadByte());
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_HAND) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Hand) > 0)
                         {
                             if (cards[i].p.controller == player)
                             {
@@ -2328,18 +2338,18 @@ public class Ocgcore : ServantWithCardDescription
                     {
                         if (cards[i].p.controller == player)
                         {
-                            if ((cards[i].p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+                            if ((cards[i].p.location & (UInt32)CardLocation.Deck) > 0)
                             {
                                 if (cards[i].p.controller == player)
                                 {
-                                    cards[i].p.location = (UInt32)game_location.LOCATION_GRAVE;
+                                    cards[i].p.location = (UInt32)CardLocation.Grave;
                                 }
                             }
-                            else if ((cards[i].p.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+                            else if ((cards[i].p.location & (UInt32)CardLocation.Grave) > 0)
                             {
                                 if (cards[i].p.controller == player)
                                 {
-                                    cards[i].p.location = (UInt32)game_location.LOCATION_DECK;
+                                    cards[i].p.location = (UInt32)CardLocation.Deck;
                                 }
                             }
                         }
@@ -2376,7 +2386,7 @@ public class Ocgcore : ServantWithCardDescription
                     gps = new GPS
                     {
                         controller = (UInt32)localPlayer(0),
-                        location = (UInt32)game_location.LOCATION_MZONE,
+                        location = (UInt32)CardLocation.MonsterZone,
                         sequence = (UInt32)i
                     };
                     if ((selectable_field & filter) > 0)
@@ -2394,7 +2404,7 @@ public class Ocgcore : ServantWithCardDescription
                     gps = new GPS
                     {
                         controller = (UInt32)localPlayer(0),
-                        location = (UInt32)game_location.LOCATION_SZONE,
+                        location = (UInt32)CardLocation.SpellZone,
                         sequence = (UInt32)i
                     };
                     if ((selectable_field & filter) > 0)
@@ -2412,7 +2422,7 @@ public class Ocgcore : ServantWithCardDescription
                     gps = new GPS
                     {
                         controller = (UInt32)localPlayer(1),
-                        location = (UInt32)game_location.LOCATION_MZONE,
+                        location = (UInt32)CardLocation.MonsterZone,
                         sequence = (UInt32)i
                     };
                     if ((selectable_field & filter) > 0)
@@ -2430,7 +2440,7 @@ public class Ocgcore : ServantWithCardDescription
                     gps = new GPS
                     {
                         controller = (UInt32)localPlayer(1),
-                        location = (UInt32)game_location.LOCATION_SZONE,
+                        location = (UInt32)CardLocation.SpellZone,
                         sequence = (UInt32)i
                     };
                     if ((selectable_field & filter) > 0)
@@ -2511,7 +2521,7 @@ public class Ocgcore : ServantWithCardDescription
     public Package getNamePacket()
     {
         Package p__ = new Package();
-        p__.Fuction = (int)YGOSharp.OCGWrapper.Enums.GameMessage.sibyl_name;
+        p__.Fuction = (int)GameMessage.sibyl_name;
         p__.Data = new BinaryMaster();
         p__.Data.writer.WriteUnicode(name_0, 50);
         p__.Data.writer.WriteUnicode(name_0_tag, 50);
@@ -2528,7 +2538,7 @@ public class Ocgcore : ServantWithCardDescription
         Program.I().book.add(toPrint);
     }
 
-    private int countLocation(int player, game_location location_)
+    private int countLocation(int player, CardLocation location_)
     {
         int re = 0;
 
@@ -2546,7 +2556,7 @@ public class Ocgcore : ServantWithCardDescription
         return re;
     }
 
-    private int countLocationSequence(int player, game_location location_)
+    private int countLocationSequence(int player, CardLocation location_)  
     {
         int re = 0;
 
@@ -2668,6 +2678,7 @@ public class Ocgcore : ServantWithCardDescription
                 true,
                 new Vector3(((float)Screen.height) / 700f, ((float)Screen.height) / 700f, ((float)Screen.height) / 700f)
                 ).GetComponent<lazyWin>();
+                UIHelper.InterGameObject(winCaculator.gameObject);
                 winCaculator.input.value = UIHelper.getTimeString();
                 UIHelper.registEvent(winCaculator.gameObject, "yes_", onSaveReplay);
                 UIHelper.registEvent(winCaculator.gameObject, "no_", onGiveUpReplay);
@@ -2934,8 +2945,8 @@ public class Ocgcore : ServantWithCardDescription
                 card = GCS_cardGet(new GPS
                 {
                     controller = (UInt32)0,
-                    location = (UInt32)game_location.LOCATION_DECK,
-                    position = (int)game_position.POS_FACEDOWN_ATTACK,
+                    location = (UInt32)CardLocation.Deck,
+                    position = (int)CardPosition.FaceDownAttack,
                     sequence = (UInt32)0,
                 }, false);
                 if (card != null)
@@ -2983,8 +2994,8 @@ public class Ocgcore : ServantWithCardDescription
                 card = GCS_cardGet(new GPS
                 {
                     controller = (UInt32)0,
-                    location = (UInt32)game_location.LOCATION_HAND,
-                    position = (int)game_position.POS_FACEDOWN_ATTACK,
+                    location = (UInt32)CardLocation.Hand,
+                    position = (int)CardPosition.FaceDownAttack,
                     sequence = (UInt32)0,
                 }, false);
                 if (card != null)
@@ -3266,19 +3277,40 @@ public class Ocgcore : ServantWithCardDescription
                 code = r.ReadInt32();
                 gps = r.ReadShortGPS();
                 r.ReadByte();
-                int cr = 95;
-                if (Config.ClientVersion >= 0x233c)
-                {
-                    int cp = r.ReadInt32();
-                    if (cp > 0)
-                        cr = cp;
-                }
-                desc = GameStringManager.get(cr);
+                int cr = r.ReadInt32();
                 card = GCS_cardGet(gps, false);
-                desc = desc.Replace("[%ls]", "「" + card.get_data().Name + "」");
                 if (card != null)
                 {
-                    string hin = ES_hint + "，\n" + desc;
+                    string displayname = "「" + card.get_data().Name + "」";
+                    if (cr == 0)
+                    {
+                        desc = GameStringManager.get(200);
+                        Debug.Log(desc);
+                        Regex forReplaceFirst = new Regex("\\[%ls\\]");
+                        desc = forReplaceFirst.Replace(desc, GameStringManager.formatLocation(gps), 1);
+                        Debug.Log(desc);
+                        desc = forReplaceFirst.Replace(desc, displayname, 1);
+                        Debug.Log(desc);
+                    }
+                    else if (cr == 221)
+                    {
+                        desc = GameStringManager.get(221);
+                        Debug.Log(desc);
+                        Regex forReplaceFirst = new Regex("\\[%ls\\]");
+                        desc = forReplaceFirst.Replace(desc, GameStringManager.formatLocation(gps), 1);
+                        Debug.Log(desc);
+                        desc = forReplaceFirst.Replace(desc, displayname, 1);
+                        Debug.Log(desc);
+                    }
+                    else
+                    {
+                        desc = GameStringManager.get(cr);
+                        Debug.Log(desc);
+                        Regex forReplaceFirst = new Regex("\\[%ls\\]");
+                        desc = forReplaceFirst.Replace(desc, displayname, 1);
+                        Debug.Log(desc);
+                    }
+                    string hin = desc;
                     RMSshow_yesOrNo("return", hin, new messageSystemValue { value = "1", hint = "yes" }, new messageSystemValue { value = "0", hint = "no" });
                     card.add_one_decoration(Program.I().mod_ocgcore_decoration_chain_selecting, 4, Vector3.zero, "chain_selecting");
                     card.currentFlash = gameCard.flashType.Active;
@@ -3419,7 +3451,7 @@ public class Ocgcore : ServantWithCardDescription
                     gameField.setHint(InterString.Get("请选择卡片。") + " " + ES_min.ToString() + "-" + ES_max.ToString());
                 }
                 break;
-            case GameMessage.SelectUnselectCard:
+            case GameMessage.SelectUnselect:
                 if (inIgnoranceReplay() || inTheWorld())
                 {
                     break;
@@ -3434,8 +3466,6 @@ public class Ocgcore : ServantWithCardDescription
                 cancalable = (r.ReadByte() != 0) || finishable;
                 ES_min = r.ReadByte();
                 ES_max = r.ReadByte();
-                ES_min = finishable ? 0 : 1; // SelectUnselectCard can actually always select 1 card
-                ES_max = 1; // SelectUnselectCard can actually always select 1 card
                 ES_level = 0;
                 count = r.ReadByte();
                 for (int i = 0; i < count; i++)
@@ -3452,12 +3482,13 @@ public class Ocgcore : ServantWithCardDescription
                         allCardsInSelectMessage.Add(card);
                     }
                 }
-                count = r.ReadByte();
-                for (int i = 0; i < count; i++)
+                cardsSelected.Clear();
+                int count2 = r.ReadByte();
+                for (int i = count; i < count + count2; i++)
                 {
                     code = r.ReadInt32();
                     gps = r.ReadGPS();
-                    /*card = GCS_cardGet(gps, false);
+                    card = GCS_cardGet(gps, false);
                     if (card != null)
                     {
                         card.set_code(code);
@@ -3465,16 +3496,24 @@ public class Ocgcore : ServantWithCardDescription
                         card.forSelect = true;
                         card.selectPtr = i;
                         allCardsInSelectMessage.Add(card);
-                    }*/
+                        cardsSelected.Add(card);
+                    }
                 }
                 if (cancalable && !finishable)
                 {
                     gameInfo.addHashedButton("cancleSelected", -1, superButtonType.no, InterString.Get("取消选择@ui"));
                 }
-                realizeCardsForSelect();
-                if (ES_selectHint != "")
+                if (finishable)
                 {
-                    gameField.setHint(ES_selectHint + " " + ES_min.ToString() + "-" + ES_max.ToString());
+                    gameInfo.addHashedButton("sendSelected", 0, superButtonType.yes, InterString.Get("完成选择@ui"));
+                }
+                realizeCardsForSelect();
+                cardsSelected.Clear();
+                if (ES_selectHint != "")
+                    ES_selectUnselectHint = ES_selectHint;
+                if (ES_selectUnselectHint != "")
+                {
+                    gameField.setHint(ES_selectUnselectHint + " " + ES_min.ToString() + "-" + ES_max.ToString());
                 }
                 else
                 {
@@ -3912,7 +3951,7 @@ public class Ocgcore : ServantWithCardDescription
                         if (card.levelForSelect_2 == 0)
                         {
                             card.levelForSelect_2 = card.levelForSelect_1;
-                            if ((card.get_data().Type & (int)game_type.link) > 0)
+                            if ((card.get_data().Type & (int)CardType.Link) > 0)
                             {
                                 card.levelForSelect_2 = 1;
                             }
@@ -3939,7 +3978,7 @@ public class Ocgcore : ServantWithCardDescription
                         if (card.levelForSelect_2 == 0)
                         {
                             card.levelForSelect_2 = card.levelForSelect_1;
-                            if ((card.get_data().Type & (int)game_type.link) > 0)
+                            if ((card.get_data().Type & (int)CardType.Link) > 0)
                             {
                                 card.levelForSelect_2 = 1;
                             }
@@ -4174,14 +4213,25 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 break;
             case GameMessage.RockPaperScissors:
-                binaryMaster = new BinaryMaster();
-                binaryMaster.writer.Write(UnityEngine.Random.Range(0, 2));
-                sendReturn(binaryMaster.get());
+                if (inIgnoranceReplay() || inTheWorld())
+                {
+                    break;
+                }
+                if (condition == Condition.record)
+                {
+                    Sleep(60);
+                }
+                destroy(waitObject, 0, false, true);
+                player = localPlayer(r.ReadByte());
+                RMSshow_tp("RockPaperScissors"
+                    , new messageSystemValue { hint = "jiandao", value = "1" }
+                    , new messageSystemValue { hint = "shitou", value = "2" }
+                    , new messageSystemValue { hint = "bu", value = "3" });
                 break;
             case GameMessage.ConfirmDecktop:
                 player = localPlayer(r.ReadByte());
                 count = r.ReadByte();
-                int countOfDeck = countLocation(player, game_location.LOCATION_DECK);
+                int countOfDeck = countLocation(player, CardLocation.Deck);
                 for (int i = 0; i < count; i++)
                 {
                     code = r.ReadInt32();
@@ -4189,7 +4239,7 @@ public class Ocgcore : ServantWithCardDescription
                     gps = new GPS
                     {
                         controller = (UInt32)player,
-                        location = (UInt32)game_location.LOCATION_DECK,
+                        location = (UInt32)CardLocation.Deck,
                         sequence = (UInt32)(countOfDeck - 1 - i),
                     };
                     card = GCS_cardGet(gps, false);
@@ -4218,7 +4268,7 @@ public class Ocgcore : ServantWithCardDescription
                     }
                     else
                     {
-                        if (gps.location != (int)game_location.LOCATION_HAND)
+                        if (gps.location != (int)CardLocation.Hand)   
                         {
                             showC = true;
                         }
@@ -4239,13 +4289,13 @@ public class Ocgcore : ServantWithCardDescription
                         if (card != null)
                         {
                             if (
-                                (card.p.location & (UInt32)game_location.LOCATION_DECK) > 0
+                                (card.p.location & (UInt32)CardLocation.Deck) > 0
                                 ||
-                                (card.p.location & (UInt32)game_location.LOCATION_GRAVE) > 0
+                                (card.p.location & (UInt32)CardLocation.Grave) > 0
                                 ||
-                                (card.p.location & (UInt32)game_location.LOCATION_EXTRA) > 0
+                                (card.p.location & (UInt32)CardLocation.Extra) > 0
                                 ||
-                                (card.p.location & (UInt32)game_location.LOCATION_REMOVED) > 0
+                                (card.p.location & (UInt32)CardLocation.Removed) > 0
                                 )
                             {
                                 card.currentKuang = gameCard.kuangType.selected;
@@ -4261,7 +4311,7 @@ public class Ocgcore : ServantWithCardDescription
                             }
                             else if (card.condition != gameCardCondition.verticle_clickable)
                             {
-                                if ((card.p.location & (UInt32)game_location.LOCATION_HAND) > 0)
+                                if ((card.p.location & (UInt32)CardLocation.Hand) > 0)
                                 {
                                     if (i == 0)
                                     {
@@ -4309,7 +4359,7 @@ public class Ocgcore : ServantWithCardDescription
                 player = localPlayer(r.ReadByte());
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Deck) > 0)
                         {
                             if (cards[i].p.controller == player)
                             {
@@ -4414,7 +4464,7 @@ public class Ocgcore : ServantWithCardDescription
                 GPS from = r.ReadGPS();
                 GPS to = r.ReadGPS();
                 card = GCS_cardGet(to, false);
-                if ((to.location == ((UInt32)game_location.LOCATION_OVERLAY | (UInt32)game_location.LOCATION_EXTRA)) && ((from.location & (UInt32)game_location.LOCATION_OVERLAY) == 0) && Program.I().setting.setting.Vxyz.value == true)
+                if ((to.location == ((UInt32)CardLocation.Overlay | (UInt32)CardLocation.Extra)) && ((from.location & (UInt32)CardLocation.Overlay) == 0) && Program.I().setting.setting.Vxyz.value == true)
                 {
                     Vector3 vDarkHole = Vector3.zero;
                     float real = (Program.fieldSize - 1) * 0.9f + 1f;
@@ -4434,22 +4484,22 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 if (card != null)
                 {
-                    if ((to.position & (int)game_position.POS_FACEDOWN) > 0)
+                    if ((to.position & (int)CardPosition.FaceDown) > 0)
                     {
-                        if (to.location == (UInt32)game_location.LOCATION_MZONE || to.location == (UInt32)game_location.LOCATION_SZONE)
+                        if (to.location == (UInt32)CardLocation.MonsterZone || to.location == (UInt32)CardLocation.SpellZone)
                         {
                             if (Program.I().setting.setting.Vset.value == true)
                                 card.positionEffect(Program.I().mod_ocgcore_decoration_card_setted);
                             UIHelper.playSound("set", 1f);
                         }
                     }
-                    if (to.location == (UInt32)game_location.LOCATION_GRAVE)
+                    if (to.location == (UInt32)CardLocation.Grave)
                     {
-                        if ((from.location & (UInt32)game_location.LOCATION_MZONE) > 0) UIHelper.playSound("destroyed", 1f);
+                        if ((from.location & (UInt32)CardLocation.MonsterZone) > 0) UIHelper.playSound("destroyed", 1f);
                         if (Program.I().setting.setting.Vmove.value == true)
                             MonoBehaviour.Destroy((GameObject)MonoBehaviour.Instantiate(Program.I().mod_ocgcore_decoration_tograve, card.gameObject.transform.position, Quaternion.identity), 5f);
                     }
-                    if (to.location == (UInt32)game_location.LOCATION_REMOVED)
+                    if (to.location == (UInt32)CardLocation.Removed)
                     {
                         UIHelper.playSound("destroyed", 1f);
                         if (Program.I().setting.setting.Vmove.value == true)
@@ -4499,21 +4549,21 @@ public class Ocgcore : ServantWithCardDescription
                     if (Program.I().setting.setting.Vspsum.value == true)
                     {
                         GameObject mod = Program.I().mod_ocgcore_ss_summon_light;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_EARTH))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Earth))
                             mod = Program.I().mod_ocgcore_ss_summon_earth;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_DARK))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Dark))
                             mod = Program.I().mod_ocgcore_ss_summon_dark;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_DEVINE))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Divine))
                             mod = Program.I().mod_ocgcore_ss_summon_light;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_FIRE))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Fire))
                             mod = Program.I().mod_ocgcore_ss_summon_fire;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_LIGHT))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Light))
                             mod = Program.I().mod_ocgcore_ss_summon_light;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_WATER))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Water))
                             mod = Program.I().mod_ocgcore_ss_summon_water;
-                        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_WIND))
+                        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Wind))
                             mod = Program.I().mod_ocgcore_ss_summon_wind;
-                        if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_FUSION))
+                        if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Fusion))
                         {
                             if (Program.I().setting.setting.Vfusion.value == true)
                             {
@@ -4521,7 +4571,7 @@ public class Ocgcore : ServantWithCardDescription
                             }
                             UIHelper.playSound("specialsummon2", 1f);
                         }
-                        else if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_SYNCHRO))
+                        else if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Synchro))
                         {
                             if (Program.I().setting.setting.Vsync.value == true)
                             {
@@ -4530,7 +4580,7 @@ public class Ocgcore : ServantWithCardDescription
                             UIHelper.playSound("specialsummon2", 1f);
 
                         }
-                        else if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_RITUAL))
+                        else if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Ritual))
                         {
                             if (Program.I().setting.setting.Vrution.value == true)
                             {
@@ -4538,7 +4588,7 @@ public class Ocgcore : ServantWithCardDescription
                             }
                             UIHelper.playSound("specialsummon2", 1f);
                         }
-                        else if (GameStringHelper.differ(card.get_data().Type, (long)game_type.link))
+                        else if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Link))
                         {
                             if (Program.I().setting.setting.Vlink.value == true)
                             {
@@ -4559,15 +4609,15 @@ public class Ocgcore : ServantWithCardDescription
                     }
                     else
                     {
-                        if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_FUSION))
+                        if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Fusion))
                         {
                             UIHelper.playSound("specialsummon2", 1f);
                         }
-                        else if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_SYNCHRO))
+                        else if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Synchro))
                         {
                             UIHelper.playSound("specialsummon2", 1f);
                         }
-                        else if (GameStringHelper.differ(card.get_data().Type, (long)game_type.TYPE_RITUAL))
+                        else if (GameStringHelper.differ(card.get_data().Type, (long)CardType.Ritual))
                         {
                             UIHelper.playSound("specialsummon2", 1f);
                         }
@@ -4610,33 +4660,33 @@ public class Ocgcore : ServantWithCardDescription
                 {
                     card.set_code(code);
                     UIHelper.playSound("activate", 1);
-                    card.animation_show_off(false);
-                    if ((card.get_data().Type & (int)game_type.TYPE_MONSTER) > 0)
+                    card.animation_show_off( false);
+                    if ((card.get_data().Type & (int)CardType.Monster) > 0)
                     {
                         if (Program.I().setting.setting.Vactm.value == true)
                         {
                             GameObject mod = Program.I().mod_ocgcore_cs_mon_light;
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_EARTH) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Earth) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_earth;
                             }
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_WATER) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Water) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_water;
                             }
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_FIRE) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Fire) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_fire;
                             }
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_WIND) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Wind) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_wind;
                             }
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_LIGHT) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Light) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_light;
                             }
-                            if ((card.get_data().Attribute & (int)game_attributes.ATTRIBUTE_DARK) > 0)
+                            if ((card.get_data().Attribute & (int)CardAttribute.Dark) > 0)
                             {
                                 mod = Program.I().mod_ocgcore_cs_mon_dark;
                             }
@@ -4644,14 +4694,14 @@ public class Ocgcore : ServantWithCardDescription
                             card.fast_decoration(mod);
                         }
                     }
-                    if ((card.get_data().Type & (int)game_type.TYPE_SPELL) > 0)
+                    if ((card.get_data().Type & (int)CardType.Spell) > 0)
                     {
                         if (Program.I().setting.setting.Vacts.value == true)
                         {
                             card.positionEffect(Program.I().mod_ocgcore_decoration_magic_activated);
                         }
                     }
-                    if ((card.get_data().Type & (int)game_type.TYPE_TRAP) > 0)
+                    if ((card.get_data().Type & (int)CardType.Trap) > 0)
                     {
                         if (Program.I().setting.setting.Vactt.value == true)
                         {
@@ -4737,7 +4787,7 @@ public class Ocgcore : ServantWithCardDescription
                     card = GCS_cardGet(gps, false);
                     if (card != null)
                     {
-                        if (card.p.location == (UInt32)game_location.LOCATION_SZONE)
+                        if (card.p.location == (UInt32)CardLocation.SpellZone)
                         {
                             if (card.p.sequence == 6 || card.p.sequence == 7)
                             {
@@ -4755,9 +4805,9 @@ public class Ocgcore : ServantWithCardDescription
                             {
                                 if (cardsInSelectAnimation.Count == 2)
                                 {
-                                    if (cardsInSelectAnimation[0].p.location == (UInt32)game_location.LOCATION_SZONE)
+                                    if (cardsInSelectAnimation[0].p.location == (UInt32)CardLocation.SpellZone)
                                     {
-                                        if (cardsInSelectAnimation[1].p.location == (UInt32)game_location.LOCATION_SZONE)
+                                        if (cardsInSelectAnimation[1].p.location == (UInt32)CardLocation.SpellZone)
                                         {
                                             if (cardsInSelectAnimation[1].p.sequence == 6 || cardsInSelectAnimation[1].p.sequence == 7)
                                             {
@@ -4806,11 +4856,11 @@ public class Ocgcore : ServantWithCardDescription
                     card = GCS_cardGet(gps, false);
                     if (card != null)
                     {
-                        if ((card.p.location == (UInt32)game_location.LOCATION_SZONE) && (card.p.sequence == 6 || card.p.sequence == 7))
+                        if ((card.p.location == (UInt32)CardLocation.SpellZone) && (card.p.sequence == 6 || card.p.sequence == 7))
                         {
                             targetTime += 0;
                         }
-                        else if ((card.p.location & (UInt32)game_location.LOCATION_ONFIELD) > 0)
+                        else if ((card.p.location & (UInt32)CardLocation.Onfield) > 0)
                         {
                             targetTime += 30;
                         }
@@ -4829,9 +4879,9 @@ public class Ocgcore : ServantWithCardDescription
                             {
                                 if (cardsInSelectAnimation.Count == 2)
                                 {
-                                    if (cardsInSelectAnimation[0].p.location == (UInt32)game_location.LOCATION_SZONE)
+                                    if (cardsInSelectAnimation[0].p.location == (UInt32)CardLocation.SpellZone)
                                     {
-                                        if (cardsInSelectAnimation[1].p.location == (UInt32)game_location.LOCATION_SZONE)
+                                        if (cardsInSelectAnimation[1].p.location == (UInt32)CardLocation.SpellZone)
                                         {
                                             if (cardsInSelectAnimation[1].p.sequence == 6 || cardsInSelectAnimation[1].p.sequence == 7)
                                             {
@@ -4932,7 +4982,7 @@ public class Ocgcore : ServantWithCardDescription
                         UIHelper.playSound("addcounter", 1);
                         //if (Program.YGOPro1 == false)
                         {
-                            Vector3 pos = ui_helper.get_close(card.gameObject.transform.position, Program.camera_game_main, 5);
+                            Vector3 pos = UIHelper.get_close(card.gameObject.transform.position, Program.camera_game_main, 5);
                             MonoBehaviour.Destroy((GameObject)MonoBehaviour.Instantiate(Program.I().mod_ocgcore_cs_end, pos, Quaternion.identity), 5f);
                         }
                     }
@@ -4953,7 +5003,7 @@ public class Ocgcore : ServantWithCardDescription
                         UIHelper.playSound("removecounter", 1);
                         //if (Program.YGOPro1 == false)
                         {
-                            Vector3 pos = ui_helper.get_close(card.gameObject.transform.position, Program.camera_game_main, 5);
+                            Vector3 pos = UIHelper.get_close(card.gameObject.transform.position, Program.camera_game_main, 5);
                             MonoBehaviour.Destroy((GameObject)MonoBehaviour.Instantiate(Program.I().mod_ocgcore_cs_end, pos, Quaternion.identity), 5f);
                         }
                     }
@@ -5100,7 +5150,7 @@ public class Ocgcore : ServantWithCardDescription
                         VectorAttackTarget = get_point_worldposition(gpsAttacked);
                         VectorAttackTarget += (VectorAttackTarget - VectorAttackCard) * 0.3f;
                     }
-                    if ((attackedCard != null && gpsAttacked.location != 0) && (attackedCard.p.position & (UInt32)game_position.POS_FACEUP_ATTACK) > 0)
+                    if ((attackedCard != null && gpsAttacked.location != 0) && (attackedCard.p.position & (UInt32)CardPosition.FaceUpAttack) > 0)
                     {
                         if (attackCard.get_data().Attack > attackedCard.get_data().Attack)
                         {
@@ -5118,7 +5168,7 @@ public class Ocgcore : ServantWithCardDescription
                     Sleep(40);
                 }
                 break;
-            case GameMessage.AttackDiabled:
+            case GameMessage.AttackDisabled:
                 //removeAttackHandler();
                 break;
             case GameMessage.DamageStepStart:
@@ -5240,8 +5290,8 @@ public class Ocgcore : ServantWithCardDescription
                 player = localPlayer(r.ReadByte());
                 ES_searchCode.Clear();
                 ES_searchCode.Add(r.ReadInt32());
-                ES_searchCode.Add((int)YGOSharp.OCGWrapper.Enums.searchCode.OPCODE_ISTYPE);
-                RMSshow_input("AnnounceCard", InterString.Get("请输入关键字。"), "");
+                ES_searchCode.Add((int)searchCode.OPCODE_ISTYPE);
+                RMSshow_input("AnnounceCard", InterString.Get("请输入关键字。"),"");
                 break;
             case GameMessage.AnnounceCardFilter:
                 if (inIgnoranceReplay() || inTheWorld())
@@ -5384,11 +5434,11 @@ public class Ocgcore : ServantWithCardDescription
         placs.data[1] = resp[1];
         placs.data[2] = resp[2];
         placeSelectors.Add(placs);
-        if (location == (uint)game_location.LOCATION_MZONE && Program.I().setting.setting.hand.value == false)
+        if (location == (uint)CardLocation.MonsterZone && Program.I().setting.setting.hand.value == false)
         {
             ES_placeSelected(placs);
         }
-        if (location == (uint)game_location.LOCATION_SZONE && Program.I().setting.setting.handm.value == false)
+        if (location == (uint)CardLocation.SpellZone && Program.I().setting.setting.handm.value == false)
         {
             ES_placeSelected(placs);
         }
@@ -5398,7 +5448,7 @@ public class Ocgcore : ServantWithCardDescription
     {
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if ((cards[i].p.location & (UInt32)game_location.LOCATION_HAND) > 0)
+                if ((cards[i].p.location & (UInt32)CardLocation.Hand) > 0)
                 {
                     if (cards[i].p.controller == player)
                     {
@@ -5517,7 +5567,7 @@ public class Ocgcore : ServantWithCardDescription
         return cardsInLocation;
     }
 
-    void MHS_creatBundle(int count, int player, game_location location)
+    void MHS_creatBundle(int count, int player, CardLocation location)
     {
         for (int i = 0; i < count; i++)
         {
@@ -5525,13 +5575,13 @@ public class Ocgcore : ServantWithCardDescription
             {
                 controller = (UInt32)player,
                 location = (UInt32)location,
-                position = (int)game_position.POS_FACEDOWN_ATTACK,
+                position = (int)CardPosition.FaceDownAttack,
                 sequence = (UInt32)i,
             });
         }
     }
 
-    List<gameCard> MHS_resizeBundle(int count, int player, game_location location)
+    List<gameCard> MHS_resizeBundle(int count, int player, CardLocation location)
     {
         List<gameCard> cardBow = new List<gameCard>();
         List<gameCard> waterOutOfBow = new List<gameCard>();
@@ -5564,14 +5614,14 @@ public class Ocgcore : ServantWithCardDescription
             {
                 controller = (UInt32)player,
                 location = (UInt32)location,
-                position = (int)game_position.POS_FACEDOWN_ATTACK,
+                position = (int)CardPosition.FaceDownAttack,
                 sequence = (UInt32)(cardBow.Count),
             }));
         }
         for (int i = 0; i < cardBow.Count; i++)
         {
             cardBow[i].erase_data();
-            cardBow[i].p.position = (int)game_position.POS_FACEDOWN_ATTACK;
+            cardBow[i].p.position = (int)CardPosition.FaceDownAttack;
         }
         return cardBow;
     }
@@ -5623,19 +5673,19 @@ public class Ocgcore : ServantWithCardDescription
     GameObject prewarmAttackEffect(gameCard card, Vector3 from, Vector3 to)
     {
         GameObject mod = Program.I().mod_ocgcore_bs_atk_line_earth;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_EARTH))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Earth))
             mod = Program.I().mod_ocgcore_bs_atk_line_earth;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_WATER))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Water))
             mod = Program.I().mod_ocgcore_bs_atk_line_water;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_FIRE))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Fire))
             mod = Program.I().mod_ocgcore_bs_atk_line_fire;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_WIND))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Wind))
             mod = Program.I().mod_ocgcore_bs_atk_line_wind;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_DARK))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Dark))
             mod = Program.I().mod_ocgcore_bs_atk_line_dark;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_LIGHT))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Light))
             mod = Program.I().mod_ocgcore_bs_atk_line_light;
-        if (GameStringHelper.differ(card.get_data().Attribute, (long)game_attributes.ATTRIBUTE_DEVINE))
+        if (GameStringHelper.differ(card.get_data().Attribute, (long)CardAttribute.Divine))
             mod = Program.I().mod_ocgcore_bs_atk_line_light;
         mod.transform.GetChild(0).localPosition = to;
         mod.transform.GetChild(1).localPosition = from;
@@ -5681,7 +5731,6 @@ public class Ocgcore : ServantWithCardDescription
                         }
                         break;
                     case GameMessage.SelectCard:
-                    case GameMessage.SelectUnselectCard:
                         if (cardsSelectable.Count <= ES_min)
                         {
                             autoSendCards();
@@ -5853,18 +5902,6 @@ public class Ocgcore : ServantWithCardDescription
                 real_send = true;
             }
         }
-        if (currentMessage == GameMessage.SelectUnselectCard)
-        {
-            if (cardsSelected.Count >= ES_min)
-            {
-                sendable = true;
-            }
-            if (cardsSelected.Count == ES_max || cardsSelected.Count == cardsSelectable.Count)
-            {
-                sendable = true;
-                real_send = true;
-            }
-        }
         if (currentMessage == GameMessage.SelectTribute)
         {
             int all = 0;
@@ -5911,7 +5948,7 @@ public class Ocgcore : ServantWithCardDescription
                 }
             }
         }
-        else
+        else if (currentMessage != GameMessage.SelectUnselect)
         {
             gameInfo.removeHashedButton("sendSelected");
         }
@@ -5923,7 +5960,7 @@ public class Ocgcore : ServantWithCardDescription
 
     private void getSelectableCards()
     {
-        if (currentMessage == GameMessage.SelectCard || currentMessage == GameMessage.SelectUnselectCard)
+        if (currentMessage == GameMessage.SelectCard || currentMessage == GameMessage.SelectUnselect)
         {
             for (int i = 0; i < allCardsInSelectMessage.Count; i++)
             {
@@ -5968,7 +6005,7 @@ public class Ocgcore : ServantWithCardDescription
         if (cards.Count > 0)
         {
             UInt32 loc = cards[0].p.location;
-            if (loc != (UInt32)game_location.LOCATION_DECK)
+            if (loc != (UInt32)CardLocation.Deck)
             {
                 return false;
             }
@@ -6232,7 +6269,7 @@ public class Ocgcore : ServantWithCardDescription
         switch (currentMessage)
         {
             case GameMessage.SelectCard:
-            case GameMessage.SelectUnselectCard:
+            case GameMessage.SelectUnselect:
             case GameMessage.SelectTribute:
                 int c = ES_min;
                 if (cardsSelectable.Count < c)
@@ -6272,11 +6309,11 @@ public class Ocgcore : ServantWithCardDescription
         switch (currentMessage)
         {
             case GameMessage.SelectCard:
-            case GameMessage.SelectUnselectCard:
+            case GameMessage.SelectUnselect:
             case GameMessage.SelectTribute:
             case GameMessage.SelectSum:
                 m = new BinaryMaster();
-                if (currentMessage == GameMessage.SelectUnselectCard && cardsSelected.Count == 0)
+                if (currentMessage == GameMessage.SelectUnselect && cardsSelected.Count == 0)
                 {
                     m.writer.Write((Int32)(-1));
                     sendReturn(m.get());
@@ -6309,7 +6346,7 @@ public class Ocgcore : ServantWithCardDescription
         flagForTimeConfirm = false;
         flagForCancleChain = false;
         //Package p = new Package();
-        //p.Fuction = (int)YGOSharp.OCGWrapper.Enums.GameMessage.sibyl_clear;
+        //p.Fuction = (int)GameMessage.sibyl_clear;
         //TcpHelper.AddRecordLine(p);
         if (clearTimeFlag)
         {
@@ -6333,7 +6370,7 @@ public class Ocgcore : ServantWithCardDescription
 
         clearAllSelectPlace();
 
-        int myMaxDeck = countLocationSequence(0, game_location.LOCATION_DECK);
+        int myMaxDeck = countLocationSequence(0, CardLocation.Deck);
 
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
@@ -6347,7 +6384,7 @@ public class Ocgcore : ServantWithCardDescription
                 {
                     cards[i].forSelect = false;
                     cards[i].isShowed = false;
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.Deck) > 0)
                     {
                         if (deckReserved == false || cards[i].p.controller != 0 || cards[i].p.sequence != myMaxDeck)
                         {
@@ -6363,7 +6400,7 @@ public class Ocgcore : ServantWithCardDescription
                         cards[i].isShowed = false;
                     }
                 }
-                if (cards[i].p.location == (uint)game_location.LOCATION_DECK)
+                if (cards[i].p.location == (uint)CardLocation.Deck)
                 {
                     cards[i].isShowed = false;
                 }
@@ -6378,7 +6415,7 @@ public class Ocgcore : ServantWithCardDescription
         List<gameCard> to_clear = new List<gameCard>();
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if (cards[i].p.location == (uint)game_location.search)
+                if (cards[i].p.location == (uint)CardLocation.Search)
                 {
                     to_clear.Add(cards[i]);
                 }
@@ -6387,7 +6424,7 @@ public class Ocgcore : ServantWithCardDescription
         for (int i = 0; i < to_clear.Count; i++)
         {
             to_clear[i].hide();
-            to_clear[i].p.location = (UInt32)game_location.LOCATION_UNKNOWN;
+            to_clear[i].p.location = (UInt32)CardLocation.Unknown;
         }
         gameInfo.removeAll();
         RMSshow_clear();
@@ -6474,7 +6511,7 @@ public class Ocgcore : ServantWithCardDescription
         List<gameCard> to_clear = new List<gameCard>();
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if (cards[i].p.location == (uint)game_location.LOCATION_UNKNOWN)
+                if (cards[i].p.location == (uint)CardLocation.Unknown)
                 {
                     to_clear.Add(cards[i]);
                 }
@@ -6510,18 +6547,18 @@ public class Ocgcore : ServantWithCardDescription
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                 if (cards[i].cookie_cared == false)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.Overlay) == 0)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0)
                         {
                             cards[i].isShowed = false;
                         }
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) > 0)
                         {
                             cards[i].isShowed = false;
                         }
                     }
-                    if ((((cards[i].p.location & (UInt32)game_location.LOCATION_HAND) > 0) && (cards[i].p.controller == 0)) || ((cards[i].p.location & (UInt32)game_location.LOCATION_UNKNOWN) > 0))
+                    if ((((cards[i].p.location & (UInt32)CardLocation.Hand) > 0) && (cards[i].p.controller == 0)) || ((cards[i].p.location & (UInt32)CardLocation.Unknown) > 0))
                     {
                         cards[i].isShowed = true;
                     }
@@ -6536,7 +6573,7 @@ public class Ocgcore : ServantWithCardDescription
 
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if (cards[i].p.location == (uint)game_location.search)
+                if (cards[i].p.location == (uint)CardLocation.Search)
                 {
                     cards[i].isShowed = true;
                 }
@@ -6621,25 +6658,25 @@ public class Ocgcore : ServantWithCardDescription
         List<gameCard> op_s = new List<gameCard>();
 
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
-            {
-                if (cards[i].p.controller == 1)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+                    if (cards[i].p.controller == 1)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Overlay) == 0)
                         {
-                            op_m.Add(cards[i]);
-                        }
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
-                        {
-                            op_s.Add(cards[i]);
+                            if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) > 0)
+                            {
+                                op_m.Add(cards[i]);
+                            }
+                            if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0)
+                            {
+                                op_s.Add(cards[i]);
+                            }
                         }
                     }
                 }
-            }
         for (int m = 0; m < op_m.Count; m++)
         {
-            if ((op_m[m].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+            if ((op_m[m].p.position & (UInt32)CardPosition.FaceUp) > 0)
             {
                 for (int s = 0; s < op_s.Count; s++)
                 {
@@ -6651,7 +6688,7 @@ public class Ocgcore : ServantWithCardDescription
                             //op_m[m].isMinBlockMode = true;
                             if (Program.getVerticalTransparency() >= 0.5f)
                             {
-                                gameField.isLong = true;    //这个设定暂时取消了
+                                gameField.isLong = Program.longField;    //这个设定恢复（？）了
                             }
                         }
                     }
@@ -6668,13 +6705,13 @@ public class Ocgcore : ServantWithCardDescription
         }
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+                if ((cards[i].p.location & (UInt32)CardLocation.Overlay) == 0)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) > 0)
                     {
                         if (cards[i].p.sequence >= 0 && cards[i].p.sequence <= 6)
                         {
-                            if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+                            if ((cards[i].p.position & (UInt32)CardPosition.FaceUp) > 0)
                             {
                                 if (cards[i].p.controller == 1)
                                 {
@@ -6735,15 +6772,15 @@ public class Ocgcore : ServantWithCardDescription
 
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
             {
-                if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+                if ((cards[i].p.location & (UInt32)CardLocation.Overlay) == 0)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) > 0)
                     {
                         if (cards[i].p.sequence >= 0 && cards[i].p.sequence <= 6)
                         {
-                            if ((cards[i].get_data().Type & (UInt32)game_type.link) > 0)
+                            if ((cards[i].get_data().Type & (UInt32)CardType.Link) > 0)
                             {
-                                if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+                                if ((cards[i].p.position & (UInt32)CardPosition.FaceUp) > 0)
                                 {
                                     if (cards[i].p.controller == 1)
                                     {
@@ -6793,7 +6830,7 @@ public class Ocgcore : ServantWithCardDescription
                 //if (vvv[curHang, curLie] != null)
                 {
                     GPS currentGPS = new GPS();
-                    currentGPS.location = (int)game_location.LOCATION_MZONE;
+                    currentGPS.location = (int)CardLocation.MonsterZone;
                     if (curHang == 4)
                     {
                         currentGPS.controller = 1;
@@ -6834,80 +6871,80 @@ public class Ocgcore : ServantWithCardDescription
                     if (curHang - 1 >= 0)
                         if (curLie - 1 >= 0)
                             if (vvv[curHang - 1, curLie - 1] != null)
-                            {
-                                gameCard card = vvv[curHang - 1, curLie - 1];
-                                if (card.p.controller == 0)
-                                    if ((card.get_data().rDefense & CardFac.youshang) > 0)
-                                        lighted = true;
-                                if (card.p.controller == 1)
-                                    if ((card.get_data().rDefense & CardFac.zuoxia) > 0)
-                                        lighted = true;
-                            }
+                    {
+                        gameCard card = vvv[curHang - 1, curLie - 1];
+                        if (card.p.controller == 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.TopRight))
+                                lighted = true;
+                        if (card.p.controller == 1)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.BottomLeft))
+                                lighted = true;
+                    }
 
                     if (curLie - 1 >= 0)
                         if (vvv[curHang, curLie - 1] != null)
                         {
                             gameCard card = vvv[curHang, curLie - 1];
-                            if (card.p.controller == 0)
-                                if ((card.get_data().rDefense & CardFac.you) > 0)
-                                    lighted = true;
-                            if (card.p.controller == 1)
-                                if ((card.get_data().rDefense & CardFac.zuo) > 0)
-                                    lighted = true;
-                        }
-                    if (curLie - 1 >= 0)
-                        if (vvv[curHang + 1, curLie - 1] != null)
-                        {
+                        if (card.p.controller == 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Right))
+                                lighted = true;
+                        if (card.p.controller == 1)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Left))
+                                lighted = true;
+                    }
+                        if (curLie - 1 >= 0)
+                            if (vvv[curHang+1, curLie - 1] != null)
+                    {
                             gameCard card = vvv[curHang + 1, curLie - 1];
-                            if (card.p.controller == 0)
-                                if ((card.get_data().rDefense & CardFac.youxia) > 0)
-                                    lighted = true;
-                            if (card.p.controller == 1)
-                                if ((card.get_data().rDefense & CardFac.zuoshang) > 0)
-                                    lighted = true;
-                        }
+                        if (card.p.controller == 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.BottomRight))
+                                lighted = true;
+                        if (card.p.controller == 1)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.TopLeft))
+                                lighted = true;
+                    }
                     if (curHang - 1 >= 0)
                         if (vvv[curHang - 1, curLie] != null)
                         {
                             gameCard card = vvv[curHang - 1, curLie];
-                            if (card.p.controller == 0)
-                                if ((card.get_data().rDefense & CardFac.shang) > 0)
-                                    lighted = true;
-                            if (card.p.controller == 1)
-                                if ((card.get_data().rDefense & CardFac.xia) > 0)
-                                    lighted = true;
-                        }
+                        if (card.p.controller == 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Top))
+                                lighted = true;
+                        if (card.p.controller == 1)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Bottom))
+                                lighted = true;
+                    }
 
                     if (vvv[curHang + 1, curLie] != null)
                     {
                         gameCard card = vvv[curHang + 1, curLie];
                         if (card.p.controller == 0)
-                            if ((card.get_data().rDefense & CardFac.xia) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Bottom))
                                 lighted = true;
                         if (card.p.controller == 1)
-                            if ((card.get_data().rDefense & CardFac.shang) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Top))
                                 lighted = true;
                     }
                     if (curHang - 1 >= 0)
                         if (vvv[curHang - 1, curLie + 1] != null)
                         {
                             gameCard card = vvv[curHang - 1, curLie + 1];
-                            if (card.p.controller == 0)
-                                if ((card.get_data().rDefense & CardFac.zuoshang) > 0)
-                                    lighted = true;
-                            if (card.p.controller == 1)
-                                if ((card.get_data().rDefense & CardFac.youxia) > 0)
-                                    lighted = true;
-                        }
+                        if (card.p.controller == 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.TopLeft))
+                                lighted = true;
+                        if (card.p.controller == 1)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.BottomRight))
+                                lighted = true;
+                    }
 
                     if (vvv[curHang, curLie + 1] != null)
                     {
                         gameCard card = vvv[curHang, curLie + 1];
                         if (card.p.controller == 0)
-                            if ((card.get_data().rDefense & CardFac.zuo) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Left))
                                 lighted = true;
                         if (card.p.controller == 1)
-                            if ((card.get_data().rDefense & CardFac.you) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.Right))
                                 lighted = true;
                     }
 
@@ -6915,10 +6952,10 @@ public class Ocgcore : ServantWithCardDescription
                     {
                         gameCard card = vvv[curHang + 1, curLie + 1];
                         if (card.p.controller == 0)
-                            if ((card.get_data().rDefense & CardFac.zuoxia) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.BottomLeft))
                                 lighted = true;
                         if (card.p.controller == 1)
-                            if ((card.get_data().rDefense & CardFac.youshang) > 0)
+                            if (card.get_data().HasLinkMarker(CardLinkMarker.TopRight))
                                 lighted = true;
                     }
 
@@ -6985,7 +7022,7 @@ public class Ocgcore : ServantWithCardDescription
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                 if (cards[i].cookie_cared == false)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_HAND) > 0 && cards[i].p.controller == 1)
+                    if ((cards[i].p.location & (UInt32)CardLocation.Hand) > 0 && cards[i].p.controller == 1)
                     {
                         line.Add(cards[i]);
                     }
@@ -7029,7 +7066,7 @@ public class Ocgcore : ServantWithCardDescription
                 int overC = 0;
                 if (Program.getVerticalTransparency() > 0.5f)
                 {
-                    if ((cards[i].p.position & (Int32)game_position.POS_FACEUP) > 0 && (cards[i].p.location & (Int32)game_location.LOCATION_ONFIELD) > 0)
+                    if ((cards[i].p.position & (Int32)CardPosition.FaceUp) > 0 && (cards[i].p.location & (Int32)CardLocation.Onfield) > 0)
                     {
                         overC = overlayed_cards.Count;
                     }
@@ -7046,7 +7083,7 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 foreach (var item in cards[i].target)
                 {
-                    if ((item.p.location & (UInt32)game_location.LOCATION_SZONE) > 0 || (item.p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+                    if ((item.p.location & (UInt32)CardLocation.SpellZone) > 0 || (item.p.location & (UInt32)CardLocation.MonsterZone) > 0)
                     {
                         animation_thunder(item.gameObject, cards[i].gameObject);
                     }
@@ -7080,11 +7117,11 @@ public class Ocgcore : ServantWithCardDescription
             for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     if (cards[i].cookie_cared == false)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0)
                         {
                             if (cards[i].p.sequence == 0 || cards[i].p.sequence == 4)
                             {
-                                if ((cards[i].get_data().Type & (int)game_type.TYPE_PENDULUM) > 0)
+                                if ((cards[i].get_data().Type & (int)CardType.Pendulum) > 0)
                                 {
                                     if (cards[i].p.controller == 0)
                                     {
@@ -7217,7 +7254,7 @@ public class Ocgcore : ServantWithCardDescription
             for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     if (cards[i].cookie_cared == false)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0)
                         {
                             if (cards[i].p.sequence == 6 || cards[i].p.sequence == 7)
                             {
@@ -7262,9 +7299,9 @@ public class Ocgcore : ServantWithCardDescription
         for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                 if (cards[i].cookie_cared == false)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.Overlay) > 0)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Extra) > 0)
                         {
                             cards[i].cookie_cared = true;
                             cards[i].UA_give_condition(get_point_worldcondition(cards[i].p));
@@ -7294,11 +7331,11 @@ public class Ocgcore : ServantWithCardDescription
 
             for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                 {
-                    if (((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0) && cards[i].p.sequence == 5)
+                    if (((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0) && cards[i].p.sequence == 5)
                     {
                         if (cards[i].p.controller == 0)
                         {
-                            if ((cards[i].p.position & (Int32)game_position.POS_FACEUP) > 0)
+                            if ((cards[i].p.position & (Int32)CardPosition.FaceUp) > 0)
                             {
                                 code = cards[i].get_data().Id;
                             }
@@ -7312,11 +7349,11 @@ public class Ocgcore : ServantWithCardDescription
 
             for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                 {
-                    if (((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0) && cards[i].p.sequence == 5)
+                    if (((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0) && cards[i].p.sequence == 5)
                     {
                         if (cards[i].p.controller == 1)
                         {
-                            if ((cards[i].p.position & (Int32)game_position.POS_FACEUP) > 0)
+                            if ((cards[i].p.position & (Int32)CardPosition.FaceUp) > 0)
                             {
                                 code = cards[i].get_data().Id;
                             }
@@ -7382,14 +7419,14 @@ public class Ocgcore : ServantWithCardDescription
         }
 
 
-        animation_count(gameField.LOCATION_DECK_0, game_location.LOCATION_DECK, 0);
-        animation_count(gameField.LOCATION_EXTRA_0, game_location.LOCATION_EXTRA, 0);
-        animation_count(gameField.LOCATION_GRAVE_0, game_location.LOCATION_GRAVE, 0);
-        animation_count(gameField.LOCATION_REMOVED_0, game_location.LOCATION_REMOVED, 0);
-        animation_count(gameField.LOCATION_DECK_1, game_location.LOCATION_DECK, 1);
-        animation_count(gameField.LOCATION_EXTRA_1, game_location.LOCATION_EXTRA, 1);
-        animation_count(gameField.LOCATION_GRAVE_1, game_location.LOCATION_GRAVE, 1);
-        animation_count(gameField.LOCATION_REMOVED_1, game_location.LOCATION_REMOVED, 1);
+        animation_count(gameField.LOCATION_DECK_0, CardLocation.Deck, 0);
+        animation_count(gameField.LOCATION_EXTRA_0, CardLocation.Extra, 0);
+        animation_count(gameField.LOCATION_GRAVE_0, CardLocation.Grave, 0);
+        animation_count(gameField.LOCATION_REMOVED_0, CardLocation.Removed, 0);
+        animation_count(gameField.LOCATION_DECK_1, CardLocation.Deck, 1);
+        animation_count(gameField.LOCATION_EXTRA_1, CardLocation.Extra, 1);
+        animation_count(gameField.LOCATION_GRAVE_1, CardLocation.Grave, 1);
+        animation_count(gameField.LOCATION_REMOVED_1, CardLocation.Removed, 1);
         gameField.realize();
         Program.notGo(gameInfo.realize);
         Program.go(50, gameInfo.realize);
@@ -7436,7 +7473,7 @@ public class Ocgcore : ServantWithCardDescription
     Vector3 get_world_rotation(gameCard card)
     {
         cardRuleComdition r = cardRuleComdition.meUpAtk;
-        if ((card.p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+        if ((card.p.location & (UInt32)CardLocation.Deck) > 0)
         {
             if (card.get_data().Id > 0)
             {
@@ -7447,13 +7484,13 @@ public class Ocgcore : ServantWithCardDescription
                 r = cardRuleComdition.meDownAtk;
             }
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+        if ((card.p.location & (UInt32)CardLocation.Grave) > 0)
         {
             r = cardRuleComdition.meUpAtk;
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_REMOVED) > 0)
+        if ((card.p.location & (UInt32)CardLocation.Removed) > 0)
         {
-            if ((card.p.position & (UInt32)game_position.POS_FACEUP) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceUp) > 0)
             {
                 r = cardRuleComdition.meUpAtk;
             }
@@ -7462,9 +7499,9 @@ public class Ocgcore : ServantWithCardDescription
                 r = cardRuleComdition.meDownAtk;
             }
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+        if ((card.p.location & (UInt32)CardLocation.Extra) > 0)
         {
-            if ((card.p.position & (UInt32)game_position.POS_FACEUP) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceUp) > 0)
             {
                 r = cardRuleComdition.meUpAtk;
             }
@@ -7473,28 +7510,28 @@ public class Ocgcore : ServantWithCardDescription
                 r = cardRuleComdition.meDownAtk;
             }
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+        if ((card.p.location & (UInt32)CardLocation.MonsterZone) > 0)
         {
-            if ((card.p.position & (UInt32)game_position.POS_FACEDOWN_DEFENSE) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceDownDefence) > 0)
             {
                 r = cardRuleComdition.meDownDef;
             }
-            if ((card.p.position & (UInt32)game_position.POS_FACEUP_DEFENSE) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceUpDefence) > 0)
             {
                 r = cardRuleComdition.meUpDef;
             }
-            if ((card.p.position & (UInt32)game_position.POS_FACEDOWN_ATTACK) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceDownAttack) > 0)
             {
                 r = cardRuleComdition.meDownAtk;
             }
-            if ((card.p.position & (UInt32)game_position.POS_FACEUP_ATTACK) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceUpAttack) > 0)
             {
                 r = cardRuleComdition.meUpAtk;
             }
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+        if ((card.p.location & (UInt32)CardLocation.SpellZone) > 0)
         {
-            if ((card.p.position & (UInt32)game_position.POS_FACEUP) > 0)
+            if ((card.p.position & (UInt32)CardPosition.FaceUp) > 0)
             {
                 r = cardRuleComdition.meUpAtk;
             }
@@ -7503,7 +7540,7 @@ public class Ocgcore : ServantWithCardDescription
                 r = cardRuleComdition.meDownAtk;
             }
         }
-        if ((card.p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+        if ((card.p.location & (UInt32)CardLocation.Overlay) > 0)
         {
             r = cardRuleComdition.meUpAtk;
         }
@@ -7556,7 +7593,7 @@ public class Ocgcore : ServantWithCardDescription
     //private Vector3 get_real_rotation(int i)
     //{
     //    Vector3 r = get_point_worldrotation(cards[i].p);
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_DECK) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.Deck) > 0)
     //    {
     //        if (cards[i].get_data().Id > 0)
     //        {
@@ -7567,51 +7604,51 @@ public class Ocgcore : ServantWithCardDescription
     //            r = new Vector3(-90, 0, 0);
     //        }
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) > 0)
     //    {
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEDOWN_DEFENSE) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceDown_DEFENSE) > 0)
     //        {
     //            r = new Vector3(-90, 0, 90);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP_DEFENSE) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUp_DEFENSE) > 0)
     //        {
     //            r = new Vector3(90, 0, 90);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEDOWN_ATTACK) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceDownAttack) > 0)
     //        {
     //            r = new Vector3(-90, 0, 0);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP_ATTACK) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUpAttack) > 0)
     //        {
     //            r = new Vector3(90, 0, 0);
     //        }
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) > 0)
     //    {
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEDOWN_DEFENSE) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceDown_DEFENSE) > 0)
     //        {
     //            r = new Vector3(-90, 0, 90);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP_DEFENSE) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUp_DEFENSE) > 0)
     //        {
     //            r = new Vector3(90, 0, 90);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEDOWN_ATTACK) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceDownAttack) > 0)
     //        {
     //            r = new Vector3(-90, 0, 0);
     //        }
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP_ATTACK) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUpAttack) > 0)
     //        {
     //            r = new Vector3(90, 0, 0);
     //        }
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_GRAVE) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.Grave) > 0)
     //    {
     //        r = new Vector3(90, 0, 0);
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_REMOVED) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.Removed) > 0)
     //    {
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUp) > 0)
     //        {
     //            r = new Vector3(90, 0, 0);
     //        }
@@ -7620,9 +7657,9 @@ public class Ocgcore : ServantWithCardDescription
     //            r = new Vector3(-90, 0, 0);
     //        }
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_EXTRA) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.Extra) > 0)
     //    {
-    //        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+    //        if ((cards[i].p.position & (UInt32)CardPosition.FaceUp) > 0)
     //        {
     //            r = new Vector3(90, 0, 0);
     //        }
@@ -7631,7 +7668,7 @@ public class Ocgcore : ServantWithCardDescription
     //            r = new Vector3(-90, 0, 0);
     //        }
     //    }
-    //    if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+    //    if ((cards[i].p.location & (UInt32)CardLocation.Overlay) > 0)
     //    {
     //        r = new Vector3(90, 0, 0);
     //    }
@@ -7643,7 +7680,7 @@ public class Ocgcore : ServantWithCardDescription
     //    return r;
     //}
 
-    private void animation_count(TMPro.TextMeshPro textmesh, game_location location, int player)
+    private void animation_count(TMPro.TextMeshPro textmesh, CardLocation location, int player)
     {
         int count = 0;
         int countU = 0;
@@ -7654,7 +7691,7 @@ public class Ocgcore : ServantWithCardDescription
                     if ((cards[i].p.location & (UInt32)location) > 0)
                     {
                         count++;
-                        if ((cards[i].p.position & (UInt32)game_position.POS_FACEUP) > 0)
+                        if ((cards[i].p.position & (UInt32)CardPosition.FaceUp) > 0)
                         {
                             countU++;
                         }
@@ -7667,7 +7704,7 @@ public class Ocgcore : ServantWithCardDescription
         }
         else
         {
-            if (location == game_location.LOCATION_EXTRA)
+            if (location== CardLocation.Extra)    
             {
                 textmesh.text = count.ToString() + "(" + countU.ToString() + ")";
             }
@@ -7730,7 +7767,7 @@ public class Ocgcore : ServantWithCardDescription
     public gameCard GCS_cardGet(GPS p, bool create)
     {
         gameCard c = null;
-        if ((p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+        if ((p.location & (UInt32)CardLocation.Overlay) > 0)
         {
             for (int i = 0; i < cards.Count; i++)
             {
@@ -7792,13 +7829,13 @@ public class Ocgcore : ServantWithCardDescription
         List<gameCard> cas = new List<gameCard>();
         if (c != null)
         {
-            if ((c.p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+            if ((c.p.location & (UInt32)CardLocation.Overlay) == 0)
             {
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
                     {
-                        if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+                        if ((cards[i].p.location & (UInt32)CardLocation.Overlay) > 0)
                             if (cards[i].p.controller == c.p.controller)
-                                if ((cards[i].p.location | (UInt32)game_location.LOCATION_OVERLAY) == (c.p.location | (UInt32)game_location.LOCATION_OVERLAY))
+                                if ((cards[i].p.location | (UInt32)CardLocation.Overlay) == (c.p.location | (UInt32)CardLocation.Overlay))
                                     if (cards[i].p.sequence == c.p.sequence)
                                         cas.Add(cards[i]);
                     }
@@ -7846,7 +7883,7 @@ public class Ocgcore : ServantWithCardDescription
 
         if (swap == false)
         {
-            if ((p1.location != p2.location) || ((p2.position & (int)game_position.POS_FACEDOWN) > 0))
+            if ((p1.location != p2.location) || ((p2.position & (int)CardPosition.FaceDown) > 0))
             {
                 card_from.target.Clear();
                 for (int i = 0; i < cards.Count; i++) if (cards[i].gameObject.activeInHierarchy)
@@ -7858,7 +7895,7 @@ public class Ocgcore : ServantWithCardDescription
             }
         }
 
-        if ((p2.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+        if ((p2.location & (UInt32)CardLocation.Overlay) > 0)
         {
             card_from.p_beforeOverLayed = p1;
         }
@@ -7891,9 +7928,9 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 else
                 {
-                    if ((card_to.p.location & (UInt32)game_location.LOCATION_OVERLAY) == 0)
+                    if ((card_to.p.location & (UInt32)CardLocation.Overlay) == 0)
                     {
-                        if (((card_to.p.location & (UInt32)game_location.LOCATION_MZONE) > 0) || ((card_to.p.location & (UInt32)game_location.LOCATION_SZONE) > 0))
+                        if (((card_to.p.location & (UInt32)CardLocation.MonsterZone) > 0) || ((card_to.p.location & (UInt32)CardLocation.SpellZone) > 0))
                         {
                             if (card_from != null)
                                 card_from.p = p2;
@@ -7927,7 +7964,7 @@ public class Ocgcore : ServantWithCardDescription
             for (int i = 0; i < overlayed_cards_of_cardFrom.Count; i++)
             {
                 overlayed_cards_of_cardFrom[i].p.controller = card_from.p.controller;
-                overlayed_cards_of_cardFrom[i].p.location = card_from.p.location | (UInt32)game_location.LOCATION_OVERLAY;
+                overlayed_cards_of_cardFrom[i].p.location = card_from.p.location | (UInt32)CardLocation.Overlay;
                 overlayed_cards_of_cardFrom[i].p.sequence = card_from.p.sequence;
                 overlayed_cards_of_cardFrom[i].p.position += 1000;
             }
@@ -7938,7 +7975,7 @@ public class Ocgcore : ServantWithCardDescription
             for (int i = 0; i < overlayed_cards_of_cardTo.Count; i++)
             {
                 overlayed_cards_of_cardTo[i].p.controller = card_to.p.controller;
-                overlayed_cards_of_cardTo[i].p.location = card_to.p.location | (UInt32)game_location.LOCATION_OVERLAY;
+                overlayed_cards_of_cardTo[i].p.location = card_to.p.location | (UInt32)CardLocation.Overlay;
                 overlayed_cards_of_cardTo[i].p.sequence = card_to.p.sequence;
                 overlayed_cards_of_cardTo[i].p.position += 1000;
             }
@@ -8000,21 +8037,21 @@ public class Ocgcore : ServantWithCardDescription
             }
             else
             {
-                if (left.p.location == (UInt32)game_location.LOCATION_HAND && right.p.location != (UInt32)game_location.LOCATION_HAND)
+                if (left.p.location == (UInt32)CardLocation.Hand && right.p.location != (UInt32)CardLocation.Hand)
                 {
                     a = -1;
                 }
-                else if (left.p.location != (UInt32)game_location.LOCATION_HAND && right.p.location == (UInt32)game_location.LOCATION_HAND)
+                else if (left.p.location != (UInt32)CardLocation.Hand && right.p.location == (UInt32)CardLocation.Hand)
                 {
                     a = 1;
                 }
                 else
                 {
-                    if ((left.p.location | (UInt32)game_location.LOCATION_OVERLAY) > (right.p.location | (UInt32)game_location.LOCATION_OVERLAY))
+                    if ((left.p.location | (UInt32)CardLocation.Overlay) > (right.p.location | (UInt32)CardLocation.Overlay))
                     {
                         a = -1;
                     }
-                    else if ((left.p.location | (UInt32)game_location.LOCATION_OVERLAY) < (right.p.location | (UInt32)game_location.LOCATION_OVERLAY))
+                    else if ((left.p.location | (UInt32)CardLocation.Overlay) < (right.p.location | (UInt32)CardLocation.Overlay))
                     {
                         a = 1;
                     }
@@ -8030,11 +8067,11 @@ public class Ocgcore : ServantWithCardDescription
                         }
                         else
                         {
-                            if ((left.p.location & (UInt32)game_location.LOCATION_OVERLAY) > (right.p.location & (UInt32)game_location.LOCATION_OVERLAY))
+                            if ((left.p.location & (UInt32)CardLocation.Overlay) > (right.p.location & (UInt32)CardLocation.Overlay))
                             {
                                 a = -1;
                             }
-                            else if ((left.p.location & (UInt32)game_location.LOCATION_OVERLAY) < (right.p.location & (UInt32)game_location.LOCATION_OVERLAY))
+                            else if ((left.p.location & (UInt32)CardLocation.Overlay) < (right.p.location & (UInt32)CardLocation.Overlay))
                             {
                                 a = 1;
                             }
@@ -8070,7 +8107,7 @@ public class Ocgcore : ServantWithCardDescription
                 {
                     sequenceWriter = 0;
                 }
-                if ((preLocation | (UInt32)game_location.LOCATION_OVERLAY) != (cards[i].p.location | (UInt32)game_location.LOCATION_OVERLAY))
+                if ((preLocation | (UInt32)CardLocation.Overlay) != (cards[i].p.location | (UInt32)CardLocation.Overlay))
                 {
                     sequenceWriter = 0;
                 }
@@ -8079,15 +8116,15 @@ public class Ocgcore : ServantWithCardDescription
                     positionWriter = 0;
                 }
 
-                if ((cards[i].p.location & (UInt32)game_location.LOCATION_MZONE) == 0)
+                if ((cards[i].p.location & (UInt32)CardLocation.MonsterZone) == 0)
                 {
-                    if ((cards[i].p.location & (UInt32)game_location.LOCATION_SZONE) == 0)
+                    if ((cards[i].p.location & (UInt32)CardLocation.SpellZone) == 0)
                     {
                         cards[i].p.sequence = sequenceWriter;
                     }
                 }
 
-                if ((cards[i].p.location & (UInt32)game_location.LOCATION_OVERLAY) > 0)
+                if ((cards[i].p.location & (UInt32)CardLocation.Overlay) > 0)
                 {
                     cards[i].p.position = positionWriter;
                     positionWriter++;
@@ -8110,6 +8147,8 @@ public class Ocgcore : ServantWithCardDescription
     string ES_turnString = "";
 
     string ES_phaseString = "";
+
+    string ES_selectUnselectHint = "";
 
     void toDefaultHint()
     {
@@ -8267,7 +8306,7 @@ public class Ocgcore : ServantWithCardDescription
                 break;
             case GameMessage.SelectCard:
                 break;
-            case GameMessage.SelectUnselectCard:
+            case GameMessage.SelectUnselect:
                 break;
             case GameMessage.SelectChain:
                 break;
@@ -8339,7 +8378,7 @@ public class Ocgcore : ServantWithCardDescription
             case GameMessage.SelectEffectYn:
             case GameMessage.SelectYesNo:
             case GameMessage.SelectCard:
-            case GameMessage.SelectUnselectCard:
+            case GameMessage.SelectUnselect:
             case GameMessage.SelectTribute:
             case GameMessage.SelectChain:
                 clearAllShowedB = true;
@@ -8518,7 +8557,6 @@ public class Ocgcore : ServantWithCardDescription
                 }
                 break;
             case GameMessage.SelectCard:
-            case GameMessage.SelectUnselectCard:
             case GameMessage.SelectTribute:
             case GameMessage.SelectSum:
                 if (card.forSelect)
@@ -8557,6 +8595,16 @@ public class Ocgcore : ServantWithCardDescription
                         cardsSelected.Remove(card);
                     }
                     realizeCardsForSelect();
+                }
+                break;
+            case GameMessage.SelectUnselect:
+                if (card.forSelect)
+                {
+                    cardsSelected.Add(card);
+                    gameInfo.removeHashedButton("sendSelected");
+                    sendSelectedCards();
+                    realize();
+                    toNearest();
                 }
                 break;
             case GameMessage.SelectChain:
@@ -8622,14 +8670,7 @@ public class Ocgcore : ServantWithCardDescription
                         BinaryMaster binaryMaster = new BinaryMaster();
                         for (int i = 0; i < allCardsInSelectMessage.Count; i++)
                         {
-                            if (Config.ClientVersion >= 0x133d)
-                            {
-                                binaryMaster.writer.Write((short)allCardsInSelectMessage[i].counterSELcount);
-                            }
-                            else
-                            {
-                                binaryMaster.writer.Write((byte)allCardsInSelectMessage[i].counterSELcount);
-                            }
+                            binaryMaster.writer.Write((short)allCardsInSelectMessage[i].counterSELcount);
                         }
                         sendReturn(binaryMaster.get());
                     }
@@ -8770,7 +8811,7 @@ public class Ocgcore : ServantWithCardDescription
                     GPS p = new GPS
                     {
                         controller = 0,
-                        location = (UInt32)game_location.search,
+                        location = (UInt32)CardLocation.Search,
                         sequence = (UInt32)i,
                         position = 0,
                     };
@@ -8818,6 +8859,20 @@ public class Ocgcore : ServantWithCardDescription
                     }
                 }
                 break;
+            case "RockPaperScissors":
+                {
+                    try
+                    {
+                        binaryMaster = new BinaryMaster();
+                        binaryMaster.writer.Write(Int32.Parse(result[0].value));
+                        sendReturn(binaryMaster.get());
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log(e);
+                    }
+                }
+                break;
         }
     }
 
@@ -8844,8 +8899,9 @@ public class Ocgcore : ServantWithCardDescription
 
     public Dictionary<int, int> sideReference = new Dictionary<int, int>();
 
-    void onDuelResultConfirmed()
+    public void onDuelResultConfirmed()
     {
+        Program.I().room.joinWithReconnect = false;
 
         if (Program.I().room.duelEnded == true || surrended || TcpHelper.tcpClient == null || TcpHelper.tcpClient.Connected == false)
         {

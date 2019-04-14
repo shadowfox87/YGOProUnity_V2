@@ -4,9 +4,10 @@ using Mono.Data.Sqlite;
 using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Assets.YGOSharp;
 using System.Linq;
+using Assets.YGOSharp;
 using Assets.YGOSharp.Extensions;
+using YGOSharp.OCGWrapper.Enums;
 
 namespace YGOSharp
 {
@@ -140,7 +141,7 @@ namespace YGOSharp
                             throw new Exception("No Internet connection!");
                         }
                     }
-                    if (www.error!=null)
+                    if (www.error != null)
                     {
                         Debug.Log(www.error);
                         WebsiteData = " ";
@@ -154,13 +155,13 @@ namespace YGOSharp
 
                 BetaToOfficialCardListObject betaToOfficialCards = JsonUtility.FromJson<BetaToOfficialCardListObject>(WebsiteData);
                 var card = betaToOfficialCards.betaToOfficialCards.FirstOrDefault(x => x.ucode == id.ToString());
-                if (card==null)
+                if (card == null)
                 {
                     return 0;
                 }
                 else
                 {
-                    int newid = int.Parse(card.ocode,System.Globalization.NumberFormatInfo.InvariantInfo);
+                    int newid = int.Parse(card.ocode, System.Globalization.NumberFormatInfo.InvariantInfo);
                     return newid;
                 }
             }
@@ -210,7 +211,7 @@ namespace YGOSharp
             foreach (var item in _cards)
             {
                 Card card = item.Value;
-                if ((card.Type & (uint)game_type.TYPE_TOKEN) == 0)
+                if ((card.Type & (uint)CardType.Token) == 0)
                 {
                     if (getName == ""
                         || Regex.Replace(card.Name, getName, "miaowu", RegexOptions.IgnoreCase) != card.Name
@@ -222,8 +223,7 @@ namespace YGOSharp
                         bool[] BolleanArrayOfCardType = card.Type.ToBooleanArray();
                         if ((temp >= 0x8000000 && ((BolleanArrayOfCardType.Count() >= 6 && !BolleanArrayOfCardType[BolleanArrayOfCardType.Count() - 6]) || BolleanArrayOfCardType.Count() < 6)) || temp <= 0x8000000)
                         {
-
-                            if (((card.Type & getTypeFilter)) == getTypeFilter || getTypeFilter == 0)
+                            if ((card.Type & getTypeFilter) == getTypeFilter || getTypeFilter == 0)
                             {
                                 if ((card.Race & getRaceFilter) > 0 || getRaceFilter == 0)
                                 {
@@ -326,7 +326,7 @@ namespace YGOSharp
             {
                 switch (getsearchCode[i])
                 {
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ADD:
+                    case (int)searchCode.OPCODE_ADD:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -334,7 +334,7 @@ namespace YGOSharp
                             stack.Push(lhs + rhs);
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_SUB:
+                    case (int)searchCode.OPCODE_SUB:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -342,7 +342,7 @@ namespace YGOSharp
                             stack.Push(lhs - rhs);
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_MUL:
+                    case (int)searchCode.OPCODE_MUL:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -350,7 +350,7 @@ namespace YGOSharp
                             stack.Push(lhs * rhs);
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_DIV:
+                    case (int)searchCode.OPCODE_DIV:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -358,7 +358,7 @@ namespace YGOSharp
                             stack.Push(lhs / rhs);
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_AND:
+                    case (int)searchCode.OPCODE_AND:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -375,7 +375,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_OR:
+                    case (int)searchCode.OPCODE_OR:
                         if (stack.Count >= 2)
                         {
                             int rhs = stack.Pop();
@@ -392,14 +392,14 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_NEG:
+                    case (int)searchCode.OPCODE_NEG:
                         if (stack.Count >= 1)
                         {
                             int rhs = stack.Pop();
                             stack.Push(-rhs);
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_NOT:
+                    case (int)searchCode.OPCODE_NOT:
                         if (stack.Count >= 1)
                         {
                             int rhs = stack.Pop();
@@ -414,7 +414,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ISCODE:
+                    case (int)searchCode.OPCODE_ISCODE:
                         if (stack.Count >= 1)
                         {
                             int code = stack.Pop();
@@ -429,7 +429,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ISSETCARD:
+                    case (int)searchCode.OPCODE_ISSETCARD:
                         if (stack.Count >= 1)
                         {
                             if (IfSetCard(stack.Pop(), card.Setcode))
@@ -442,7 +442,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ISTYPE:
+                    case (int)searchCode.OPCODE_ISTYPE:
                         if (stack.Count >= 1)
                         {
                             if ((stack.Pop() & card.Type) > 0)
@@ -455,7 +455,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ISRACE:
+                    case (int)searchCode.OPCODE_ISRACE:
                         if (stack.Count >= 1)
                         {
                             if ((stack.Pop() & card.Race) > 0)
@@ -468,7 +468,7 @@ namespace YGOSharp
                             }
                         }
                         break;
-                    case (int)OCGWrapper.Enums.searchCode.OPCODE_ISATTRIBUTE:
+                    case (int)searchCode.OPCODE_ISATTRIBUTE:
                         if (stack.Count >= 1)
                         {
                             if ((stack.Pop() & card.Attribute) > 0)
@@ -489,13 +489,13 @@ namespace YGOSharp
             if (stack.Count != 1 || stack.Pop() == 0)
                 return false;
             return
-                card.Id == (int)YGOSharp.OCGWrapper.Enums.Sp.CARD_MARINE_DOLPHIN
+                card.Id == (int)TwoNameCards.CARD_MARINE_DOLPHIN
                 ||
-                card.Id == (int)YGOSharp.OCGWrapper.Enums.Sp.CARD_TWINKLE_MOSS
+                card.Id == (int)TwoNameCards.CARD_TWINKLE_MOSS
          ||
          (!(card.Alias != 0)
-         && ((card.Type & ((int)YGOSharp.OCGWrapper.Enums.CardType.Monster + (int)YGOSharp.OCGWrapper.Enums.CardType.Token)))
-         != ((int)YGOSharp.OCGWrapper.Enums.CardType.Monster + (int)YGOSharp.OCGWrapper.Enums.CardType.Token));
+         && ((card.Type & ((int)CardType.Monster + (int)CardType.Token)))
+         != ((int)CardType.Monster + (int)CardType.Token));
         }
 
         public static bool IfSetCard(int setCodeToAnalyse, long setCodeFromCard)
@@ -689,7 +689,8 @@ namespace YGOSharp
 
         internal static void initializeSec()
         {
-            packs.Sort((left, right) => {
+            packs.Sort((left, right) =>
+            {
                 if (left.year > right.year)
                 {
                     return -1;

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
@@ -26,13 +25,13 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "quickAI_", onQuickAI);
         UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
         serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
-        serversList.fontSize = 24;
+        serversList.fontSize = 20;
         serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefo");
-        UIHelper.registEvent(gameObject,"server", pickServer);
-        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name","YGOPro2 User");
+        UIHelper.registEvent(gameObject, "server", pickServer);
+        UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name", "YGOPro2 User");
         UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
         list = UIHelper.getByName<UIPopupList>(gameObject, "history_");
-        UIHelper.registEvent(gameObject,"history_", onSelected);
+        UIHelper.registEvent(gameObject, "history_", onSelected);
         name = Config.Get("name", "YGOPro2 User");
         inputIP = UIHelper.getByName<UIInput>(gameObject, "ip_");
         inputIP.defaultText = "szefoserver.ddns.net";
@@ -41,7 +40,7 @@ public class SelectServer : WindowServantSP
         inputPsw = UIHelper.getByName<UIInput>(gameObject, "psw_");
         inputPsw.defaultText = "";
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
-        inputVersion.defaultText = "0x1349";
+        set_version("0x" + String.Format("{0:X}", Config.ClientVersion));
         SetActiveFalse();
     }
     private void pickServer()
@@ -68,7 +67,7 @@ public class SelectServer : WindowServantSP
                     Config.Set("serversPicker", "[TCG]Koishi");
                     break;
                 }
-           case "[OCG]Koishi":
+            case "[OCG]Koishi":
                 {
                     UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
                     UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
@@ -205,7 +204,7 @@ public class SelectServer : WindowServantSP
         inputIP.value = ip;
         inputPort.value = port;
         inputPsw.value = psw;
-        inputVersion.value = version;
+        //inputVersion.value = version;
     }
 
     public override void show()
@@ -273,7 +272,7 @@ public class SelectServer : WindowServantSP
         string portString = UIHelper.getByName<UIInput>(gameObject, "port_").value;
         string pswString = UIHelper.getByName<UIInput>(gameObject, "psw_").value;
         string versionString = UIHelper.getByName<UIInput>(gameObject, "version_").value;
-        if (versionString=="")  
+        if (versionString == "")
         {
             UIHelper.getByName<UIInput>(gameObject, "version_").value = "0x1349";
             versionString = "0x1349";
@@ -282,7 +281,7 @@ public class SelectServer : WindowServantSP
 
     }
 
-    public void KF_onlineGame(string Name,string ipString, string portString, string versionString, string pswString="")
+    public void KF_onlineGame(string Name, string ipString, string portString, string versionString, string pswString = "")
     {
         name = Name;
         Config.Set("name", name);
@@ -312,7 +311,7 @@ public class SelectServer : WindowServantSP
                     File.WriteAllText("config/hosts.conf", all);
                     printFile(false);
                 }
-                (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString,versionString); })).Start();
+                (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString, versionString); })).Start();
             }
             else
             {

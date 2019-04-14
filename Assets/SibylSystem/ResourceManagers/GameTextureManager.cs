@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using UnityEngine;
+using YGOSharp.OCGWrapper.Enums;
 
 public enum GameTextureType
 {
@@ -113,7 +114,7 @@ public class GameTextureManager
         }
     }
 
-    private class PictureResource
+    public class PictureResource
     {
         public GameTextureType type;
         public long code;
@@ -220,7 +221,7 @@ public class GameTextureManager
                         pic = waitLoadStack.Pop();
                         try
                         {
-                            pic.pCard = (YGOSharp.CardsManager.Get((int)pic.code).Type & (int)game_type.TYPE_PENDULUM) > 0;
+                            pic.pCard = (YGOSharp.CardsManager.Get((int)pic.code).Type & (int)CardType.Pendulum) > 0;
                         }
                         catch (Exception e)
                         {
@@ -617,7 +618,7 @@ public class GameTextureManager
                 }
                 //if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
                 //{
-                //    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                //    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 //    path = "picture/card/" + pic.code.ToString() + ".png";
                 //}
                 if (!File.Exists(path))
@@ -825,7 +826,7 @@ public class GameTextureManager
                                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                                 if (Program.I().setting.autoPicDownload && !File.Exists(path))
                                 {
-                                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                 }
                             }
                             break;
@@ -835,13 +836,13 @@ public class GameTextureManager
                             path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
                             if (Program.I().setting.autoPicDownload && !File.Exists(path))
                             {
-                                df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
+                                df.Download("http://duelistsunite.org/picture/mobile/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
                                 if (!File.Exists(path))
                                 {
                                     path = "picture/card/" + pic.code.ToString() + ".jpg";
                                     if (!File.Exists(path))
                                     {
-                                        df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                        df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                     }
                                 }
                             }
@@ -853,7 +854,7 @@ public class GameTextureManager
                             path = "picture/card/" + pic.code.ToString() + ".png";
                             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
                             {
-                                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                             }
                             break;
                         }
@@ -868,7 +869,7 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (Program.I().setting.autoPicDownload && !File.Exists(path))
                 {
-                    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                     path = "picture/card/" + pic.code.ToString() + ".jpg";
                 }
             }
@@ -878,13 +879,13 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".png";
                 if (!File.Exists(path))
                 {
-                    df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 }
             }
 #endif
             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
             {
-                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOSeries10CardPics/master/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 path = "picture/card/" + pic.code.ToString() + ".png";
             }
             //if (!File.Exists(path) && pic.code != 0)

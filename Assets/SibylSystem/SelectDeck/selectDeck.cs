@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using YGOSharp.OCGWrapper.Enums;
+
 public class selectDeck : WindowServantSP
 {
 
@@ -87,6 +89,8 @@ public class selectDeck : WindowServantSP
             ((DeckManager)Program.I().deckManager).returnAction =
                 () =>
                 {
+                    if (((DeckManager)Program.I().deckManager).deckDirty)
+                    {
                     RMSshow_yesOrNoOrCancle(
                           "deckManager_returnAction"
                         , InterString.Get("要保存卡组的变更吗？")
@@ -94,6 +98,10 @@ public class selectDeck : WindowServantSP
                         , new messageSystemValue { hint = "no", value = "no" }
                         , new messageSystemValue { hint = "cancle", value = "cancle" }
                         );
+                    }
+                    else {
+                        Program.I().shiftToServant(Program.I().selectDeck);
+                    }
                 };
         }
     }
@@ -241,13 +249,13 @@ public class selectDeck : WindowServantSP
         string path = "deck/" + superScrollView.selectedString + ".ydk";
         if (File.Exists(path))
         {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-            System.Diagnostics.Process.Start("notepad.exe", path);
-#elif UNITY_STANDALONE_OSX //Mac OS X
+            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+                System.Diagnostics.Process.Start("notepad.exe", path);
+            #elif UNITY_STANDALONE_OSX //Mac OS X
                 System.Diagnostics.Process.Start("open", "-e " + path);
-#elif UNITY_STANDALONE_LINUX //Linux
+            #elif UNITY_STANDALONE_LINUX //Linux
                 System.Diagnostics.Process.Start("gedit", path);
-#endif
+            #endif
         }
     }
 
@@ -309,25 +317,25 @@ public class selectDeck : WindowServantSP
         int extraXyz = 0;
         int currentIndex = 0;
         bool resaveDeck = false;
-
+        
         int[] hangshu = UIHelper.get_decklieshuArray(deck.Main.Count);
         foreach (var item in deck.Main)
         {
             mainAll++;
             YGOSharp.Card c = YGOSharp.CardsManager.Get(item);
-            if ((c.Type & (UInt32)game_type.TYPE_MONSTER) > 0)
+            if ((c.Type & (UInt32)CardType.Monster) > 0)
             {
                 mainMonster++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_SPELL) > 0)
+            if ((c.Type & (UInt32)CardType.Spell) > 0)
             {
                 mainSpell++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_TRAP) > 0)
+            if ((c.Type & (UInt32)CardType.Trap) > 0)
             {
                 mainTrap++;
             }
-            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Main[deck.Deck_O.Main.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -355,19 +363,19 @@ public class selectDeck : WindowServantSP
         {
             sideAll++;
             YGOSharp.Card c = YGOSharp.CardsManager.Get(item);
-            if ((c.Type & (UInt32)game_type.TYPE_MONSTER) > 0)
+            if ((c.Type & (UInt32)CardType.Monster) > 0)
             {
                 sideMonster++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_SPELL) > 0)
+            if ((c.Type & (UInt32)CardType.Spell) > 0)
             {
                 sideSpell++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_TRAP) > 0)
+            if ((c.Type & (UInt32)CardType.Trap) > 0)
             {
                 sideTrap++;
             }
-            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Side[deck.Deck_O.Side.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -394,23 +402,23 @@ public class selectDeck : WindowServantSP
         {
             extraAll++;
             YGOSharp.Card c = YGOSharp.CardsManager.Get(item);
-            if ((c.Type & (UInt32)game_type.TYPE_FUSION) > 0)
+            if ((c.Type & (UInt32)CardType.Fusion) > 0)
             {
                 extraFusion++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_SYNCHRO) > 0)
+            if ((c.Type & (UInt32)CardType.Synchro) > 0)
             {
                 extraSync++;
             }
-            if ((c.Type & (UInt32)game_type.TYPE_XYZ) > 0)
+            if ((c.Type & (UInt32)CardType.Xyz) > 0)
             {
                 extraXyz++;
             }
-            if ((c.Type & (UInt32)game_type.link) > 0)
+            if ((c.Type & (UInt32)CardType.Link) > 0)
             {
                 extraLink++;
             }
-            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Extra[deck.Deck_O.Extra.IndexOf(item)] = c.Id;
                 resaveDeck = true;

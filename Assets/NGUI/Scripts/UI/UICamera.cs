@@ -372,7 +372,7 @@ public class UICamera : MonoBehaviour
 		}
 	}
 
-	static bool mDisableController = false;
+	static bool mDisableController = true;
 	static Vector2 mLastPos = Vector2.zero;
 
 	/// <summary>
