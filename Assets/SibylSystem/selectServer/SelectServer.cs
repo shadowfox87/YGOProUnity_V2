@@ -40,7 +40,7 @@ public class SelectServer : WindowServantSP
         inputPsw = UIHelper.getByName<UIInput>(gameObject, "psw_");
         inputPsw.defaultText = "";
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
-        inputVersion.defaultText = "0x1349";
+        set_version("0x" + String.Format("{0:X}", Config.ClientVersion));
         SetActiveFalse();
     }
     private void pickServer()
@@ -204,7 +204,7 @@ public class SelectServer : WindowServantSP
         inputIP.value = ip;
         inputPort.value = port;
         inputPsw.value = psw;
-        inputVersion.value = version;
+        //inputVersion.value = version;
     }
 
     public override void show()

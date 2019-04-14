@@ -10,7 +10,7 @@ GameObject:
   - component: {fileID: 416280}
   - component: {fileID: 11482142}
   m_Layer: 5
-  m_Name: hint_
+  m_Name: '!hint_'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -375,13 +375,13 @@ MonoBehaviour:
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 305
+  mWidth: 302
   mHeight: 5
   mDepth: 2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 61
+  aspectRatio: 60.4
   mType: 0
   mFillDirection: 4
   mFillAmount: 1
@@ -458,7 +458,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: "\u540E\u624B"
+  mText: "\u540E\u653B"
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 2
@@ -569,7 +569,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: "\u5148\u624B"
+  mText: "\u5148\u653B"
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 2

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using YGOSharp.Network.Enums;
 
 public class Room : WindowServantSP
 {
@@ -252,30 +253,30 @@ public class Room : WindowServantSP
         p.Data = new BinaryMaster();
         p.Data.writer.WriteUnicode(res, res.Length + 1);
         TcpHelper.AddRecordLine(p);
-        switch ((YGOSharp.Network.Enums.PlayerType)player)
+        switch ((PlayerType)player)
         {
-            case YGOSharp.Network.Enums.PlayerType.Red:
+            case PlayerType.Red:
                 result = "[FF3030]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.Green:
+            case PlayerType.Green:
                 result = "[7CFC00]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.Blue:
+            case PlayerType.Blue:
                 result = "[4876FF]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.BabyBlue:
+            case PlayerType.BabyBlue:
                 result = "[63B8FF]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.Pink:
+            case PlayerType.Pink:
                 result = "[EED2EE]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.Yellow:
+            case PlayerType.Yellow:
                 result = "[EEEE00]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.White:
+            case PlayerType.White:
                 result = "[FAF0E6]" + result + "[-]";
                 break;
-            case YGOSharp.Network.Enums.PlayerType.Gray:
+            case PlayerType.Gray:
                 result = "[CDC9C9]" + result + "[-]";
                 break;
         }
@@ -493,6 +494,7 @@ public class Room : WindowServantSP
 
         Program.I().ocgcore.returnServant = Program.I().selectServer;
         needSide = false;
+        joinWithReconnect = true;
         if (Program.I().deckManager.isShowed)
         {
             Program.I().deckManager.hide();
@@ -520,16 +522,21 @@ public class Room : WindowServantSP
         is_host = ((type >> 4) & 0xf) != 0;
         if (is_host)
         {
+            if (selftype < 4 && roomPlayers[selftype] != null) {
+                roomPlayers[selftype].prep = false;
+            }
             UIHelper.shiftButton(startButton(), true);
             lazyRoom.start.localScale = Vector3.one;
+            lazyRoom.ready.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f + 30f, 0);
             lazyRoom.duelist.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f, 0);
-            lazyRoom.observer.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f-30f, 0);
+            lazyRoom.observer.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f - 30f, 0);
             lazyRoom.start.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f - 30f - 30f, 0);
         }
         else
         {
             UIHelper.shiftButton(startButton(), false);
             lazyRoom.start.localScale = Vector3.zero;
+            lazyRoom.ready.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f, 0);
             lazyRoom.duelist.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f - 30f, 0);
             lazyRoom.observer.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f - 30f - 30f, 0);
             lazyRoom.start.localPosition = new Vector3(lazyRoom.duelist.localPosition.x, -94.2f - 30f - 30f - 30f, 0);
@@ -566,12 +573,16 @@ public class Room : WindowServantSP
 
     public bool needSide = false;
 
+    public bool joinWithReconnect = false;
+
     public void StocMessage_ChangeSide(BinaryReader r)
     {
         Program.I().ocgcore.surrended = false;
         Program.I().ocgcore.returnServant = Program.I().deckManager;
         needSide = true;
-        
+        if(Program.I().ocgcore.condition != Ocgcore.Condition.duel || joinWithReconnect) { //Change side when reconnect
+            Program.I().ocgcore.onDuelResultConfirmed();
+        }
     }
 
     GameObject handres = null;
@@ -696,31 +707,31 @@ public class Room : WindowServantSP
                 switch (flag)
                 {
                     case 1: // DECKERROR_LFLIST
-                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（数量不符合禁限卡表）", null);
+                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（数量不符合禁限卡表）"), null);
                         break;
                     case 2: // DECKERROR_OCGONLY
-                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（OCG独有卡，不能在当前设置使用）", null);
+                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（OCG独有卡，不能在当前设置使用）"), null);
                         break;
                     case 3: // DECKERROR_TCGONLY
-                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（TCG独有卡，不能在当前设置使用）", null);
+                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（TCG独有卡，不能在当前设置使用）"), null);
                         break;
                     case 4: // DECKERROR_UNKNOWNCARD
                         if (code < 100000000)
-                            RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（服务器无法识别此卡，可能是服务器未更新）", null);
+                            RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（服务器无法识别此卡，可能是服务器未更新）"), null);
                         else
-                            RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（服务器无法识别此卡，可能是服务器不支持先行卡或此先行卡已正式更新）", null);
+                            RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（服务器无法识别此卡，可能是服务器不支持先行卡或此先行卡已正式更新）"), null);
                         break;
                     case 5: // DECKERROR_CARDCOUNT
-                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "（数量过多）", null);
+                        RMSshow_onlyYes("", InterString.Get("卡组非法，请检查：[?]", YGOSharp.CardsManager.Get(code).Name) + "\r\n" + InterString.Get("（数量过多）"), null);
                         break;
                     case 6: // DECKERROR_MAINCOUNT
-                        RMSshow_onlyYes("", "Your main deck needs to be between 40-60 cards", null);
+                        RMSshow_onlyYes("", InterString.Get("主卡组数量应为40-60张"), null);
                         break;
                     case 7: // DECKERROR_EXTRACOUNT
-                        RMSshow_onlyYes("", "Your extra deck needs to be between 0-15 cards", null);
+                        RMSshow_onlyYes("", InterString.Get("额外卡组数量应为0-15张"), null);
                         break;
                     case 8: // DECKERROR_SIDECOUNT
-                        RMSshow_onlyYes("", "Your side deck needs to be between 0-15 cards", null);
+                        RMSshow_onlyYes("", InterString.Get("副卡组数量应为0-15"), null);
                         break;
                     default:
                         RMSshow_onlyYes("", GameStringManager.get_unsafe(1406), null);
@@ -735,9 +746,9 @@ public class Room : WindowServantSP
                 r.ReadByte();
                 r.ReadByte();
                 code = r.ReadInt32();
-                string hexOutput = "0x"+String.Format("{0:X}", code);
-                Program.I().selectServer.set_version(hexOutput);
-                RMSshow_none(InterString.Get("你输入的版本号和服务器不一致,[7CFC00]YGOPro2已经智能切换版本号[-]，请重新链接。"));
+                //string hexOutput = "0x"+String.Format("{0:X}", code);
+                //Program.I().selectServer.set_version(hexOutput);
+                //RMSshow_none(InterString.Get("你输入的版本号和服务器不一致,[7CFC00]YGOPro2已经智能切换版本号[-]，请重新连接。"));
                 break;
             default:
                 break;
@@ -1009,6 +1020,7 @@ public class Room : WindowServantSP
         UIHelper.registUIEventTriggerForClick(exitButton().gameObject, listenerForClicked);
         UIHelper.registUIEventTriggerForClick(duelistButton().gameObject, listenerForClicked);
         UIHelper.registUIEventTriggerForClick(observerButton().gameObject, listenerForClicked);
+        UIHelper.registUIEventTriggerForClick(readyButton().gameObject, listenerForClicked);
         realize();
         superScrollView.refreshForOneFrame();
     }
@@ -1055,11 +1067,31 @@ public class Room : WindowServantSP
         return UIHelper.getByName<UIButton>(gameObject, "observer_");
     }
 
+    private UIButton readyButton()
+    {
+        return UIHelper.getByName<UIButton>(gameObject, "ready_");
+    }
+
     void listenerForClicked(GameObject gameObjectListened)
     {
         if (gameObjectListened.name == "exit_")
         {
             Program.I().ocgcore.onExit();
+        }
+        if (gameObjectListened.name == "ready_")
+        {
+            if (selftype < realPlayers.Length && realPlayers[selftype] != null)
+            {
+                if (realPlayers[selftype].getIfPreped())
+                {
+                    TcpHelper.CtosMessage_HsNotReady();
+                }
+                else
+                {
+                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "wizard") + ".ydk"));
+                    TcpHelper.CtosMessage_HsReady();
+                }
+            }
         }
         if (gameObjectListened.name == "duelist_")
         {
