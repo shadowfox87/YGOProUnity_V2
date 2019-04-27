@@ -585,12 +585,12 @@ public class GameTextureManager
 #if UNITY_ANDROID || UNITY_IOS //Android、iPhone
             if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value != "Series 10 HQ")
             {
-                df.Download("http://duelistsunite.org/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
+                df.Download("https://pictures.duelistsunite.org/lq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
 #endif
             if (!File.Exists(path) && Program.I().setting.autoPicDownload)
             {
-                df.Download("https://raw.githubusercontent.com/shadowfox87/YGOCloseupsPng300x300/master/picture/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
+                df.Download("https://pictures.duelistsunite.org/lq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
             if (!File.Exists(path))
             {
@@ -618,7 +618,7 @@ public class GameTextureManager
                 }
                 //if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
                 //{
-                //    df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                //    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 //    path = "picture/card/" + pic.code.ToString() + ".png";
                 //}
                 if (!File.Exists(path))
@@ -826,7 +826,7 @@ public class GameTextureManager
                                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                                 if (Program.I().setting.autoPicDownload && !File.Exists(path))
                                 {
-                                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                    df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                 }
                             }
                             break;
@@ -842,7 +842,7 @@ public class GameTextureManager
                                     path = "picture/card/" + pic.code.ToString() + ".jpg";
                                     if (!File.Exists(path))
                                     {
-                                        df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                        df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                                     }
                                 }
                             }
@@ -854,7 +854,7 @@ public class GameTextureManager
                             path = "picture/card/" + pic.code.ToString() + ".png";
                             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
                             {
-                                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                                df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                             }
                             break;
                         }
@@ -869,7 +869,7 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (Program.I().setting.autoPicDownload && !File.Exists(path))
                 {
-                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                     path = "picture/card/" + pic.code.ToString() + ".jpg";
                 }
             }
@@ -879,13 +879,13 @@ public class GameTextureManager
                 path = "picture/card/" + pic.code.ToString() + ".png";
                 if (!File.Exists(path))
                 {
-                    df.Download("http://duelistsunite.org/picture/mobile/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                    df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 }
             }
 #endif
             if (!File.Exists(path) && pic.code != 0 && Program.I().setting.autoPicDownload)
             {
-                df.Download("http://duelistsunite.org/picture/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
                 path = "picture/card/" + pic.code.ToString() + ".png";
             }
             //if (!File.Exists(path) && pic.code != 0)

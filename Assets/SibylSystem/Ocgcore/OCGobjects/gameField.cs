@@ -452,7 +452,7 @@ public class GameField : OCGobject
                         if ( tex == null && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
                         {
                             //HQ  Field
-                            df.Download("http://duelistsunite.org/picture/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
+                            df.Download("https://pictures.duelistsunite.org/lq/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
                             if (File.Exists("picture/field/" + code.ToString() + ".png"))
                             {
                                 tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
