@@ -664,7 +664,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCloseupDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://pictures.duelistsunite.org/lq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("https://pictures.duelistsunite.org/hq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
                 });
                 return;
             }
