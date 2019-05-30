@@ -23,7 +23,7 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 Mobile\nOCGCORE 0x1349";
+            nullString += "YGOPro2 Mobile\nOCGCORE 0x134a";
             nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
             nullString += "English translation done by AntiMetaman.";
