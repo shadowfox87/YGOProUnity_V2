@@ -425,25 +425,25 @@ public class GameField : OCGobject
                     if (code > 0)
                     {
                         Texture2D tex = null;
-                        if (File.Exists("picture/field/" + code.ToString() + ".png"))
-                        {
-                            tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
-                        }
-                        else if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
+                        if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
                         {
                             tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
                         }
-                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".png"))
+                        else if (File.Exists("picture/field/" + code.ToString() + ".png"))
                         {
-                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".png");
+                            tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
                         }
                         else if (File.Exists("expansions/pics/field/" + code.ToString() + ".jpg"))
                         {
                             tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".jpg");
                         }
-                        else if (File.Exists("pics/field/" + code.ToString() + ".png"))
+                        else if (File.Exists("expansions/pics/field/" + code.ToString() + ".png"))
                         {
-                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".png");
+                            tex = UIHelper.getTexture2D("expansions/pics/field/" + code.ToString() + ".png");
+                        }
+                        else if (File.Exists("pics/field/" + code.ToString() + ".jpg"))
+                        {
+                            tex = UIHelper.getTexture2D("pics/field/" + code.ToString() + ".jpg");
                         }
                         else if (File.Exists("pics/field/" + code.ToString() + ".jpg"))
                         {
@@ -452,10 +452,10 @@ public class GameField : OCGobject
                         if ( tex == null && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
                         {
                             //HQ  Field
-                            df.Download("https://pictures.duelistsunite.org/hq/field/" + code.ToString() + ".png", "picture/field/" + code.ToString() + ".png");
-                            if (File.Exists("picture/field/" + code.ToString() + ".png"))
+                            df.Download("https://pictures.duelistsunite.org/hq/field/" + code.ToString() + ".jpg", "picture/field/" + code.ToString() + ".jpg");
+                            if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
                             {
-                                tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".png");
+                                tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
                             }
                         }
                         if (tex != null)

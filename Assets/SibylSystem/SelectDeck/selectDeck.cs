@@ -182,7 +182,7 @@ public class selectDeck : WindowServantSP
                 RMSshow_none(InterString.Get("非法输入！请检查输入的文件名。"));
             }
         }
-        if (hashCode == "onCode")
+        if (hashCode == "")
         {
             if (result[0].value != "")
             {

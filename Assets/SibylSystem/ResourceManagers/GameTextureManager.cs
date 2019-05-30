@@ -292,24 +292,24 @@ public class GameTextureManager
         }
         else
         {
-            if (!File.Exists("picture/card/" + pic.code.ToString() + ".png"))
+            if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
                     while (_basicBackgroundWorkerCardDownload.QueueCount > 0)
                     {
-                        if (File.Exists("picture/card/" + pic.code.ToString() + ".png"))
+                        if (File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
                         {
-                            LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".png", false);
+                            LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".jpg", false);
                             return;
                         }
                     }
-                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic, true);
+                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg", pic, true);
                 });
             }
             else
             {
-                LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".png", false);
+                LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".jpg", false);
             }
         }
 
@@ -381,10 +381,10 @@ public class GameTextureManager
             }
             else
             {
-                string path = "picture/card/" + pic.code.ToString() + ".png";
+                string path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (!File.Exists(path))
                 {
-                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                    path = "picture/card/" + pic.code.ToString() + ".png";
                 }
                 //if (!File.Exists(path))
                 //{
@@ -671,10 +671,10 @@ public class GameTextureManager
             if (!File.Exists(path))
             {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-                path = "picture/card/" + pic.code.ToString() + ".png";
+                path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (!File.Exists(path))
                 {
-                    path = "picture/card/" + pic.code.ToString() + ".jpg";
+                    path = "picture/card/" + pic.code.ToString() + ".png";
                 }
                 bool Iam8 = false;
                 //if (!File.Exists(path))
@@ -889,10 +889,10 @@ public class GameTextureManager
     {
         try
         {
-            string path = "picture/card/" + pic.code.ToString() + ".png";
+            string path = "picture/card/" + pic.code.ToString() + ".jpg";
             if (!File.Exists(path))
             {
-                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                path = "picture/card/" + pic.code.ToString() + ".png";
             }
             if (!File.Exists(path))
             {
@@ -923,7 +923,7 @@ public class GameTextureManager
                 {
                     case "Series 10":
                         {
-                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            path = "picture/card/" + pic.code.ToString() + ".jpg";
                             if (!File.Exists(path))
                             {
                                 path = "picture/card/" + pic.code.ToString() + ".jpg";
@@ -954,10 +954,10 @@ public class GameTextureManager
                         }
                     case "Series 10 HQ":
                         {
-                            path = "picture/card/" + pic.code.ToString() + ".png";
+                            path = "picture/card/" + pic.code.ToString() + ".jpg";
                             if (!File.Exists(path) && pic.code != 0 && AutoPicDownload)
                             {
-                                df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                                df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                             }
                             break;
                         }
@@ -979,10 +979,10 @@ public class GameTextureManager
 
             if (!File.Exists(path) && pic.code != 0 && AutoPicDownload)
             {
-                path = "picture/card/" + pic.code.ToString() + ".png";
+                path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (!File.Exists(path))
                 {
-                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png");
+                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
                 }
             }
 #endif
@@ -990,7 +990,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".png", "picture/card/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg", pic,false);
 
                 });
                 return;
