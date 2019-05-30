@@ -23,7 +23,7 @@ namespace YGOSharp
         {
             nullName = InterString.Get("未知卡片");
             nullString = "";
-            nullString += "YGOPro2 \nOCGCORE 0x1349";
+            nullString += "YGOPro2 \nOCGCORE 0x134a";
             nullString += "\nMade by Szefo09";
             nullString += "\r\n\r\n";
             nullString += "English translation done by AntiMetaman.";
@@ -504,7 +504,7 @@ namespace YGOSharp
             int settype = setCodeToAnalyse & 0xfff;
             int setsubtype = setCodeToAnalyse & 0xf000;
             long sc = setCodeFromCard;
-            while (sc != 0)
+            while (sc != 0 && sc != -1)
             {
                 if ((sc & 0xfff) == settype && (sc & 0xf000 & setsubtype) == setsubtype)
                     res = true;
