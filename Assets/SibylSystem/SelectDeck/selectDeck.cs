@@ -91,15 +91,16 @@ public class selectDeck : WindowServantSP
                 {
                     if (((DeckManager)Program.I().deckManager).deckDirty)
                     {
-                    RMSshow_yesOrNoOrCancle(
-                          "deckManager_returnAction"
-                        , InterString.Get("要保存卡组的变更吗？")
-                        , new messageSystemValue { hint = "yes", value = "yes" }
-                        , new messageSystemValue { hint = "no", value = "no" }
-                        , new messageSystemValue { hint = "cancle", value = "cancle" }
-                        );
+                        RMSshow_yesOrNoOrCancle(
+                              "deckManager_returnAction"
+                            , InterString.Get("要保存卡组的变更吗？")
+                            , new messageSystemValue { hint = "yes", value = "yes" }
+                            , new messageSystemValue { hint = "no", value = "no" }
+                            , new messageSystemValue { hint = "cancle", value = "cancle" }
+                            );
                     }
-                    else {
+                    else
+                    {
                         Program.I().shiftToServant(Program.I().selectDeck);
                     }
                 };
@@ -181,6 +182,43 @@ public class selectDeck : WindowServantSP
                 RMSshow_none(InterString.Get("非法输入！请检查输入的文件名。"));
             }
         }
+        if (hashCode == "onCode")
+        {
+            if (result[0].value != "")
+            {
+                try
+                {
+                    YGOSharp.Deck deck;
+                    if (!DeckManager.FromBase64toCodedDeck(result[0].value, out deck))
+                    {
+                        RMSshow_none(InterString.Get("卡组代码无效。"));
+                        return;
+                    }
+                    string value = "#created by ygopro2\r\n#main\r\n";
+                    for (int i = 0; i < deck.Main.Count; i++)
+                    {
+                        value += deck.Main[i].ToString() + "\r\n";
+                    }
+                    value += "#extra\r\n";
+                    for (int i = 0; i < deck.Extra.Count; i++)
+                    {
+                        value += deck.Extra[i].ToString() + "\r\n";
+                    }
+                    value += "!side\r\n";
+                    for (int i = 0; i < deck.Side.Count; i++)
+                    {
+                        value += deck.Side[i].ToString() + "\r\n";
+                    }
+                    System.IO.File.WriteAllText("deck/" + superScrollView.selectedString + ".ydk", value, System.Text.Encoding.UTF8);
+                    printSelected();
+                    RMSshow_none(InterString.Get("卡组代码加载成功。"));
+                }
+                catch (Exception)
+                {
+                    RMSshow_none(InterString.Get("卡组代码加载失败。"));
+                }
+            }
+        }
     }
 
     void onNew()
@@ -249,19 +287,20 @@ public class selectDeck : WindowServantSP
         string path = "deck/" + superScrollView.selectedString + ".ydk";
         if (File.Exists(path))
         {
-            #if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
-                System.Diagnostics.Process.Start("notepad.exe", path);
-            #elif UNITY_STANDALONE_OSX //Mac OS X
-                System.Diagnostics.Process.Start("open", "-e " + path);
-            #elif UNITY_STANDALONE_LINUX //Linux
-                System.Diagnostics.Process.Start("gedit", path);
-            #endif
+            YGOSharp.Deck deck;
+            DeckManager.FromYDKtoCodedDeck(path, out deck);
+            string default_string;
+            if (deck.Main.Count > 0 || deck.Extra.Count > 0 || deck.Side.Count > 0)
+                default_string = DeckManager.convertDeckToBase64(deck);
+            else
+                default_string = "";
+            RMSshow_input("onCode", InterString.Get("卡组代码"), default_string);
         }
     }
 
     private void setSortLable()
     {
-        if (Config.Get(sort,"1") == "1")
+        if (Config.Get(sort, "1") == "1")
         {
             UIHelper.trySetLableText(gameObject, "sort_", InterString.Get("时间排序"));
         }
@@ -273,7 +312,7 @@ public class selectDeck : WindowServantSP
 
     private void onSort()
     {
-        if (Config.Get(sort,"1") == "1")
+        if (Config.Get(sort, "1") == "1")
         {
             Config.Set(sort, "0");
         }
@@ -317,7 +356,7 @@ public class selectDeck : WindowServantSP
         int extraXyz = 0;
         int currentIndex = 0;
         bool resaveDeck = false;
-        
+
         int[] hangshu = UIHelper.get_decklieshuArray(deck.Main.Count);
         foreach (var item in deck.Main)
         {
@@ -335,7 +374,7 @@ public class selectDeck : WindowServantSP
             {
                 mainTrap++;
             }
-            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Main[deck.Deck_O.Main.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -348,7 +387,7 @@ public class selectDeck : WindowServantSP
             Vector2 v = UIHelper.get_hang_lieArry(mainAll - 1, hangshu);
             quickCards[currentIndex].transform.localPosition = new Vector3
                 (
-                -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, (int)v.y, hangshu[(int)v.x],10)
+                -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, (int)v.y, hangshu[(int)v.x], 10)
                 ,
                 161.6f - v.x * 60f
                 ,
@@ -375,7 +414,7 @@ public class selectDeck : WindowServantSP
             {
                 sideTrap++;
             }
-            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Side[deck.Deck_O.Side.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -387,7 +426,7 @@ public class selectDeck : WindowServantSP
             }
             quickCards[currentIndex].transform.localPosition = new Vector3
                 (
-                -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, sideAll - 1, deck.Side.Count,10)
+                -176.3f + UIHelper.get_left_right_indexZuo(0, 352f, sideAll - 1, deck.Side.Count, 10)
                 ,
                 -181.1f
                 ,
@@ -418,7 +457,7 @@ public class selectDeck : WindowServantSP
             {
                 extraLink++;
             }
-            if (item != c.Id && c.Id!=0 && Program.I().setting.autoDeckUpdate)
+            if (item != c.Id && c.Id != 0 && Program.I().setting.autoDeckUpdate)
             {
                 deck.Deck_O.Extra[deck.Deck_O.Extra.IndexOf(item)] = c.Id;
                 resaveDeck = true;
@@ -456,7 +495,7 @@ public class selectDeck : WindowServantSP
         deckPanel.leftMain.text = GameStringHelper._zhukazu + mainAll;
         deckPanel.leftExtra.text = GameStringHelper._ewaikazu + extraAll;
         deckPanel.leftSide.text = GameStringHelper._fukazu + sideAll;
-        deckPanel.rightMain.text = GameStringHelper._guaishou + mainMonster + " "+ GameStringHelper._mofa + mainSpell + " " + GameStringHelper._xianjing + mainTrap;
+        deckPanel.rightMain.text = GameStringHelper._guaishou + mainMonster + " " + GameStringHelper._mofa + mainSpell + " " + GameStringHelper._xianjing + mainTrap;
         deckPanel.rightExtra.text = GameStringHelper._ronghe + extraFusion + " " + GameStringHelper._tongtiao + extraSync + " " + GameStringHelper._chaoliang + extraXyz + " " + GameStringHelper._lianjie + extraLink;
         deckPanel.rightSide.text = GameStringHelper._guaishou + sideMonster + " " + GameStringHelper._mofa + sideSpell + " " + GameStringHelper._xianjing + sideTrap;
         if (resaveDeck && Program.I().setting.autoDeckUpdate)
@@ -488,15 +527,15 @@ public class selectDeck : WindowServantSP
                 Config.Set("deckInUse", superScrollView.selectedString);
             }
         }
-        base.hide();    
+        base.hide();
     }
 
     void printFile()
     {
-        string deckInUse = Config.Get("deckInUse","miaowu");
+        string deckInUse = Config.Get("deckInUse", "miaowu");
         superScrollView.clear();
         FileInfo[] fileInfos = (new DirectoryInfo("deck")).GetFiles();
-        if (Config.Get(sort,"1") == "1")
+        if (Config.Get(sort, "1") == "1")
         {
             Array.Sort(fileInfos, UIHelper.CompareTime);
         }
