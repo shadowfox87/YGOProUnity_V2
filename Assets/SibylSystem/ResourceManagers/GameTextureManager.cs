@@ -934,24 +934,24 @@ public class GameTextureManager
                             }
                             break;
                         }
-                    case "Anime":
-                        {
-                            path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
-                            if (AutoPicDownload && !File.Exists(path))
-                            {
-                                df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
-                                if (!File.Exists(path))
-                                {
-                                    path = "picture/card/" + pic.code.ToString() + ".jpg";
-                                    if (!File.Exists(path))
-                                    {
-                                        df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
-                                    }
-                                }
-                            }
+                    //case "Anime":
+                    //    {
+                    //        path = "picture/card-ani/" + pic.code.ToString() + ".jpg";
+                    //        if (AutoPicDownload && !File.Exists(path))
+                    //        {
+                    //            df.Download("http://duelistsunite.org/picture/card-ani/" + pic.code.ToString() + ".jpg", "picture/card-ani/" + pic.code.ToString() + ".jpg");
+                    //            if (!File.Exists(path))
+                    //            {
+                    //                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                    //                if (!File.Exists(path))
+                    //                {
+                    //                    df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                    //                }
+                    //            }
+                    //        }
 
-                            break;
-                        }
+                    //        break;
+                    //    }
                     case "Series 10 HQ":
                         {
                             path = "picture/card/" + pic.code.ToString() + ".jpg";
@@ -963,6 +963,15 @@ public class GameTextureManager
                         }
                     default:
                         {
+                            path = "picture/card/" + pic.code.ToString() + ".jpg";
+                            if (!File.Exists(path))
+                            {
+                                path = "picture/card/" + pic.code.ToString() + ".jpg";
+                                if (AutoPicDownload && !File.Exists(path))
+                                {
+                                    df.Download("https://pictures.duelistsunite.org/lq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg");
+                                }
+                            }
                             break;
                         }
                 }

@@ -13980,7 +13980,6 @@ MonoBehaviour:
   position: 2
   alignment: 1
   items:
-  - Anime
   - Series 10
   - Series 10 HQ
   padding: {x: 4, y: 4}
