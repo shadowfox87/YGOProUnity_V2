@@ -9,6 +9,7 @@ public class RoomList : WindowServantSP
     bool hideAI;
     bool hideStarted;
     UILabel roomPSWLabel;
+    string currentClientVersion = "0x" + String.Format("{0:X}", Config.ClientVersion);
     public override void initialize()
     {
         createWindow(Program.I().new_ui_RoomList);
@@ -111,8 +112,9 @@ public class RoomList : WindowServantSP
         string versionString = UIHelper.getByName<UIInput>(Program.I().selectServer.gameObject, "version_").value;
         if (versionString == "")
         {
-            UIHelper.getByName<UIInput>(Program.I().selectServer.gameObject, "version_").value = "0x134a";
-            versionString = "0x134a";
+            UIHelper.getByName<UIInput>(Program.I().selectServer.gameObject, "version_").value = currentClientVersion;
+            
+            versionString = currentClientVersion;
         }
         Program.I().roomList.hide();
         Program.I().selectServer.KF_onlineGame(Name, ipString, portString, versionString, pswString);
