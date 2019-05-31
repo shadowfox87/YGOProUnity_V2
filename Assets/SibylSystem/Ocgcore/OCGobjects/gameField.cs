@@ -451,8 +451,22 @@ public class GameField : OCGobject
                         }
                         if ( tex == null && code.ToString().Length > 0 && !(Application.internetReachability == NetworkReachability.NotReachable) && Program.I().setting.autoPicDownload)
                         {
-                            //HQ  Field
-                            df.Download("https://pictures.duelistsunite.org/hq/field/" + code.ToString() + ".jpg", "picture/field/" + code.ToString() + ".jpg");
+                            if(Program.I().setting != null)
+                            {
+                                if(Program.I().setting.pictureDownloadVersion.value == "Series 10 HQ")
+                                {
+                                    //HQ  Field
+                                    df.Download("https://pictures.duelistsunite.org/hq/field/" + code.ToString() + ".jpg", "picture/field/" + code.ToString() + ".jpg");
+                                }
+                                else
+                                {
+                                    //LQ  Field
+                                    df.Download("https://pictures.duelistsunite.org/lq/field/" + code.ToString() + ".jpg", "picture/field/" + code.ToString() + ".jpg");
+                                }
+                                
+                            }
+
+                            
                             if (File.Exists("picture/field/" + code.ToString() + ".jpg"))
                             {
                                 tex = UIHelper.getTexture2D("picture/field/" + code.ToString() + ".jpg");
