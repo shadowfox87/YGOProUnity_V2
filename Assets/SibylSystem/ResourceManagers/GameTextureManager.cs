@@ -278,8 +278,15 @@ public class GameTextureManager
     private static void LoadCloseupFromCardWhenDownloaded(object sender, EventArgs e)
     {
         var dlArgs = e as DownloadPicCompletedEventArgs;
-        LoadCloseupFromCardPicture(dlArgs.Pic, dlArgs.Filename, false);
-        LoadCardPicture(dlArgs.Pic, dlArgs.Filename);
+        if (dlArgs.DownloadSuccesful)
+        {
+            LoadCardPicture(dlArgs.Pic, dlArgs.Filename);
+            LoadCloseupFromCardPicture(dlArgs.Pic, dlArgs.Filename, false);
+        }
+        else
+        {
+            LoadCloseupFromCardPicture(dlArgs.Pic, dlArgs.Filename, false);
+        }
     }
 
     private static void LoadCloseupWhenDownloaded(object sender, EventArgs e)
@@ -296,7 +303,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
-                    while (_basicBackgroundWorkerCardDownload.QueueCount > 0)
+                    while (_basicBackgroundWorkerCardDownload.QueueCount > 1)
                     {
                         if (File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
                         {
@@ -962,7 +969,7 @@ public class GameTextureManager
                             break;
                         }
                     default:
-                        {
+                       {
                             break;
                         }
                 }
