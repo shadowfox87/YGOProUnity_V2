@@ -661,23 +661,28 @@ public class GameTextureManager
         try
         {
             string path = "picture/closeup/" + pic.code.ToString() + ".png";
-#if UNITY_ANDROID || UNITY_IOS //Android、iPhone
-            if (!File.Exists(path) && Program.I().setting.autoPicDownload && Program.I().setting.pictureDownloadVersion.value != "Series 10 HQ")
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS //Android、iPhone
+            if (!File.Exists(path) && AutoPicDownload && Program.I().setting.pictureDownloadVersion.value != "Series 10 HQ")
             {
                 df.Download("https://pictures.duelistsunite.org/lq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
             }
-#endif
+            else if((!File.Exists(path) && AutoPicDownload))
+            {
+                df.Download("https://pictures.duelistsunite.org/hq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png");
+            }
+#else
             if (!File.Exists(path) && AutoPicDownload)
             {
                 _basicBackgroundWorkerCloseupDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://pictures.duelistsunite.org/lq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("https://pictures.duelistsunite.org/hq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
                 });
                 return;
             }
+#endif
             if (!File.Exists(path))
             {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN //编译器、Windows
+#if UNITY_STANDALONE_WIN //编译器、Windows
                 path = "picture/card/" + pic.code.ToString() + ".jpg";
                 if (!File.Exists(path))
                 {
@@ -706,7 +711,7 @@ public class GameTextureManager
                  *  以上处理其他平台无法正常使用
                  *  暂时只能直接贴图，以后再处理
                 */
-#elif UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
+#elif UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX //Android、iPhone
             if (!File.Exists(path))
             {
                 path = "picture/null.png";
