@@ -299,7 +299,7 @@ public class GameTextureManager
         }
         else
         {
-            if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
+            if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg") && !File.Exists("picture/card/" + pic.code.ToString() + ".png"))
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
@@ -316,7 +316,15 @@ public class GameTextureManager
             }
             else
             {
-                LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".jpg", false);
+                if(File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
+                {
+                    LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".jpg", false);
+                }
+                else
+                {
+                    LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".png", false);
+                }
+                
             }
         }
 
