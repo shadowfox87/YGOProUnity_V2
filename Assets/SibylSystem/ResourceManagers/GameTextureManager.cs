@@ -241,8 +241,8 @@ public class GameTextureManager
                                 {
                                     //_basicBackgroundWorkerProcessing.EnqueueWork(() =>
                                     //{
-                                        ProcessingCardFeature(pic);
-                                   // });
+                                    ProcessingCardFeature(pic);
+                                    // });
 
                                     break;
                                 }
@@ -250,7 +250,7 @@ public class GameTextureManager
                                 {
                                     //_basicBackgroundWorkerProcessing.EnqueueWork(() =>
                                     //{
-                                        ProcessingCardPicture(pic);
+                                    ProcessingCardPicture(pic);
                                     //});
 
                                     break;
@@ -259,7 +259,7 @@ public class GameTextureManager
                                 {
                                     //_basicBackgroundWorkerProcessing.EnqueueWork(() =>
                                     //{
-                                        ProcessingVerticleDrawing(pic);
+                                    ProcessingVerticleDrawing(pic);
                                     //});
 
                                     break;
@@ -299,7 +299,20 @@ public class GameTextureManager
         }
         else
         {
-            if (!File.Exists("picture/card/" + pic.code.ToString() + ".jpg"))
+            string path = "picture/card/" + pic.code.ToString() + ".jpg";
+            if (!File.Exists(path))
+            {
+                path = "picture/card/" + pic.code.ToString() + ".png";
+            }
+            if (!File.Exists(path))
+            {
+                path = "expansions/pics/" + pic.code.ToString() + ".jpg";
+            }
+            if (!File.Exists(path))
+            {
+                path = "pics/" + pic.code.ToString() + ".jpg";
+            }
+            if (!File.Exists(path))
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
@@ -316,7 +329,7 @@ public class GameTextureManager
             }
             else
             {
-                LoadCloseupFromCardPicture(pic, "picture/card/" + pic.code.ToString() + ".jpg", false);
+                LoadCloseupFromCardPicture(pic, path, false);
             }
         }
 
@@ -393,11 +406,6 @@ public class GameTextureManager
                 {
                     path = "picture/card/" + pic.code.ToString() + ".png";
                 }
-                //if (!File.Exists(path))
-                //{
-                //    Iam8 = true;
-                //    path = "picture/cardIn8thEdition/" + pic.code.ToString() + ".jpg";
-                //}
                 if (!File.Exists(path))
                 {
                     path = "expansions/pics/" + pic.code.ToString() + ".jpg";
@@ -675,7 +683,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCloseupDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://pictures.duelistsunite.org/hq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic,false);
+                    df.Download("https://pictures.duelistsunite.org/hq/closeup/" + pic.code.ToString() + ".png", "picture/closeup/" + pic.code.ToString() + ".png", pic, false);
                 });
                 return;
             }
@@ -1011,7 +1019,7 @@ public class GameTextureManager
             {
                 _basicBackgroundWorkerCardDownload.EnqueueWork(() =>
                 {
-                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg", pic,false);
+                    df.Download("https://pictures.duelistsunite.org/hq/card/" + pic.code.ToString() + ".jpg", "picture/card/" + pic.code.ToString() + ".jpg", pic, false);
 
                 });
                 return;
