@@ -8,6 +8,7 @@ public class Setting : WindowServant2D
     public UIToggle isBGMMute;
     public bool batterySaving;
     public bool autoPicDownload;
+    public bool rndBGM;
     public bool autoDeckUpdate;
 
     public override void initialize()
@@ -42,6 +43,8 @@ public class Setting : WindowServant2D
         UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value = UIHelper.fromStringToBool(Config.Get("handmPosition_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "spyer_").value = UIHelper.fromStringToBool(Config.Get("spyer_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "resize_").value = UIHelper.fromStringToBool(Config.Get("resize_", "1"));
+        UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value = UIHelper.fromStringToBool(Config.Get("rndBGM_", "1"));
+        rndBGM = UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value;
         UIHelper.registEvent(gameObject, "muteBGM", muteBGM);
         UIHelper.registEvent(gameObject, "vol_", onVolChange);
         if (QualitySettings.GetQualityLevel() < 3)
@@ -60,6 +63,7 @@ public class Setting : WindowServant2D
         UIHelper.registEvent(gameObject, "handmPosition_", save);
         UIHelper.registEvent(gameObject, "spyer_", save);
         UIHelper.registEvent(gameObject, "high_", save);
+        UIHelper.registEvent(gameObject, "rndBGM_", save);
         UIHelper.registEvent(gameObject, "longField_", onChangeLongField);
         UIHelper.registEvent(gameObject, "size_", onChangeSize);
         //UIHelper.registEvent(gameObject, "alpha_", onChangeAlpha);
@@ -126,6 +130,7 @@ public class Setting : WindowServant2D
             if (Program.I().bgm != null && Program.I().bgm.audioSource != null)
             {
                 Program.I().bgm.audioSource.Stop();
+ 
             }
 
         }
@@ -332,6 +337,7 @@ public class Setting : WindowServant2D
         Config.Set("handPosition_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "handPosition_").value));
         Config.Set("handmPosition_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value));
         Config.Set("spyer_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "spyer_").value));
+        Config.Set("rndBGM_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value));
         if (UIHelper.getByName<UIToggle>(gameObject, "high_").value)
         {
             QualitySettings.SetQualityLevel(5);

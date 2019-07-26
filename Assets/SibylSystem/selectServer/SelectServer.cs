@@ -27,7 +27,7 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
         serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
         serversList.fontSize = 20;
-        serversList.value = Config.Get("serversPicker", "[TCG+OCG]Szefo");
+        serversList.value = Config.Get("serversPicker", "[TCG+OCG]wSedlacek");
         UIHelper.registEvent(gameObject, "server", pickServer);
         UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name", "YGOPro2 User");
         UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
@@ -52,12 +52,12 @@ public class SelectServer : WindowServantSP
         //[OCG]Mercury233
         switch (server)
         {
-            case "[TCG+OCG]Szefo":
+            case "[TCG+OCG]wSedlacek":
                 {
-                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "szefoserver.ddns.net";
-                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
+                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "srvpro.wsedlacek.com";
+                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7911";
                     UIHelper.getByName<UIInput>(gameObject, "version_").value = currentClientVersion;
-                    Config.Set("serversPicker", "[TCG+OCG]Szefo");
+                    Config.Set("serversPicker", "[TCG+OCG]wsedlacek");
                     break;
                 }
             case "[TCG]Koishi":
