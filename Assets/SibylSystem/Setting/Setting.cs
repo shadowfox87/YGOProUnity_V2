@@ -9,6 +9,7 @@ public class Setting : WindowServant2D
     public UIPopupList pictureDownloadVersion;
     public bool batterySaving;
     public bool autoPicDownload;
+    public bool rndBGM;
     public bool autoDeckUpdate;
 
     public override void initialize()
@@ -45,8 +46,11 @@ public class Setting : WindowServant2D
         UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value = UIHelper.fromStringToBool(Config.Get("handmPosition_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "spyer_").value = UIHelper.fromStringToBool(Config.Get("spyer_", "1"));
         UIHelper.getByName<UIToggle>(gameObject, "resize_").value = UIHelper.fromStringToBool(Config.Get("resize_", "1"));
+        UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value = UIHelper.fromStringToBool(Config.Get("rndBGM_", "1"));
+        rndBGM = UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value;
         UIHelper.registEvent(gameObject, "muteBGM", muteBGM);
         UIHelper.registEvent(gameObject, "vol_", onVolChange);
+
         if (QualitySettings.GetQualityLevel() < 3)
         {
             UIHelper.getByName<UIToggle>(gameObject, "high_").value = false;
@@ -67,6 +71,7 @@ public class Setting : WindowServant2D
         UIHelper.registEvent(gameObject, "size_", onChangeSize);
         UIHelper.registEvent(gameObject, "alpha_", onChangeAlpha);
         UIHelper.registEvent(gameObject, "vSize_", onChangeVsize);
+        UIHelper.registEvent(gameObject, "rndBGM_", save);
         sliderSize = UIHelper.getByName<UISlider>(gameObject, "size_");
         sliderAlpha = UIHelper.getByName<UISlider>(gameObject, "alpha_");
         sliderVsize = UIHelper.getByName<UISlider>(gameObject, "vSize_");
@@ -323,6 +328,7 @@ public class Setting : WindowServant2D
         Config.Set("handPosition_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "handPosition_").value));
         Config.Set("handmPosition_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "handmPosition_").value));
         Config.Set("spyer_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "spyer_").value));
+        Config.Set("rndBGM_", UIHelper.fromBoolToString(UIHelper.getByName<UIToggle>(gameObject, "rndBGM_").value));
         if (UIHelper.getByName<UIToggle>(gameObject, "high_").value)
         {
             QualitySettings.SetQualityLevel(5);

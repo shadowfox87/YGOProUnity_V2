@@ -731,8 +731,8 @@ PlayerSettings:
     UNet: 1
   facebookSdkVersion: 7.9.1
   apiCompatibilityLevel: 1
-  cloudProjectId: 15eb9568-5d04-44d9-8767-2d34ec59f3e4
-  projectName: YGOPro2
-  organizationId: szefo09
+  cloudProjectId: 
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNewInputSystem: 0
