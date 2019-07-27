@@ -291,10 +291,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 2000482543}
     m_Modifications:
-    - target: {fileID: 11466292, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: items.Array.size
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 409530, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
       propertyPath: m_LocalPosition.x
       value: -2831
@@ -330,30 +326,6 @@ Prefab:
     - target: {fileID: 115020, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
       propertyPath: m_Name
       value: GameObject
-      objectReference: {fileID: 0}
-    - target: {fileID: 6532048, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: m_Size.x
-      value: 408
-      objectReference: {fileID: 0}
-    - target: {fileID: 415176, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 175
-      objectReference: {fileID: 0}
-    - target: {fileID: 413964, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: -157
-      objectReference: {fileID: 0}
-    - target: {fileID: 11466292, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: items.Array.data[4]
-      value: '[TCG+OCG] NEWguy'
-      objectReference: {fileID: 0}
-    - target: {fileID: 11466292, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: items.Array.data[5]
-      value: Custom
-      objectReference: {fileID: 0}
-    - target: {fileID: 11466292, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}
-      propertyPath: mSelectedItem
-      value: '[TCG+OCG] NEWguy'
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5122bad30b031a14bb86f5fc2f95df57, type: 2}

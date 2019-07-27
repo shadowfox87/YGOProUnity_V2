@@ -2582,7 +2582,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: '[TCG&OCG]Szefo'
+  mText: '[TCG+OCG]wSedlacek'
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 0
@@ -4012,11 +4012,9 @@ MonoBehaviour:
   position: 0
   alignment: 1
   items:
-  - '[TCG+OCG]Szefo'
   - '[TCG+OCG]wSedlacek'
   - '[TCG]Koishi'
   - '[OCG]Koishi'
-  - '[OCG]Mercury233'
   - Custom
   padding: {x: 4, y: 4}
   textColor: {r: 1, g: 1, b: 1, a: 1}
@@ -4035,7 +4033,7 @@ MonoBehaviour:
     mMethodName: function
     mParameters: []
     oneShot: 0
-  mSelectedItem: '[TCG+OCG]Szefo'
+  mSelectedItem: '[TCG+OCG]wSedlacek'
   mPanel: {fileID: 0}
   mBackground: {fileID: 0}
   mHighlight: {fileID: 0}
