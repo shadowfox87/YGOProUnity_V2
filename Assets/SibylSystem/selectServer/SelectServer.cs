@@ -2,12 +2,19 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
+class serverT
+{
+    public string name;
+    public string ip;
+    public string port;
+}
 public class SelectServer : WindowServantSP
 {
     UIPopupList list;
     UIPopupList serversList;
-
+    List<serverT> servers;
     UIInput inputIP;
     UIInput inputPort;
     UIInput inputPsw;
@@ -16,6 +23,8 @@ public class SelectServer : WindowServantSP
 
     public override void initialize()
     {
+        servers = new List<serverT>();
+
         createWindow(Program.I().new_ui_selectServer);
         UIHelper.registEvent(gameObject, "exit_", onClickExit);
         UIHelper.registEvent(gameObject, "face_", onClickFace);
@@ -27,7 +36,7 @@ public class SelectServer : WindowServantSP
         UIHelper.registEvent(gameObject, "quickTag_", onQuickTag);
         serversList = UIHelper.getByName<UIPopupList>(gameObject, "server");
         serversList.fontSize = 20;
-        serversList.value = Config.Get("serversPicker", "[TCG+OCG]wSedlacek");
+        serversList.value = Config.Get("serversPicker", "Custom");
         UIHelper.registEvent(gameObject, "server", pickServer);
         UIHelper.getByName<UIInput>(gameObject, "name_").value = Config.Get("name", "YGOPro2 User");
         UIHelper.getByName<UIInput>(gameObject, "name_").defaultText = "YGOPro2 User";
@@ -43,6 +52,21 @@ public class SelectServer : WindowServantSP
         inputVersion = UIHelper.getByName<UIInput>(gameObject, "version_");
         set_version(currentClientVersion);
         SetActiveFalse();
+        string[] lines = File.ReadAllLines("config/servers.conf");
+        foreach (string s in lines)
+        {
+            serverT add = new serverT();
+            string[] mats = s.Split("->");
+            add.name = mats[0];
+            string[] mats2 = mats[1].Split(",");
+            add.ip = mats2[0];
+            add.port = mats2[1];
+            servers.Add(add);
+            serversList.items.Add(add.name);
+        }
+        serverT custom = new serverT() { name = name = "Custom", ip = "", port = "" };
+        servers.Add(custom);
+        serversList.items.Add(custom.name);
     }
     private void pickServer()
     {
@@ -50,46 +74,16 @@ public class SelectServer : WindowServantSP
         //[TCG/OCG]Szefoserver
         //[TCG]Koishi
         //[OCG]Mercury233
-        switch (server)
+        foreach (serverT s in servers)
         {
-            case "[TCG+OCG]wSedlacek":
-                {
-                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "srvpro.wsedlacek.com";
-                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7911";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = currentClientVersion;
-                    Config.Set("serversPicker", "[TCG+OCG]wsedlacek");
-                    break;
-                }
-            case "[TCG]Koishi":
-                {
-                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
-                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "1311";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = currentClientVersion;
-                    Config.Set("serversPicker", "[TCG]Koishi");
-                    break;
-                }
-            case "[OCG]Koishi":
-                {
-                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "222.73.218.25";
-                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "7210";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = currentClientVersion;
-                    Config.Set("serversPicker", "[OCG]Koishi");
-                    break;
-                }
-            case "[OCG]Mercury233":
-                {
-                    UIHelper.getByName<UIInput>(gameObject, "ip_").value = "s1.ygo233.com";
-                    UIHelper.getByName<UIInput>(gameObject, "port_").value = "23333";
-                    UIHelper.getByName<UIInput>(gameObject, "version_").value = currentClientVersion;
-                    Config.Set("serversPicker", "[OCG]Mercury233");
-                    break;
-                }
-            default:
-                {
-                    Config.Set("serversPicker", "Custom");
-                    break;
-                }
-
+            if (s.name == server)
+            {
+                inputIP.value = s.ip;
+                inputPort.value = s.port;
+                inputVersion.value = currentClientVersion;
+                Config.Set("serversPicker", s.name);
+                break;
+            }
         }
 
     }
@@ -118,7 +112,20 @@ public class SelectServer : WindowServantSP
         }
         onQuick("T");
     }
-
+    void printFile()
+    {
+        list.Clear();
+        if (File.Exists("config/hosts.conf") == false)
+        {
+            File.Create("config/hosts.conf").Close();
+        }
+        string txtString = File.ReadAllText("config/hosts.conf");
+        string[] lines = txtString.Replace("\r", "").Split("\n");
+        for (int i = 0; i < lines.Length; i++)
+        {
+            list.AddItem(lines[i]);
+        }
+    }
     public void onQuickMatch()
     {
         if (!isShowed)
@@ -212,7 +219,8 @@ public class SelectServer : WindowServantSP
     {
         base.show();
         Program.I().room.RMSshow_clear();
-        printFile(true);
+        printFile();
+        pickServer();
         Program.charge();
     }
 
@@ -220,28 +228,6 @@ public class SelectServer : WindowServantSP
     {
         base.preFrameFunction();
         Menu.checkCommend();
-    }
-
-    void printFile(bool first)
-    {
-        list.Clear();
-        if (File.Exists("config/hosts.conf") == false)
-        {
-            File.Create("config/hosts.conf").Close();
-        }
-        string txtString = File.ReadAllText("config/hosts.conf");
-        string[] lines = txtString.Replace("\r", "").Split("\n");
-        for (int i = 0; i < lines.Length; i++)
-        {
-            if (i == 0)
-            {
-                if (first)
-                {
-                    readString(lines[i]);
-                }
-            }
-            list.AddItem(lines[i]);
-        }
     }
 
     void onClickExit()
@@ -310,7 +296,6 @@ public class SelectServer : WindowServantSP
                         all += list.items[i] + "\r\n";
                     }
                     File.WriteAllText("config/hosts.conf", all);
-                    printFile(false);
                 }
                 (new Thread(() => { TcpHelper.join(ipString, name, portString, pswString, versionString); })).Start();
             }

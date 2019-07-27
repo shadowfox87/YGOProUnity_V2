@@ -2582,7 +2582,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: '[TCG+OCG]wSedlacek'
+  mText: server name
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 0
@@ -4011,11 +4011,7 @@ MonoBehaviour:
   highlightSprite: Button
   position: 0
   alignment: 1
-  items:
-  - '[TCG+OCG]wSedlacek'
-  - '[TCG]Koishi'
-  - '[OCG]Koishi'
-  - Custom
+  items: []
   padding: {x: 4, y: 4}
   textColor: {r: 1, g: 1, b: 1, a: 1}
   backgroundColor: {r: 0, g: 0, b: 0, a: 1}
@@ -4033,7 +4029,7 @@ MonoBehaviour:
     mMethodName: function
     mParameters: []
     oneShot: 0
-  mSelectedItem: '[TCG+OCG]wSedlacek'
+  mSelectedItem: 
   mPanel: {fileID: 0}
   mBackground: {fileID: 0}
   mHighlight: {fileID: 0}
@@ -4186,7 +4182,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: szefoserver.ddns.net
+  mText: IP
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 1
@@ -4341,7 +4337,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: f775853fdfd14bb47934543e95c3bae3, type: 3}
   mFont: {fileID: 0}
-  mText: 7210
+  mText: Port
   mFontSize: 18
   mFontStyle: 0
   mAlignment: 1

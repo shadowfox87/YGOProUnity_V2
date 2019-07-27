@@ -43,13 +43,13 @@ public class BGMController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Program.I().setting != null && Program.I().setting.isBGMMute.value)
+        if (Program.I().setting == null || Program.I().setting.isBGMMute.value)
             return;
-        if (Program.I().ocgcore.isShowed)
+        if (Program.I().ocgcore != null && Program.I().ocgcore.isShowed)
         {
             int l0 = Program.I().ocgcore.life_0;
             int l1 = Program.I().ocgcore.life_1;
-            if (l0 > l1 && l0/l1>=2 )
+            if (l0 > l1 && l0 / l1 >= 2)
             {
                 if (audioSource.clip.name != advantage.name)
                     PlayAudioFile(1);

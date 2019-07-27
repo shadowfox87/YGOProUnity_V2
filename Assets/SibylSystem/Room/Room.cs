@@ -30,7 +30,7 @@ public class Room : WindowServantSP
                 if (realPlayers[selftype].getIfPreped() == true)
                 {
                     TcpHelper.CtosMessage_HsNotReady();
-                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse","wizard") + ".ydk"));
+                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "") + ".ydk"));
                     TcpHelper.CtosMessage_HsReady();
                 }
             }
@@ -41,10 +41,10 @@ public class Room : WindowServantSP
 
     void printFile()
     {
-        string deckInUse = Config.Get("deckInUse","wizard");
+        string deckInUse = Config.Get("deckInUse", "");
         superScrollView.clear();
         FileInfo[] fileInfos = (new DirectoryInfo("deck")).GetFiles();
-        if (Config.Get(sort,"1") == "1")
+        if (Config.Get(sort, "1") == "1")
         {
             Array.Sort(fileInfos, UIHelper.CompareTime);
         }
@@ -159,7 +159,7 @@ public class Room : WindowServantSP
     public void StocMessage_HsPlayerEnter(BinaryReader r)
     {
         string name = r.ReadUnicode(20);
-        int pos = r.ReadByte()&3;//Fuck this
+        int pos = r.ReadByte() & 3;//Fuck this
         RoomPlayer player = new RoomPlayer();
         player.name = name;
         player.prep = false;
@@ -176,7 +176,7 @@ public class Room : WindowServantSP
 
         if (player < 4)
         {
-            if (UIHelper.fromStringToBool(Config.Get("ignoreOP_","0")) == true)
+            if (UIHelper.fromStringToBool(Config.Get("ignoreOP_", "0")) == true)
                 return;
             if (mode != 2)
             {
@@ -201,7 +201,7 @@ public class Room : WindowServantSP
         }
         else
         {
-            if (UIHelper.fromStringToBool(Config.Get("ignoreWatcher_","0")) == true)
+            if (UIHelper.fromStringToBool(Config.Get("ignoreWatcher_", "0")) == true)
                 return;
         }
         AddChatMsg(str, player);
@@ -286,36 +286,36 @@ public class Room : WindowServantSP
     public void StocMessage_RoomList(BinaryReader r)
     {
         //requires a dedicated button and a list to show rooms.
-            short count = BitConverter.ToInt16(r.ReadBytes(2), 0);
-            string roomname;
-            string player1 = "";
-            string player2 = "";
-            string hoststr=String.Empty;
-            List<string[]> roomList = new List<string[]>();
-            for (ushort i = 0; i < count; i++)
+        short count = BitConverter.ToInt16(r.ReadBytes(2), 0);
+        string roomname;
+        string player1 = "";
+        string player2 = "";
+        string hoststr = String.Empty;
+        List<string[]> roomList = new List<string[]>();
+        for (ushort i = 0; i < count; i++)
+        {
+            List<char> chars = new List<char>();
+            byte[] temp = r.ReadBytes(64);
+            roomname = Encoding.UTF8.GetString(temp);
+            roomname = roomname.Trim(new char[] { '\0' });
+            int room_status = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0), 16);
+            int room_duel_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0), 16);
+            int room_turn_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0), 16);
+            temp = r.ReadBytes(128);
+            player1 = Encoding.UTF8.GetString(temp);
+            player1 = player1.Trim(new char[] { '\0' });
+            int player1_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
+            int player1_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
+            temp = r.ReadBytes(128);
+            player2 = Encoding.UTF8.GetString(temp);
+            player2 = player2.Trim(new char[] { '\0' });
+            int player2_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
+            int player2_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
+            if (room_status == 0)
             {
-                List<char> chars = new List<char>();
-                byte[] temp = r.ReadBytes(64);
-                roomname = Encoding.UTF8.GetString(temp);
-                roomname = roomname.Trim(new char[] { '\0' });
-                int room_status = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0),16);
-                int room_duel_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0),16);
-                int room_turn_count = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0), 16);
-                temp = r.ReadBytes(128);
-                player1 = Encoding.UTF8.GetString(temp);
-                player1 = player1.Trim(new char[] { '\0' });
-                int player1_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
-                int player1_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
-                temp = r.ReadBytes(128);
-                player2 = Encoding.UTF8.GetString(temp);
-                player2 = player2.Trim(new char[] { '\0' });
-                int player2_score = Convert.ToInt16(BitConverter.ToString(r.ReadBytes(1), 0));
-                int player2_lp = BitConverter.ToInt32(r.ReadBytes(4), 0);
-                if (room_status == 0)
-                {
-                    player1 = player1.Replace("???", " ");
-                    player2 = player2.Replace("???", " ");
-                }
+                player1 = player1.Replace("???", " ");
+                player2 = player2.Replace("???", " ");
+            }
 
             string roomTag = RoomNameFormatter(roomname);
             string[] strings = new string[]
@@ -337,13 +337,13 @@ public class Room : WindowServantSP
             {
                 case 0:
                     {
-                        hoststr = "[EFD334][Waiting][FFFFFF] " + strings[11] +"[FFFFFF]"+ strings[5] + " VS " + strings[6];
+                        hoststr = "[EFD334][Waiting][FFFFFF] " + strings[11] + "[FFFFFF]" + strings[5] + " VS " + strings[6];
                         break;
                     }
                 case 1:
                     {
-                        
-                        hoststr = "[A978ED][G:" + strings[0] + ",T:" + strings[1] + "][FFFFFF] " + strings[11] +"[FFFFFF]" + strings[5] + " VS " + strings[6];
+
+                        hoststr = "[A978ED][G:" + strings[0] + ",T:" + strings[1] + "][FFFFFF] " + strings[11] + "[FFFFFF]" + strings[5] + " VS " + strings[6];
                         break;
                     }
                 case 2:
@@ -364,21 +364,21 @@ public class Room : WindowServantSP
         //Do something with the roomList.
     }
 
-     string RoomNameFormatter(string roomname)
+    string RoomNameFormatter(string roomname)
     {
-        string roomTag=String.Empty;
+        string roomTag = String.Empty;
         List<string> tags = new List<string>();
         if (Regex.IsMatch(roomname, @"^S,RANDOM#\d{1,}"))
         {
             roomTag = "[8AE57E][Duel] ";
             return roomTag;
         }
-        else if(Regex.IsMatch(roomname, @"^M,RANDOM#\d{1,}"))
+        else if (Regex.IsMatch(roomname, @"^M,RANDOM#\d{1,}"))
         {
             roomTag = "[42C1EC][Match] ";
             return roomTag;
         }
-        else if(Regex.IsMatch(roomname, @"^AI#\S{0,},\d{1,}")|| Regex.IsMatch(roomname, @"^AI\S{0,}#\d{1,}"))
+        else if (Regex.IsMatch(roomname, @"^AI#\S{0,},\d{1,}") || Regex.IsMatch(roomname, @"^AI\S{0,}#\d{1,}"))
         {
             roomTag = "[5E71FF][AI] ";
             return roomTag;
@@ -453,15 +453,16 @@ public class Room : WindowServantSP
             {
                 tags.Add("[42C1EC][Match]");
             }
-            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))")){
+            if (Regex.IsMatch(roomname, @"(\w{1,}[,^]{1}S[,#])?(?(1)|(^S[#,]))"))
+            {
                 tags.Add("[8AE57E][Duel]");
             }
         }
 
-        roomTag = String.Join("", tags.ToArray())+" ";
+        roomTag = String.Join("", tags.ToArray()) + " ";
         if (roomTag == " ")
         {
-            roomTag ="[ "+roomname+" ] ";
+            roomTag = "[ " + roomname + " ] ";
         }
         if (roomTag.Length > 150)
         {
@@ -478,7 +479,7 @@ public class Room : WindowServantSP
         p.Data = new BinaryMaster();
         p.Data.writer.Write(data);
         TcpHelper.AddRecordLine(p);
-        TcpHelper.SaveRecord(); 
+        TcpHelper.SaveRecord();
     }
 
     public bool duelEnded = false;
@@ -498,7 +499,7 @@ public class Room : WindowServantSP
         if (Program.I().deckManager.isShowed)
         {
             Program.I().deckManager.hide();
-            RMSshow_onlyYes("",InterString.Get("更换副卡组成功，请等待对手更换副卡组。"),null);
+            RMSshow_onlyYes("", InterString.Get("更换副卡组成功，请等待对手更换副卡组。"), null);
         }
         if (isShowed)
         {
@@ -522,7 +523,8 @@ public class Room : WindowServantSP
         is_host = ((type >> 4) & 0xf) != 0;
         if (is_host)
         {
-            if (selftype < 4 && roomPlayers[selftype] != null) {
+            if (selftype < 4 && roomPlayers[selftype] != null)
+            {
                 roomPlayers[selftype].prep = false;
             }
             UIHelper.shiftButton(startButton(), true);
@@ -580,7 +582,8 @@ public class Room : WindowServantSP
         Program.I().ocgcore.surrended = false;
         Program.I().ocgcore.returnServant = Program.I().deckManager;
         needSide = true;
-        if(Program.I().ocgcore.condition != Ocgcore.Condition.duel || joinWithReconnect) { //Change side when reconnect
+        if (Program.I().ocgcore.condition != Ocgcore.Condition.duel || joinWithReconnect)
+        { //Change side when reconnect
             Program.I().ocgcore.onDuelResultConfirmed();
         }
     }
@@ -592,7 +595,7 @@ public class Room : WindowServantSP
         {
             hide();
         }
-        int meResult = r.ReadByte();  
+        int meResult = r.ReadByte();
         int opResult = r.ReadByte();
         Program.I().new_ui_handShower.GetComponent<handShower>().me = meResult - 1;
         Program.I().new_ui_handShower.GetComponent<handShower>().op = opResult - 1;
@@ -677,7 +680,7 @@ public class Room : WindowServantSP
     {
         int msg = r.ReadByte();
         int code = 0;
-        switch (msg)    
+        switch (msg)
         {
             case 1:
                 r.ReadByte();
@@ -757,7 +760,7 @@ public class Room : WindowServantSP
 
     public void StocMessage_GameMsg(BinaryReader r)
     {
-        showOcgcore();  
+        showOcgcore();
         Package p = new Package();
         p.Fuction = r.ReadByte();
         p.Data = new BinaryMaster(r.ReadToEnd());
@@ -922,7 +925,7 @@ public class Room : WindowServantSP
             {
                 realPlayers[i].SetNotNull(true);
                 realPlayers[i].setName(roomPlayers[i].name);
-                realPlayers[i].SetIFcanKick(is_host&&(i != selftype));
+                realPlayers[i].SetIFcanKick(is_host && (i != selftype));
                 realPlayers[i].setIfMe(i == selftype);
                 realPlayers[i].setIfprepared(roomPlayers[i].prep);
                 if (mode != 2)
@@ -987,7 +990,7 @@ public class Room : WindowServantSP
         superScrollView.selectedAction = onSelected;
         superScrollView.install();
         printFile();
-        superScrollView.selectedString = Config.Get("deckInUse", "miaowu");
+        superScrollView.selectedString = Config.Get("deckInUse", "");
         superScrollView.toTop();
         if (mode == 0)
         {
@@ -1003,7 +1006,7 @@ public class Room : WindowServantSP
         }
 
         UIHelper.trySetLableText(gameObject, "description_", "");
-        for (int i = 0; i < 4; i++) 
+        for (int i = 0; i < 4; i++)
         {
             realPlayers[i] = UIHelper.getByName<lazyPlayer>(gameObject, i.ToString());
         }
@@ -1033,7 +1036,7 @@ public class Room : WindowServantSP
         }
         if (arg2)
         {
-            TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse","miaouwu") + ".ydk"));
+            TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "") + ".ydk"));
             TcpHelper.CtosMessage_HsReady();
         }
         else
@@ -1088,7 +1091,7 @@ public class Room : WindowServantSP
                 }
                 else
                 {
-                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "wizard") + ".ydk"));
+                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "") + ".ydk"));
                     TcpHelper.CtosMessage_HsReady();
                 }
             }
@@ -1103,6 +1106,8 @@ public class Room : WindowServantSP
         }
         if (gameObjectListened.name == "start_")
         {
+            if (!superScrollView.Selected())
+                return;
             TcpHelper.CtosMessage_HsStart();
         }
     }

@@ -26,8 +26,8 @@ public class AIRoom : WindowServantSP
         UIHelper.registEvent(gameObject, "aideck_", onSave);
         UIHelper.registEvent(gameObject, "rank_", onSave);
         UIHelper.registEvent(gameObject, "start_", onStart);
-        UIHelper.registEvent(gameObject, "exit_", ()=> { Program.I().shiftToServant(Program.I().menu); });
-        UIHelper.trySetLableText(gameObject,"percyHint",InterString.Get("人机模式"));
+        UIHelper.registEvent(gameObject, "exit_", () => { Program.I().shiftToServant(Program.I().menu); });
+        UIHelper.trySetLableText(gameObject, "percyHint", InterString.Get("人机模式"));
         superScrollView.install();
         SetActiveFalse();
     }
@@ -49,6 +49,10 @@ public class AIRoom : WindowServantSP
         {
             return;
         }
+        if (!superScrollView.Selected())
+        {
+            return;
+        }
         int l = 8000;
         try
         {
@@ -60,7 +64,7 @@ public class AIRoom : WindowServantSP
         string aideck = "";
         if (Config.Get("list_aideck", suiji) == suiji)
         {
-            aideck= "ai/ydk/" + list_aideck.items[UnityEngine.Random.Range(1, list_aideck.items.Count)] + ".ydk";
+            aideck = "ai/ydk/" + list_aideck.items[UnityEngine.Random.Range(1, list_aideck.items.Count)] + ".ydk";
         }
         else
         {
@@ -71,10 +75,10 @@ public class AIRoom : WindowServantSP
 
     void printFile()
     {
-        string deckInUse = Config.Get("deckInUse","miaowu");
+        string deckInUse = Config.Get("deckInUse", "miaowu");
         superScrollView.clear();
         FileInfo[] fileInfos = (new DirectoryInfo("deck")).GetFiles();
-        if (Config.Get(sort,"1") == "1")
+        if (Config.Get(sort, "1") == "1")
         {
             Array.Sort(fileInfos, UIHelper.CompareTime);
         }
@@ -150,14 +154,14 @@ public class AIRoom : WindowServantSP
 
     PrecyOcg precy;
 
-    public void launch(string playerDek, string aiDeck, string aiScript, bool playerGo, bool suffle, int life,bool god,int rule)
+    public void launch(string playerDek, string aiDeck, string aiScript, bool playerGo, bool suffle, int life, bool god, int rule)
     {
         if (precy != null)
         {
             precy.dispose();
         }
         precy = new PrecyOcg();
-        precy.startAI(playerDek, aiDeck, aiScript, playerGo, suffle, life, god,rule);
+        precy.startAI(playerDek, aiDeck, aiScript, playerGo, suffle, life, god, rule);
         RMSshow_none(InterString.Get("AI模式还在开发中，您在AI模式下遇到的BUG不会在联机的时候出现。"));
     }
 
