@@ -212,6 +212,7 @@ public class Book : WindowServant2D
     Program.I().ocgcore.life_0 - Program.I().ocgcore.life_1
 
     , false);
+			Program.I().bgm.PlayWhat();
         }
         string all = "";
         foreach (var item in lines)
