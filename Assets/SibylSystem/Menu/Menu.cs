@@ -12,6 +12,8 @@ public class Menu : WindowServantSP
     //GameObject screen;
     public override void initialize()
     {
+		if (!File.Exists("config/hint.conf"))
+			File.Create("config/hint.conf").Close();
         string hint = File.ReadAllText("config/hint.conf");
         createWindow(Program.I().new_ui_menu);
         UIHelper.registEvent(gameObject, "setting_", onClickSetting);

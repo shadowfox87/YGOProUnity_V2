@@ -6,6 +6,7 @@ public class Setting : WindowServant2D
 
 	public LAZYsetting setting;
 	public UIToggle isBGMMute;
+	public UIPopupList pictureDownloadVersion;
 	public bool batterySaving;
 	public bool autoPicDownload;
 	public bool rndBGM;

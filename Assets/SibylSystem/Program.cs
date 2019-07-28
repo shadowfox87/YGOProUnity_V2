@@ -288,11 +288,12 @@ public class Program : MonoBehaviour
 			});
 		go(300, () =>
 			{
+				UpdateClientV2();
 				InterString.initialize("config/translation.conf");
 				InterString.initialize("config" + AppLanguage.LanguageDir() + "/translation.conf");   //System Language
 				GameTextureManager.initialize();
 				Config.initialize("config/config.conf");
-				UpdateClient();
+
 				GameStringManager.initialize("config/strings.conf");
 				if (File.Exists("config/strings.conf"))
 				{
@@ -429,6 +430,86 @@ public class Program : MonoBehaviour
 			}
 		}
 	}
+	private void UpdateClientV2()
+	{
+		if (UIHelper.fromStringToBool(Config.Get("autoUpdateDownload_", "1")))
+		{
+			try
+			{
+				WWW w = new WWW("https://api.github.com/repos/szefo09/updateYGOPro2/contents/");
+				while (!w.isDone)
+				{
+					if (Application.internetReachability == NetworkReachability.NotReachable || !string.IsNullOrEmpty(w.error))
+					{
+						throw new Exception("No Internet connection!");
+					}
+				}
+				List<ApiFile> toDownload = new List<ApiFile>();
+				List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
+
+				List<string> local = new List<string>();
+				local.AddRange(new DirectoryInfo("config/").GetFiles("*.conf").Select(x => x.Name).ToList());
+				local.AddRange(new DirectoryInfo("cdb/").GetFiles("*.cdb").Select(x => x.Name).ToList());
+				foreach (ApiFile file in apiFromGit)
+				{
+					string s = local.FirstOrDefault(x => x == file.name);
+					if (s == null)
+					{
+						toDownload.Add(file);
+					}
+					else
+					{
+						FileInfo f = new FileInfo((Path.GetExtension(s).ToLower() == ".cdb" ? "cdb/" : "config/") + s);
+						byte[] bytes1 = System.Text.Encoding.ASCII.GetBytes("blob " + f.Length.ToString() + '\0'.ToString());
+						byte[] bytes2 = File.ReadAllBytes((Path.GetExtension(s).ToLower() == ".cdb" ? "cdb/" : "config/") + s);
+						List<byte> temp = new List<byte>();
+						temp.AddRange(bytes1);
+						temp.AddRange(bytes2);
+						byte[] bytes = temp.ToArray();
+						string sha = GetHashString(GetHash(bytes)).ToLower(); ;
+						if (sha != file.sha)
+						{
+							toDownload.Add(file);
+						}
+					}
+				}
+				//foreach (string f in local)
+				//{
+				//    if (apiFromGit.FirstOrDefault(x => x.name == f) == null || f != apiFromGit.FirstOrDefault(x => x.name == f).name)
+				//    {
+				//        if (File.Exists("cdb/" + f))
+				//        {
+				//            File.Delete("cdb/" + f);
+				//        }
+				//        if (File.Exists("config/" + f))
+				//        {
+				//            File.Delete("config/" + f);
+				//        }
+
+				//    }
+				//}
+
+				HttpDldFile httpDldFile = new HttpDldFile();
+				foreach (var dl in toDownload)
+				{
+					if (Path.GetExtension(dl.name) == ".cdb" && !(Application.internetReachability == NetworkReachability.NotReachable))
+					{
+						httpDldFile.Download(dl.download_url, Path.Combine("cdb/", dl.name));
+					}
+					if (Path.GetExtension(dl.name) == ".conf" && !(Application.internetReachability == NetworkReachability.NotReachable))
+					{
+						httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				throw new Exception("Update Error");
+			}
+
+		}
+	}
+
 	public GameObject mouseParticle;
 
 	static int lastChargeTime = 0;
@@ -472,6 +553,20 @@ public class Program : MonoBehaviour
 
 	public static float wheelValue = 0;
 
+	public static byte[] GetHash(byte[] inputString)
+	{
+		System.Security.Cryptography.HashAlgorithm algorithm = System.Security.Cryptography.SHA1.Create();
+		return algorithm.ComputeHash(inputString);
+	}
+
+	public static string GetHashString(byte[] inputString)
+	{
+		System.Text.StringBuilder sb = new System.Text.StringBuilder();
+		foreach (byte b in inputString)
+			sb.Append(b.ToString("X2"));
+
+		return sb.ToString();
+	}
 	public class delayedTask
 	{
 		public int timeToBeDone;
@@ -908,7 +1003,6 @@ public class Program : MonoBehaviour
 		if (to == aiRoom && aiRoom.isShowed == false) aiRoom.show();
 		if (to == roomList && !roomList.isShowed) roomList.show();
 		Program.I().bgm.PlayWhat();
-
 	}
 
 	#endregion
