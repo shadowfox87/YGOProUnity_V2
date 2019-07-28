@@ -30,7 +30,7 @@ public class Room : WindowServantSP
                 if (realPlayers[selftype].getIfPreped() == true)
                 {
                     TcpHelper.CtosMessage_HsNotReady();
-                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse","wizard") + ".ydk"));
+                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse","") + ".ydk"));
                     TcpHelper.CtosMessage_HsReady();
                 }
             }
@@ -41,7 +41,7 @@ public class Room : WindowServantSP
 
     void printFile()
     {
-        string deckInUse = Config.Get("deckInUse","wizard");
+        string deckInUse = Config.Get("deckInUse","");
         superScrollView.clear();
         FileInfo[] fileInfos = (new DirectoryInfo("deck")).GetFiles();
         if (Config.Get(sort,"1") == "1")
@@ -1088,7 +1088,7 @@ public class Room : WindowServantSP
                 }
                 else
                 {
-                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "wizard") + ".ydk"));
+                    TcpHelper.CtosMessage_UpdateDeck(new YGOSharp.Deck("deck/" + Config.Get("deckInUse", "") + ".ydk"));
                     TcpHelper.CtosMessage_HsReady();
                 }
             }
@@ -1103,6 +1103,8 @@ public class Room : WindowServantSP
         }
         if (gameObjectListened.name == "start_")
         {
+            if (!superScrollView.Selected())
+                return;
             TcpHelper.CtosMessage_HsStart();
         }
     }

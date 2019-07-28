@@ -49,6 +49,10 @@ public class AIRoom : WindowServantSP
         {
             return;
         }
+        if (!superScrollView.Selected())
+        {
+            return;
+        }
         int l = 8000;
         try
         {

@@ -28,6 +28,7 @@ public static class Config
         if (File.Exists(path) == false)
         {
             File.Create(path).Close();
+            return;
         }
         string txtString = File.ReadAllText(path);
         string[] lines = txtString.Replace("\r", "").Split("\n");
