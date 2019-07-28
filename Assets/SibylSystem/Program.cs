@@ -1394,7 +1394,7 @@ public class Program : MonoBehaviour
             InterString.initialize("config" + AppLanguage.LanguageDir() + "/translation.conf");   //System Language
             GameTextureManager.initialize();
             Config.initialize("config/config.conf");
-            
+
             GameStringManager.initialize("config/strings.conf");
             if (File.Exists("config/strings.conf"))
             {
@@ -1547,41 +1547,49 @@ public class Program : MonoBehaviour
                 }
                 List<ApiFile> toDownload = new List<ApiFile>();
                 List<ApiFile> apiFromGit = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(w.text);
-                if (!File.Exists("updates/SHAs.txt"))
-                {
-                    Directory.CreateDirectory("updates");
-                    toDownload.AddRange(apiFromGit);
-                }
 
-                if (File.Exists("updates/SHAs.txt"))
+                List<string> local = new List<string>();
+                local.AddRange(new DirectoryInfo("config/").GetFiles("*.conf").Select(x => x.Name).ToList());
+                local.AddRange(new DirectoryInfo("cdb/").GetFiles("*.cdb").Select(x => x.Name).ToList());
+                foreach (ApiFile file in apiFromGit)
                 {
-                    List<string> local = new List<string>();
-                    //List<ApiFile> local = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<ApiFile>>(File.ReadAllText("updates/SHAs.txt"));
-                    local.AddRange(new DirectoryInfo("config/").GetFiles("*.conf").Select(x => x.Name).ToList());
-                    local.AddRange(new DirectoryInfo("cdb/").GetFiles("*.cdb").Select(x => x.Name).ToList());
-                    foreach (ApiFile file in apiFromGit)
+                    string s = local.FirstOrDefault(x => x == file.name);
+                    if (s == null)
                     {
-                        if (local.FirstOrDefault(x => x == file.name) == null)
+                        toDownload.Add(file);
+                    }
+                    else
+                    {
+                        FileInfo f = new FileInfo((Path.GetExtension(s).ToLower() == ".cdb" ? "cdb/" : "config/") + s);
+                        byte[] bytes1 = System.Text.Encoding.ASCII.GetBytes("blob " + f.Length.ToString() + '\0'.ToString());
+                        byte[] bytes2 = File.ReadAllBytes((Path.GetExtension(s).ToLower() == ".cdb" ? "cdb/" : "config/") + s);
+                        List<byte> temp = new List<byte>();
+                        temp.AddRange(bytes1);
+                        temp.AddRange(bytes2);
+                        byte[] bytes = temp.ToArray();
+                        string sha = GetHashString(GetHash(bytes)).ToLower(); ;
+                        if (sha != file.sha)
                         {
                             toDownload.Add(file);
                         }
                     }
-                    //foreach (string f in local)
-                    //{
-                    //    if (apiFromGit.FirstOrDefault(x => x.name == f) == null || f != apiFromGit.FirstOrDefault(x => x.name == f).name)
-                    //    {
-                    //        if (File.Exists("cdb/" + f))
-                    //        {
-                    //            File.Delete("cdb/" + f);
-                    //        }
-                    //        if (File.Exists("config/" + f))
-                    //        {
-                    //            File.Delete("config/" + f);
-                    //        }
-
-                    //    }
-                    //}
                 }
+                //foreach (string f in local)
+                //{
+                //    if (apiFromGit.FirstOrDefault(x => x.name == f) == null || f != apiFromGit.FirstOrDefault(x => x.name == f).name)
+                //    {
+                //        if (File.Exists("cdb/" + f))
+                //        {
+                //            File.Delete("cdb/" + f);
+                //        }
+                //        if (File.Exists("config/" + f))
+                //        {
+                //            File.Delete("config/" + f);
+                //        }
+
+                //    }
+                //}
+
                 HttpDldFile httpDldFile = new HttpDldFile();
                 foreach (var dl in toDownload)
                 {
@@ -1594,14 +1602,15 @@ public class Program : MonoBehaviour
                         httpDldFile.Download(dl.download_url, Path.Combine("config/", dl.name));
                     }
                 }
-                File.WriteAllText("updates/SHAs.txt", w.text);
             }
             catch (Exception e)
             {
-                File.Delete("updates/SHAs.txt");
+                throw new Exception("Update Error");
             }
+
         }
     }
+
     public GameObject mouseParticle;
 
     static int lastChargeTime = 0;
@@ -1645,6 +1654,20 @@ public class Program : MonoBehaviour
 
     public static float wheelValue = 0;
 
+    public static byte[] GetHash(byte[] inputString)
+    {
+        System.Security.Cryptography.HashAlgorithm algorithm = System.Security.Cryptography.SHA1.Create();
+        return algorithm.ComputeHash(inputString);
+    }
+
+    public static string GetHashString(byte[] inputString)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        foreach (byte b in inputString)
+            sb.Append(b.ToString("X2"));
+
+        return sb.ToString();
+    }
     public class delayedTask
     {
         public int timeToBeDone;
